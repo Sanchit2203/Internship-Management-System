@@ -1,14 +1,42 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hello World</title>
-  <link href='/style.css' rel='stylesheet'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internship Management System - Dashboard</title>
 </head>
 <body>
-  <h1>Hello, world!</h1>
-  <button onclick="console.log('hello');">Press me</button>
-  <script defer type="text/javascript" src="/main.js"></script>
+    <h1>Welcome to the Internship Management System</h1>
+    <p>This is the dashboard.</p>
+
+    <h2>Careers at Our Law Firm</h2>
+    <p>Explore exciting career opportunities at our prestigious law firm. We are always looking for talented and driven individuals to join our team. Whether you are an experienced legal professional or just starting your career, we offer a challenging and rewarding environment.</p>
+    <p>Our firm is committed to fostering a supportive and inclusive workplace where you can grow your skills, contribute to impactful cases, and make a difference. We value dedication, innovation, and a passion for justice.</p>
+    <p>Visit our careers page to learn more about current openings and how to apply.</p>
+
+    <hr> <!-- Adding a horizontal rule for spacing -->
+
+    <h2>Choose Your Career Path</h2>
+    <select id="career-type">
+        <option value="jobs">Jobs</option>
+        <option value="internship">Internship</option>
+    </select>
+    <button onclick="goToCareerPage()">Go</button>
+
+    <script>
+        function goToCareerPage() {
+            const selectElement = document.getElementById('career-type');
+            const selectedValue = selectElement.value;
+            if (selectedValue === 'jobs') {
+                // Redirect to the jobs page
+                window.location.href = 'Pages/jobs_listing.html';
+            } else if (selectedValue === 'internship') {
+                // Redirect to the internship listing page
+                window.location.href = 'Pages/internship_listing.html';
+            }
+        }
+    </script>
+
+    <!-- Add more content here later -->
 </body>
 </html>
