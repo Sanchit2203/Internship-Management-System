@@ -10,6 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script> <!-- If using Authentication -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
 
     <script>
       // Your Firebase project configuration
@@ -29,6 +30,7 @@
       // Get Firestore and Auth instances (if using) - Note: using var or let for scope
       var db = firebase.firestore();
       var auth = firebase.auth(); // If using Authentication
+      const storage = firebase.storage(); // Initialize Firebase Storage
 
     </script>
 </head>
@@ -77,24 +79,46 @@
             internshipApplicationForm.addEventListener('submit', function (event) {
                 event.preventDefault(); // Prevent actual form submission
 
-                // Get form data
                 const formData = new FormData(internshipApplicationForm);
                 const registrationData = {};
+
+                // Get the resume file from the form data
+                const resumeFile = formData.get('resume');
+
+                // Remove the file object from registrationData for now
+                formData.delete('resume');
+
+                // Populate registrationData with other form fields
                 formData.forEach((value, key) => {
                     registrationData[key] = value;
                 });
                 registrationData.title = document.getElementById('internship_title').value; // Add the internship title
 
-                // Save to Firestore
-                db.collection('internshipApplications').add(registrationData)
-                .then((docRef) => {
-                    console.log("Document written with ID: ", docRef.id);
-                    alert('Internship application submitted successfully!');
-                    internshipApplicationForm.reset(); // Clear the form
-                })
-                .catch((error) => {
-                    console.error("Error adding document: ", error);
-                    alert('Error submitting internship application. Please try again.');
+                // Upload the resume file to Firebase Storage
+                const storageRef = storage.ref();
+                const resumeRef = storageRef.child('resumes/' + resumeFile.name);
+
+                resumeRef.put(resumeFile).then((snapshot) => {
+                    // Get the download URL
+                    snapshot.ref.getDownloadURL().then((downloadURL) => {
+                        // Add the download URL to the registration data
+                        registrationData.resumeURL = downloadURL;
+
+                        // Save the registration data to Firestore
+                        db.collection('internshipApplications').add(registrationData)
+                        .then((docRef) => {
+                            console.log("Document written with ID: ", docRef.id);
+                            alert('Internship application submitted successfully!');
+                            internshipApplicationForm.reset(); // Clear the form
+                        })
+                        .catch((error) => {
+                            console.error("Error adding document: ", error);
+                            alert('Error submitting internship application. Please try again.');
+                        });
+                    });
+                }).catch((error) => {
+                    console.error("Error uploading resume: ", error);
+                    alert('Error uploading resume. Please try again.');
                 });
             });
         });

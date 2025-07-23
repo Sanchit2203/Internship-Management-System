@@ -10,6 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script> <!-- If using Authentication -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
 
     <script>
       // Your Firebase project configuration
@@ -29,6 +30,7 @@
       // Get Firestore and Auth instances (if using)
       const db = firebase.firestore();
       const auth = firebase.auth(); // If using Authentication
+      const storage = firebase.storage(); // Initialize Firebase Storage
 
     </script>
 </head>
@@ -71,24 +73,46 @@
             jobApplicationForm.addEventListener('submit', function (event) {
                 event.preventDefault(); // Prevent actual form submission
 
-                // Get form data
                 const formData = new FormData(jobApplicationForm);
                 const registrationData = {};
+
+                // Get the resume file from the form data
+                const resumeFile = formData.get('resume');
+
+                // Remove the file object from registrationData for now
+                formData.delete('resume');
+
+                // Populate registrationData with other form fields
                 formData.forEach((value, key) => {
                     registrationData[key] = value;
                 });
                 registrationData.title = document.getElementById('job_title').value; // Add the job title
 
-                // Save to Firestore
-                db.collection('jobApplications').add(registrationData)
-                .then((docRef) => {
-                    console.log("Document written with ID: ", docRef.id);
-                    alert('Job application submitted successfully!');
-                    jobApplicationForm.reset(); // Clear the form
-                })
-                .catch((error) => {
-                    console.error("Error adding document: ", error);
-                    alert('Error submitting job application. Please try again.');
+                // Upload the resume file to Firebase Storage
+                const storageRef = storage.ref();
+                const resumeRef = storageRef.child('resumes/' + resumeFile.name);
+
+                resumeRef.put(resumeFile).then((snapshot) => {
+                    // Get the download URL
+                    snapshot.ref.getDownloadURL().then((downloadURL) => {
+                        // Add the download URL to the registration data
+                        registrationData.resumeURL = downloadURL;
+
+                        // Save the registration data to Firestore
+                        db.collection('jobApplications').add(registrationData)
+                        .then((docRef) => {
+                            console.log("Document written with ID: ", docRef.id);
+                            alert('Job application submitted successfully!');
+                            jobApplicationForm.reset(); // Clear the form
+                        })
+                        .catch((error) => {
+                            console.error("Error adding document: ", error);
+                            alert('Error submitting job application. Please try again.');
+                        });
+                    });
+                }).catch((error) => {
+                    console.error("Error uploading resume: ", error);
+                    alert('Error uploading resume. Please try again.');
                 });
             });
         });
