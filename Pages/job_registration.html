@@ -8,18 +8,22 @@
 <body>
     <h1>Job Application Form</h1>
     <form>
-        <!-- Form fields for job application -->
-        <label for="full_name">Full Name:</label><br>
-        <input type="text" id="full_name" name="full_name"><br><br>
+        <!-- Display the job title -->
+        <label for="job_title">Applying For:</label><br>
+        <input type="text" id="job_title" name="job_title" disabled><br><br>
 
-        <label for="email">Email:</label><br>
-        <input type="email" id="email" name="email"><br><br>
+        <!-- Other form fields -->
+        <label for="full_name">Full Name: <span style="color: red;">*</span></label><br>
+        <input type="text" id="full_name" name="full_name" required><br><br>
 
-        <label for="phone">Phone:</label><br>
-        <input type="tel" id="phone" name="phone"><br><br>
+        <label for="email">Email: <span style="color: red;">*</span></label><br>
+        <input type="email" id="email" name="email" required><br><br>
 
-        <label for="resume">Upload Resume:</label><br>
-        <input type="file" id="resume" name="resume"><br><br>
+        <label for="phone">Phone: <span style="color: red;">*</span></label><br>
+        <input type="tel" id="phone" name="phone" required><br><br>
+
+        <label for="resume">Upload Resume: <span style="color: red;">*</span></label><br>
+        <input type="file" id="resume" name="resume" required><br><br>
 
         <label for="cover_letter">Cover Letter (Optional):</label><br>
         <textarea id="cover_letter" name="cover_letter" rows="4" cols="50"></textarea><br><br>
@@ -27,5 +31,13 @@
         <input type="submit" value="Submit Application">
     </form>
     <!-- Add more content here later -->
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const jobTitle = urlParams.get('title');
+        if (jobTitle) {
+            document.getElementById('job_title').value = decodeURIComponent(jobTitle);
+        }
+    </script>
 </body>
 </html>
