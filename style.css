@@ -1,1 +1,214 @@
-/* Add styles here */
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif; /* Using a common professional font */
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f8f8; /* Light gray background for the page */
+    color: #333; /* Default text color */
+}
+
+.container {
+    max-width: 1200px; /* Wider container */
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff; /* White background for content areas */
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Softer shadow */
+}
+
+h1, h2, h3 {
+    color: #1a237e; /* Deep blue for headings (can be overridden by theme) */
+    margin-bottom: 15px;
+    text-align: center; /* Center all headings */
+}
+
+p {
+    margin-bottom: 15px;
+}
+
+/* Navigation Styles (Example - you might have a nav menu) */
+nav {
+    background-color: #1a237e; /* Deep blue navigation background */
+    padding: 10px 0;
+    text-align: center;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 15px;
+    font-weight: bold;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+
+/* Button Styles */
+button,
+input[type="submit"] {
+    padding: 10px 20px;
+    border: 1px solid; /* Add a border */
+    border-radius: 5px; /* Slightly rounded corners */
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 10px;
+    transition: background-color 0.3s ease; /* Smooth transition on hover */
+}
+
+button:hover,
+input[type="submit"]:hover {
+    opacity: 1; /* Remove opacity change */
+    background-color: #e0e0e0; /* Light gray background on hover */
+}
+
+/* Theme Classes (for subtle accents) */
+.blue-theme .accent-color {
+    color: #2196f3; /* Blue accent */
+}
+
+.red-theme .accent-color {
+    color: #f44336; /* Red accent */
+}
+
+.purple-theme .accent-color {
+    color: #9c27b0; /* Purple accent */
+}
+
+
+/* Button Color Themes (applied based on the parent container's theme) */
+.blue-theme button,
+.blue-theme input[type="submit"] {
+    border-color: #2196f3; /* Blue border */
+    color: #2196f3; /* Blue text */
+    background-color: transparent; /* Transparent background */
+}
+
+.blue-theme button:hover,
+.blue-theme input[type="submit"]:hover {
+    background-color: #2196f3; /* Blue background on hover */
+    color: white;
+}
+
+.red-theme button,
+.red-theme input[type="submit"] {
+    border-color: #f44336; /* Red border */
+    color: #f44336; /* Red text */
+    background-color: transparent; /* Transparent background */
+}
+
+.red-theme button:hover,
+.red-theme input[type="submit"]:hover {
+    background-color: #f44336; /* Red background on hover */
+    color: white;
+}
+
+.purple-theme button,
+.purple-theme input[type="submit"] {
+    border-color: #9c27b0; /* Purple border */
+    color: #9c27b0; /* Purple text */
+    background-color: transparent; /* Transparent background */
+}
+
+.purple-theme button:hover,
+.purple-theme input[type="submit"]:hover {
+    background-color: #9c27b0; /* Purple background on hover */
+    color: white;
+}
+
+
+/* Form Styling */
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 600px; /* Slightly wider forms */
+    margin: 20px auto;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="tel"],
+form textarea,
+form input[type="file"] {
+    width: 100%;
+    padding: 10px; /* Increased padding */
+    margin-bottom: 15px; /* Increased margin */
+    border: 1px solid #ccc; /* Lighter border */
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+form input[disabled] {
+    background-color: #eee;
+    font-style: italic;
+    border-color: #ccc;
+}
+
+form input[type="submit"] {
+    /* Submit button style will be based on the parent theme */
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px 8px; /* Increased padding */
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    color: #555;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9; /* Zebra striping */
+}
+
+table button {
+    /* Button style within tables will be based on the parent theme */
+}
+
+/* Style for the career type dropdown in the blue theme */
+.blue-theme select#career-type {
+    width: 150px; /* Adjust the width as needed */
+    padding: 8px; /* Adjust padding for size */
+    border-radius: 4px;
+    margin-right: 10px;
+    display: inline-block; /* Ensure it sits next to the button */
+}
+
+/* Center the filter buttons section */
+.filter-category {
+    width: fit-content; /* Or a specific width, e.g., 300px; */
+    margin: 20px auto; /* Auto margins for horizontal centering */
+    /* text-align: center;  Center text within the div if needed */
+}
+
+.filter-category button {
+    margin: 0 5px; /* Adjust horizontal margin for buttons */
+}
+
+/* Center content within a div */
+.center-content {
+    text-align: center;
+    margin-top: 20px; /* Optional: Add some space above */
+    margin-bottom: 20px; /* Optional: Add some space below */
+}
