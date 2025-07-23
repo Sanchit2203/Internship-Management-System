@@ -5,10 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Application</title>
     <link rel="stylesheet" href="../style.css">
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script> <!-- If using Authentication -->
+
+    <script>
+      // Your Firebase project configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDQPX2zwIyVa8Bm3ggoOPhPmNUsWN9TP3w",
+        authDomain: "internship-47c43.firebaseapp.com",
+        projectId: "internship-47c43",
+        storageBucket: "internship-47c43.firebasestorage.app",
+        messagingSenderId: "180629966091",
+        appId: "1:180629966091:web:b5df3ee2f84b2aeafe660e",
+        measurementId: "G-X16QZ8EP4K"
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+
+      // Get Firestore and Auth instances (if using)
+      const db = firebase.firestore();
+      const auth = firebase.auth(); // If using Authentication
+
+    </script>
 </head>
 <body class="red-theme">
     <h1>Job Application Form</h1>
-    <form>
+    <form id="job-application-form">
         <!-- Display the job title -->
         <label for="job_title">Applying For:</label><br>
         <input type="text" id="job_title" name="job_title" disabled><br><br>
@@ -34,11 +60,38 @@
     <!-- Add more content here later -->
 
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const jobTitle = urlParams.get('title');
-        if (jobTitle) {
-            document.getElementById('job_title').value = decodeURIComponent(jobTitle);
-        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const jobTitle = urlParams.get('title');
+            if (jobTitle) {
+                document.getElementById('job_title').value = decodeURIComponent(jobTitle);
+            }
+
+            const jobApplicationForm = document.getElementById('job-application-form');
+            jobApplicationForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent actual form submission
+
+                // Get form data
+                const formData = new FormData(jobApplicationForm);
+                const registrationData = {};
+                formData.forEach((value, key) => {
+                    registrationData[key] = value;
+                });
+                registrationData.title = document.getElementById('job_title').value; // Add the job title
+
+                // Save to Firestore
+                db.collection('jobApplications').add(registrationData)
+                .then((docRef) => {
+                    console.log("Document written with ID: ", docRef.id);
+                    alert('Job application submitted successfully!');
+                    jobApplicationForm.reset(); // Clear the form
+                })
+                .catch((error) => {
+                    console.error("Error adding document: ", error);
+                    alert('Error submitting job application. Please try again.');
+                });
+            });
+        });
     </script>
 </body>
 </html>

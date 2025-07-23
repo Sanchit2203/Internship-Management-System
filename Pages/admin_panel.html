@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="../style.css">
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script> <!-- If using Authentication -->
+
+    <script>
+      // Your Firebase project configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDQPX2zwIyVa8Bm3ggoOPhPmNUsWN9TP3w",
+        authDomain: "internship-47c43.firebaseapp.com",
+        projectId: "internship-47c43",
+        storageBucket: "internship-47c43.firebasestorage.app",
+        messagingSenderId: "180629966091",
+        appId: "1:180629966091:web:b5df3ee2f84b2aeafe660e",
+        measurementId: "G-X16QZ8EP4K"
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+
+      // Get Firestore and Auth instances (if using)
+      var db = firebase.firestore();
+      var auth = firebase.auth(); // If using Authentication
+
+    </script>
+</head>
+<body class="blue-theme"> <!-- Using blue theme for admin panel -->
+    <h1>Admin Panel - Registrations</h1>
+
+    <div class="container">
+        <h2>Job Registrations</h2>
+        <table id="job-registrations-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <!-- Add more headers for other fields if needed -->
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Job registration data will be loaded here by JavaScript -->
+            </tbody>
+        </table>
+
+        <br>
+
+        <h2>Internship Registrations</h2>
+        <table id="internship-registrations-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>University</th>
+                    <th>Major</th>
+                    <!-- Add more headers for other fields if needed -->
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Internship registration data will be loaded here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Function to load and display job registrations from Firestore
+            function loadJobRegistrations() {
+                const jobTableBody = document.getElementById('job-registrations-table').querySelector('tbody');
+                jobTableBody.innerHTML = ''; // Clear existing rows
+
+                db.collection('jobApplications').get().then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                        const reg = doc.data();
+                        const row = jobTableBody.insertRow();
+                        row.insertCell().textContent = reg.title || 'N/A';
+                        row.insertCell().textContent = reg.fullName || 'N/A';
+                        row.insertCell().textContent = reg.email || 'N/A';
+                        row.insertCell().textContent = reg.phone || 'N/A';
+                        // Add cells for other job fields if needed
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error getting job documents: ", error);
+                });
+            }
+
+            // Function to load and display internship registrations from Firestore
+            function loadInternshipRegistrations() {
+                const internshipTableBody = document.getElementById('internship-registrations-table').querySelector('tbody');
+                internshipTableBody.innerHTML = ''; // Clear existing rows
+
+                db.collection('internshipApplications').get().then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                        const reg = doc.data();
+                        const row = internshipTableBody.insertRow();
+                        row.insertCell().textContent = reg.title || 'N/A';
+                        row.insertCell().textContent = reg.fullName || 'N/A';
+                        row.insertCell().textContent = reg.email || 'N/A';
+                        row.insertCell().textContent = reg.phone || 'N/A';
+                        row.insertCell().textContent = reg.university || 'N/A';
+                        row.insertCell().textContent = reg.major || 'N/A';
+                        // Add cells for other internship fields if needed
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error getting internship documents: ", error);
+                });
+            }
+
+            // Load data when the page loads
+            loadJobRegistrations();
+            loadInternshipRegistrations();
+
+            // Optional: Set up real-time listeners for automatic updates
+            // db.collection('jobApplications').onSnapshot(loadJobRegistrations);
+            // db.collection('internshipApplications').onSnapshot(loadInternshipRegistrations);
+        });
+    </script>
+</body>
+</html>

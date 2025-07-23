@@ -5,10 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Internship Application</title>
     <link rel="stylesheet" href="../style.css">
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script> <!-- If using Authentication -->
+
+    <script>
+      // Your Firebase project configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDQPX2zwIyVa8Bm3ggoOPhPmNUsWN9TP3w",
+        authDomain: "internship-47c43.firebaseapp.com",
+        projectId: "internship-47c43",
+        storageBucket: "internship-47c43.firebasestorage.app",
+        messagingSenderId: "180629966091",
+        appId: "1:180629966091:web:b5df3ee2f84b2aeafe660e",
+        measurementId: "G-X16QZ8EP4K"
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+
+      // Get Firestore and Auth instances (if using) - Note: using var or let for scope
+      var db = firebase.firestore();
+      var auth = firebase.auth(); // If using Authentication
+
+    </script>
 </head>
 <body class="purple-theme">
     <h1>Internship Application Form</h1>
-    <form>
+    <form id="internship-application-form">
         <!-- Display the internship title -->
         <label for="internship_title">Applying For:</label><br>
         <input type="text" id="internship_title" name="internship_title" disabled><br><br>
@@ -40,11 +66,38 @@
     <!-- Add more content here later -->
 
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const internshipTitle = urlParams.get('title');
-        if (internshipTitle) {
-            document.getElementById('internship_title').value = decodeURIComponent(internshipTitle);
-        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const internshipTitle = urlParams.get('title');
+            if (internshipTitle) {
+                document.getElementById('internship_title').value = decodeURIComponent(internshipTitle);
+            }
+
+            const internshipApplicationForm = document.getElementById('internship-application-form');
+            internshipApplicationForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent actual form submission
+
+                // Get form data
+                const formData = new FormData(internshipApplicationForm);
+                const registrationData = {};
+                formData.forEach((value, key) => {
+                    registrationData[key] = value;
+                });
+                registrationData.title = document.getElementById('internship_title').value; // Add the internship title
+
+                // Save to Firestore
+                db.collection('internshipApplications').add(registrationData)
+                .then((docRef) => {
+                    console.log("Document written with ID: ", docRef.id);
+                    alert('Internship application submitted successfully!');
+                    internshipApplicationForm.reset(); // Clear the form
+                })
+                .catch((error) => {
+                    console.error("Error adding document: ", error);
+                    alert('Error submitting internship application. Please try again.');
+                });
+            });
+        });
     </script>
 </body>
 </html>
