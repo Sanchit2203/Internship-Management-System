@@ -184,6 +184,51 @@ tr:nth-child(even) {
     margin: 0 5px; /* Adjust horizontal margin for buttons */
 }
 
+/* Login Page Role Switch */
+.role-switch {
+    position: relative;
+    width: 200px;
+    height: 40px;
+    margin: 0 auto 30px;
+    background: #e0e0e0;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.role-switch input {
+    display: none;
+}
+
+.role-switch label {
+    flex: 1;
+    text-align: center;
+    cursor: pointer;
+    z-index: 1;
+    color: #333;
+    font-weight: 600;
+}
+
+.role-switch .slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    background-color: #00796b;
+    border-radius: 20px;
+    transition: transform 0.3s ease;
+}
+
+#userRole:checked ~ .slider {
+    transform: translateX(0);
+}
+
+#adminRole:checked ~ .slider {
+    transform: translateX(100%);
+}
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .navbar {
