@@ -8,48 +8,42 @@
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script> <!-- If using Authentication -->
     <script src="../firebase-config.js"></script>
-
-    <script>
-      // Initialize Firebase
-      firebase.initializeApp(firebaseConfig);
-      // Get Firestore and Auth instances (if using)
-      var db = firebase.firestore();
-      var auth = firebase.auth(); // If using Authentication
-    </script>
-    <script src="../main.js"></script>
-     <style>
-        .login-button-container {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
-    </style>
 </head>
-<body class="purple-theme">
-     <div class="login-button-container">
-        <button onclick="window.location.href='login.html'">Login</button>
+<body>
+    <nav class="navbar">
+        <div class="logo">CareerConnect</div>
+        <ul class="nav-links">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="jobs_listing.html">Jobs</a></li>
+            <li><a href="internship_listing.html">Internships</a></li>
+            <li><a href="login.html">Login</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>Law Internship Opportunities</h1>
+        <table id="internship-listings-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Location</th>
+                    <th>Description</th>
+                    <th>Deadline</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Internship listings will be loaded here by JavaScript -->
+            </tbody>
+        </table>
     </div>
-    <h1>Law Internship Opportunities</h1>
 
-    <table id="internship-listings-table">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Location</th>
-                <th>Description</th>
-                <th>Deadline</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Internship listings will be loaded here by JavaScript -->
-        </tbody>
-    </table>
-
-
+    <script src="../main.js"></script>
     <script>
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
         document.addEventListener('DOMContentLoaded', function () {
             loadInternshipListings('Law');
         });

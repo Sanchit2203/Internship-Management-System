@@ -5,52 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Internship Management System - Dashboard</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .login-button-container {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
-    </style>
 </head>
-<body class="blue-theme">
-    <div class="login-button-container">
-        <button onclick="window.location.href='Pages/login.html'">Login</button>
+<body>
+    <nav class="navbar">
+        <div class="logo">CareerConnect</div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="Pages/jobs_listing.html">Jobs</a></li>
+            <li><a href="Pages/internship_listing.html">Internships</a></li>
+            <li><a href="Pages/login.html">Login</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>Welcome to the Internship Management System</h1>
+        <p>This is the career dashboard.</p>
+
+        <h2>Careers at Our Law Firm</h2>
+        <p>Explore exciting career opportunities at our prestigious law firm. We are always looking for talented and driven individuals to join our team. Whether you are an experienced legal professional or just starting your career, we offer a challenging and rewarding environment.</p>
+        <p>Our firm is committed to fostering a supportive and inclusive workplace where you can grow your skills, contribute to impactful cases, and make a difference. We value dedication, innovation, and a passion for justice.</p>
+
+        <hr>
+
+        <h2>Choose Your Career Path</h2>
+        <div>
+            <select id="career-type">
+                <option value="jobs">Jobs</option>
+                <option value="internship">Internship</option>
+            </select>
+            <button onclick="goToCareerPage()">Go</button>
+        </div>
     </div>
-    <h1>Welcome to the Internship Management System</h1>
-    <p>This is the carrer dashboard.</p>
-
-    <h2>Careers at Our Law Firm</h2>
-    <p>Explore exciting career opportunities at our prestigious law firm. We are always looking for talented and driven individuals to join our team. Whether you are an experienced legal professional or just starting your career, we offer a challenging and rewarding environment.</p>
-    <p>Our firm is committed to fostering a supportive and inclusive workplace where you can grow your skills, contribute to impactful cases, and make a difference. We value dedication, innovation, and a passion for justice.</p>
-    <p>Visit our careers page to learn more about current openings and how to apply.</p>
-
-    <hr> <!-- Adding a horizontal rule for spacing -->
-
-    <h2>Choose Your Career Path</h2>
-    <div class="center-content">
-        <select id="career-type">
-            <option value="jobs">Jobs</option>
-            <option value="internship">Internship</option>
-        </select>
-        <button onclick="goToCareerPage()">Go</button>
-    </div>
-
 
     <script>
         function goToCareerPage() {
             const selectElement = document.getElementById('career-type');
             const selectedValue = selectElement.value;
             if (selectedValue === 'jobs') {
-                // Redirect to the jobs page
                 window.location.href = 'Pages/jobs_listing.html';
             } else if (selectedValue === 'internship') {
-                // Redirect to the internship listing page
                 window.location.href = 'Pages/internship_listing.html';
             }
         }
     </script>
-
-    <!-- Add more content here later -->
 </body>
 </html>

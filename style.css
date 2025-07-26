@@ -1,152 +1,107 @@
 /* General Styles */
 body {
-    font-family: 'Arial', sans-serif; /* Using a common professional font */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     margin: 0;
-    padding: 20px; /* Add some padding to the body */
-    background-color: #f8f8f8; /* Light gray background for the page */
-    color: #333; /* Default text color */
-    /* Add a subtle background pattern */
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+CjxyZXRhbmd3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9IiNmOGY4ZjgiLz4KPGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9IiNlMGUwZTAiLz4KPC9zdmc+'); /* Light dots pattern */
-    background-repeat: repeat;
+    background-color: #f4f7f6;
+    color: #333;
 }
 
 .container {
-    max-width: 1200px; /* Wider container */
-    margin: 20px auto; /* Center the container and add vertical margin */
-    padding: 20px; /* Add padding inside the container */
-    background-color: #fff; /* White background for content areas */
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Softer shadow */
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
 h1, h2, h3 {
-    color: #1a237e; /* Deep blue for headings (can be overridden by theme) */
-    margin-top: 20px; /* Add top margin to headings */
-    margin-bottom: 15px; /* Maintain bottom margin */
-    text-align: center; /* Center all headings */
-    font-weight: 700; /* Make headings bolder */
+    color: #004d40; /* Dark Teal */
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 600;
 }
 
 h1 {
-    font-size: 32px; /* Larger size for main heading */
-    margin-bottom: 30px; /* More space below main heading */
+    font-size: 2.5em;
 }
 
 h2 {
-     font-size: 24px; /* Slightly larger size for subheadings */
-     margin-bottom: 20px; /* More space below subheadings */
+    font-size: 2em;
 }
 
 p {
-    margin-bottom: 15px; /* Maintain bottom margin for paragraphs */
+    margin-bottom: 15px;
 }
 
-/* Navigation Styles (Example - you might have a nav menu) */
-nav {
-    background-color: #1a237e; /* Deep blue navigation background */
-    padding: 10px 0;
-    text-align: center;
+/* Navigation Bar */
+.navbar {
+    background-color: #004d40; /* Dark Teal */
+    padding: 15px 0;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-nav a {
+.navbar .logo {
+    font-size: 1.5em;
+    font-weight: bold;
+    padding-left: 20px;
+}
+
+.navbar .nav-links {
+    list-style: none;
+    display: flex;
+    padding-right: 20px;
+}
+
+.navbar .nav-links li {
+    margin-left: 20px;
+}
+
+.navbar .nav-links a {
     color: white;
     text-decoration: none;
-    margin: 0 15px;
     font-weight: bold;
+    transition: color 0.3s;
 }
 
-nav a:hover {
-    text-decoration: underline;
+.navbar .nav-links a:hover {
+    color: #b2dfdb; /* Light Teal for hover */
 }
 
 
 /* Button Styles */
 button,
 input[type="submit"] {
-    padding: 10px 20px;
-    border: 1px solid; /* Add a border */
-    border-radius: 5px; /* Slightly rounded corners */
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    margin-right: 10px;
-    transition: background-color 0.3s ease; /* Smooth transition on hover */
+    transition: background-color 0.3s ease;
+    background-color: #00796b; /* Teal */
+    color: white;
 }
 
 button:hover,
 input[type="submit"]:hover {
-    opacity: 1; /* Remove opacity change */
-    background-color: #e0e0e0; /* Light gray background on hover */
-}
-
-/* Theme Classes (for subtle accents) */
-.blue-theme .accent-color {
-    color: #2196f3; /* Blue accent */
-}
-
-.red-theme .accent-color {
-    color: #f44336; /* Red accent */
-}
-
-.purple-theme .accent-color {
-    color: #9c27b0; /* Purple accent */
-}
-
-
-/* Button Color Themes (applied based on the parent container's theme) */
-.blue-theme button,
-.blue-theme input[type="submit"] {
-    border-color: #2196f3; /* Blue border */
-    color: #2196f3; /* Blue text */
-    background-color: transparent; /* Transparent background */
-}
-
-.blue-theme button:hover,
-.blue-theme input[type="submit"]:hover {
-    background-color: #2196f3; /* Blue background on hover */
-    color: white;
-}
-
-.red-theme button,
-.red-theme input[type="submit"] {
-    border-color: #f44336; /* Red border */
-    color: #f44336; /* Red text */
-    background-color: transparent; /* Transparent background */
-}
-
-.red-theme button:hover,
-.red-theme input[type="submit"]:hover {
-    background-color: #f44336; /* Red background on hover */
-    color: white;
-}
-
-.purple-theme button,
-.purple-theme input[type="submit"] {
-    border-color: #9c27b0; /* Purple border */
-    color: #9c27b0; /* Purple text */
-    background-color: transparent; /* Transparent background */
-}
-
-.purple-theme button:hover,
-.purple-theme input[type="submit"]:hover {
-    background-color: #9c27b0; /* Purple background on hover */
-    color: white;
+    background-color: #004d40; /* Darker Teal on hover */
 }
 
 
 /* Form Styling */
 form {
     background-color: #fff;
-    padding: 20px;
+    padding: 30px;
     border-radius: 8px;
-    max-width: 600px; /* Slightly wider forms */
-    margin: 20px auto;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    margin: 40px auto;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 form label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
     font-weight: bold;
 }
 
@@ -154,153 +109,61 @@ form input[type="text"],
 form input[type="email"],
 form input[type="tel"],
 form textarea,
-form input[type="file"] {
+form input[type="file"],
+form input[type="password"],
+form input[type="date"],
+form select {
     width: 100%;
-    padding: 10px; /* Increased padding */
-    margin-bottom: 15px; /* Increased margin */
-    border: 1px solid #ccc; /* Lighter border */
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
 }
 
 form input[disabled] {
-    background-color: #eee;
-    font-style: italic;
-    border-color: #ccc;
-}
-
-form input[type="submit"] {
-    /* Submit button style will be based on the parent theme */
+    background-color: #e9ecef;
+    opacity: 0.7;
 }
 
 /* Table Styling */
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 th, td {
     border: 1px solid #ddd;
-    padding: 12px 8px; /* Increased padding */
+    padding: 15px;
     text-align: left;
 }
 
 th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-    color: #555;
+    background-color: #00796b; /* Teal */
+    color: white;
 }
 
 tr:nth-child(even) {
-    background-color: #f9f9f9; /* Zebra striping */
+    background-color: #e0f2f1; /* Very Light Teal */
 }
 
-table button {
-    /* Button style within tables will be based on the parent theme */
-}
-
-/* Style for the career type dropdown in the blue theme */
-.blue-theme select#career-type {
-    width: 150px; /* Adjust the width as needed */
-    padding: 8px; /* Adjust padding for size */
-    border-radius: 4px;
-    margin-right: 10px;
-    display: inline-block; /* Ensure it sits next to the button */
-}
-
-/* Center the filter buttons section */
-.filter-category {
-    width: fit-content; /* Or a specific width, e.g., 300px; */
-    margin: 20px auto; /* Auto margins for horizontal centering */
-    /* text-align: center;  Center text within the div if needed */
-}
-
-.filter-category button {
-    margin: 0 5px; /* Adjust horizontal margin for buttons */
-}
-
-/* Center content within a div */
-.center-content {
-    text-align: center;
-    margin-top: 20px; /* Optional: Add some space above */
-    margin-bottom: 20px; /* Optional: Add some space below */
-}
-
-/* Added some basic responsive adjustments */
+/* Responsive Design */
 @media (max-width: 768px) {
-    body {
-        padding: 10px; /* Further reduce body padding on very small screens */
+    .navbar {
+        flex-direction: column;
+    }
+    .navbar .nav-links {
+        padding-top: 10px;
     }
     .container {
-        padding: 15px; /* Reduce padding on smaller screens */
-        margin: 15px;
+        padding: 10px;
     }
-
     h1 {
-        font-size: 24px; /* Reduce heading size on smaller screens */
+        font-size: 2em;
     }
-
     h2 {
-        font-size: 20px;
-    }
-
-    button, input[type="submit"] {
-        font-size: 14px;
-        padding: 8px 15px;
-    }
-
-    table,
-    thead,
-    tbody,
-    th,
-    td,
-    tr {
-        display: block; /* Stack table elements */
-    }
-
-    thead tr {
-        position: absolute;
-        top: -9999px;
-        left: -9999px;
-    }
-
-    tr {
-        border: 1px solid #ccc; /* Add border to stacked rows */
-        margin-bottom: 10px;
-    }
-
-    td {
-        border: none; /* Remove borders from stacked cells */
-        border-bottom: 1px solid #eee; /* Add a light bottom border */
-        position: relative;
-        padding-left: 50%; /* Make space for the pseudo-element label */
-        text-align: right; /* Align content to the right */
-    }
-
-    td:before {
-        position: absolute;
-        top: 6px;
-        left: 6px;
-        width: 45%;
-        padding-right: 10px;
-        white-space: nowrap;
-        content: attr(data-label); /* Use data-label for the column header */
-        font-weight: bold;
-        text-align: left; /* Align labels to the left */
-    }
-
-     /* Add data-label attributes to table cells in HTML for accessibility */
-
-    .filter-category button {
-        display: block; /* Stack filter buttons on smaller screens */
-        margin-bottom: 10px;
-        width: 100%;
-    }
-
-    .blue-theme select#career-type {
-        width: 100%;
-        margin-bottom: 10px;
+        font-size: 1.5em;
     }
 }
