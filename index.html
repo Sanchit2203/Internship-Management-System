@@ -5,8 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Internship Management System - Dashboard</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .login-button-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+    </style>
 </head>
 <body class="blue-theme">
+    <div class="login-button-container">
+        <button onclick="window.location.href='Pages/login.html'">Login</button>
+    </div>
     <h1>Welcome to the Internship Management System</h1>
     <p>This is the carrer dashboard.</p>
 
@@ -26,7 +36,6 @@
         <button onclick="goToCareerPage()">Go</button>
     </div>
 
-    <button onclick="window.location.href='Pages/admin_panel.html'">Admin Panel</button>
 
     <script>
         function goToCareerPage() {

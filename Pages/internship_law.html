@@ -19,8 +19,18 @@
       var auth = firebase.auth(); // If using Authentication
     </script>
     <script src="../main.js"></script>
+     <style>
+        .login-button-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+    </style>
 </head>
 <body class="purple-theme">
+     <div class="login-button-container">
+        <button onclick="window.location.href='login.html'">Login</button>
+    </div>
     <h1>Law Internship Opportunities</h1>
 
     <table id="internship-listings-table">
@@ -38,7 +48,6 @@
         </tbody>
     </table>
 
-    <button onclick="window.location.href='admin_panel.html'">Admin Panel</button>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
