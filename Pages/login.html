@@ -1,279 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <title>Login Form </title>
- <link rel="stylesheet" href="Log.css">
- <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
- <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
- <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
- <script src="../firebase-config.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="../style.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="../firebase-config.js"></script>
 </head>
-<style>
- /* CSS styles can go here */
-*{
- margin: 0;
- padding: 0;
- box-sizing: border-box;
- font-family: "Poppins", sans-serif;
-}
- body{
- display: flex;
- justify-content: center;
- align-items: center;
- min-height: 100vh;
- background-color: #87CEEB; /* Sky blue background */
- background-size: cover;
- background-position: center;
- transition: background-color 0.3s ease;
- }
- .wrapper{
- width: 420px;
- background: #ADD8E6; /* Lighter sky blue for wrapper */
- border: 2px solid #fff; 
- color: #333; /* Darker text for readability */
- border-radius: 12px;
- padding: 30px 40px;
- transition: background-color 0.3s ease, border-color 0.3s ease;
- }
- .wrapper h1{
- font-size: 36px;
- text-align: center;
- color: #333; /* Darker text for readability */
- }
-
- .role-switch {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 25px;
-}
-.role-switch label {
-    padding: 8px 20px;
-    border: 1px solid #4682B4;
-    cursor: pointer;
-    color: #4682B4;
-    transition: background-color 0.3s, color 0.3s;
-    font-weight: 600;
-}
-.role-switch input[type="radio"] {
-    display: none;
-}
-.role-switch input[type="radio"]:checked + label {
-    background-color: #4682B4;
-    color: white;
-}
-.role-switch label:first-of-type {
-    border-radius: 20px 0 0 20px;
-}
-.role-switch label:last-of-type {
-    border-radius: 0 20px 20px 0;
-    border-left: none;
-}
-
- .wrapper .input-box{
- position: relative;
- width: 100%;
- height: 50px;
-
- margin: 30px 0;
- }
- .input-box input{
- width: 100%;
- height: 100%;
- background: #F0F8FF; /* AliceBlue for input background */
- border: none;
- outline: none;
- border: 2px solid #87CEEB; /* Sky blue border for inputs */
- border-radius: 40px;
- font-size: 16px;
- color: #333; /* Darker text for input */
- padding: 20px 45px 20px 20px;
- }
- .input-box input::placeholder{
- color: #555; /* Slightly darker placeholder */
- }
- .input-box i{
- position: absolute;
- right: 20px;
- top: 30%;
- transform: translate(-50%);
- font-size: 20px;
- color: #333; /* Darker icon color */
-
- }
- .wrapper .remember-forgot{
- display: flex;
- justify-content: space-between;
- font-size: 14.5px;
- margin: -15px 0 15px;
- }
- .remember-forgot label input{
- accent-color: #333; /* Darker accent for checkbox */
- margin-right: 3px;
-
- }
- .remember-forgot a{
- color: #333; /* Darker link color */
- text-decoration: none;
-
- }
- .remember-forgot a:hover{
- text-decoration: underline;
- }
- .wrapper .btn{
- width: 100%;
- height: 45px;
- background: #4682B4; /* SteelBlue for button */
- border: none;
- outline: none;
- border-radius: 40px;
- box-shadow: 0 0 10px rgba(0, 0, 0, .1);
- cursor: pointer;
- font-size: 16px;
- color: #fff; /* White text for button */
- font-weight: 600;
- }
- .wrapper .register-link{
- font-size: 14.5px;
- text-align: center;
- margin: 20px 0 15px;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-
- }
- .register-link p a{
- color: #333; /* Darker link color */
- text-decoration: none;
- font-weight: 600;
- }
- .register-link p a:hover{
- text-decoration: underline;
- }
-
- /* Red Theme for Admin */
- .red-theme {
-    background-color: #FFB6C1; /* LightPink */
-}
-.red-theme .wrapper {
-    background: #F08080; /* LightCoral */
-    border-color: #CD5C5C; /* IndianRed */
-    color: #fff;
-}
-.red-theme .wrapper h1 {
-    color: #fff;
-}
-.red-theme .input-box input {
-    background: #FFE4E1; /* MistyRose */
-    border-color: #CD5C5C; /* IndianRed */
-    color: #333;
-}
-.red-theme .input-box i {
-    color: #333;
-}
-.red-theme .remember-forgot a, .red-theme .remember-forgot label {
-    color: #fff;
-}
-.red-theme .btn {
-    background: #DC143C; /* Crimson */
-}
-.red-theme .role-switch label {
-    color: #DC143C;
-    border-color: #DC143C;
-}
-.red-theme .role-switch input[type="radio"]:checked + label {
-    background-color: #DC143C;
-    color: white;
-}
-.red-theme .register-link a {
-    color: #fff;
-}
-
-</style>
 <body>
- <div class="wrapper">
-  <form id="loginForm">
-   <h1>Login</h1>
+    <nav class="navbar">
+        <div class="logo"><img src="../image.png" alt="CareerConnect Logo" class="navbar-logo"></div>
+        <ul class="nav-links">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="jobs_listing.html">Jobs</a></li>
+            <li><a href="internship_listing.html">Internships</a></li>
+            <li><a href="login.html">Login</a></li>
+        </ul>
+    </nav>
 
-   <div class="role-switch">
-    <input type="radio" id="userRole" name="role" value="user" checked>
-    <label for="userRole">User</label>
-    <input type="radio" id="adminRole" name="role" value="admin">
-    <label for="adminRole">Admin</label>
-   </div>
+    <div class="container">
+        <form id="loginForm">
+            <h1>Login</h1>
+            <div class="role-switch">
+                <input type="radio" id="userRole" name="role" value="user" checked>
+                <label for="userRole">User</label>
+                <input type="radio" id="adminRole" name="role" value="admin">
+                <label for="adminRole">Admin</label>
+            </div>
+            <label for="email">Email / Username</label>
+            <input type="text" id="email" required>
+            <label for="password">Password</label>
+            <input type="password" id="password" required>
+            <button type="submit">Login</button>
+            <div id="feedback-message" style="text-align: center; margin-top: 20px;"></div>
+            <div class="register-link" style="text-align: center; margin-top: 20px;">
+                <p>Don't have an account? <a href="Register.html">Register</a></p>
+            </div>
+        </form>
+    </div>
 
-   <div class="input-box">
-    <input type="text" id="email" placeholder="Email / Username" required>
-    <i class='bx bxs-user'></i>
-   </div>
-   <div class="input-box">
-    <input type="password" id="password" placeholder="Password" required>
-    <i class='bx bxs-lock-alt' ></i>
-   </div>
-   <div class="remember-forgot">
-    <label><input type="checkbox">Remember Me</label>
-    <a href="#">Forgot Password</a>
-   </div>
-   <button type="submit" class="btn">Login</button>
-   <div class="register-link">
-    <p>Don't have an account? <a href="Register.html">Register</a></p>
-   </div>
-  </form>
- </div>
+    <script>
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const userRole = document.getElementById('userRole');
+        const adminRole = document.getElementById('adminRole');
+        const registerLink = document.querySelector('.register-link');
+        const feedbackMessage = document.getElementById('feedback-message');
 
- <script>
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const userRole = document.getElementById('userRole');
-    const adminRole = document.getElementById('adminRole');
-    const body = document.querySelector('body');
-    const registerLink = document.querySelector('.register-link');
-
-    function applyTheme() {
-        if (adminRole.checked) {
-            body.classList.add('red-theme');
-            registerLink.style.display = 'none';
-        } else {
-            body.classList.remove('red-theme');
-            registerLink.style.display = 'block';
-        }
-    }
-
-    userRole.addEventListener('change', applyTheme);
-    adminRole.addEventListener('change', applyTheme);
-
-
-    document.getElementById('loginForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the default form submission
-
-        const isAdmin = document.getElementById('adminRole').checked;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-
-        // Basic validation for demonstration
-        if (email === '' || password === '') {
-            alert('Please enter both email/username and password.');
-            return;
-        }
-
-        if (isAdmin) {
-            if (email === 'admin' && password === 'admin123') {
-                window.location.href = '../admin/admin_panel.html';
+        function applyTheme() {
+            if (adminRole.checked) {
+                registerLink.style.display = 'none';
             } else {
-                alert('Invalid admin credentials.');
+                registerLink.style.display = 'block';
             }
-        } else {
-            auth.signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    // Signed in
-                    window.location.href = '../index.html';
-                })
-                .catch((error) => {
-                    var errorCode = error.code;
-                    var errorMessage = error.message;
-                    alert(errorMessage);
-                });
         }
-    });
- </script>
+
+        userRole.addEventListener('change', applyTheme);
+        adminRole.addEventListener('change', applyTheme);
+
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const isAdmin = document.getElementById('adminRole').checked;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (email === '' || password === '') {
+                feedbackMessage.textContent = 'Please enter both email/username and password.';
+                feedbackMessage.style.color = 'red';
+                return;
+            }
+
+            if (isAdmin) {
+                if (email === 'admin' && password === 'admin123') {
+                    window.location.href = '../admin/admin_panel.html';
+                } else {
+                    feedbackMessage.textContent = 'Invalid admin credentials.';
+                    feedbackMessage.style.color = 'red';
+                }
+            } else {
+                auth.signInWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        window.location.href = '../index.html';
+                    })
+                    .catch((error) => {
+                        feedbackMessage.textContent = error.message;
+                        feedbackMessage.style.color = 'red';
+                    });
+            }
+        });
+    </script>
 </body>
 </html>

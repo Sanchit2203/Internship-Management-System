@@ -8,7 +8,7 @@
 </head>
 <body>
     <nav class="navbar">
-        <div class="logo">CareerConnect</div>
+        <div class="logo"><img src="image.png" alt="CareerConnect Logo" class="navbar-logo"></div>
         <ul class="nav-links">
             <li><a href="index.html">Home</a></li>
             <li><a href="Pages/jobs_listing.html">Jobs</a></li>
@@ -27,13 +27,15 @@
 
         <hr>
 
-        <h2>Choose Your Career Path</h2>
-        <div>
-            <select id="career-type">
-                <option value="jobs">Jobs</option>
-                <option value="internship">Internship</option>
-            </select>
-            <button onclick="goToCareerPage()">Go</button>
+        <div class="career-path-selector">
+            <h2>Choose Your Career Path</h2>
+            <div>
+                <select id="career-type">
+                    <option value="jobs">Jobs</option>
+                    <option value="internship">Internship</option>
+                </select>
+                <button onclick="goToCareerPage()">Go</button>
+            </div>
         </div>
     </div>
 

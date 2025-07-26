@@ -46,6 +46,13 @@ p {
     font-size: 1.5em;
     font-weight: bold;
     padding-left: 20px;
+    display: flex; /* To center the image if needed */
+    align-items: center;
+}
+
+.navbar-logo {
+    height: 40px; /* Adjust as needed */
+    width: auto;
 }
 
 .navbar .nav-links {
@@ -147,6 +154,34 @@ th {
 
 tr:nth-child(even) {
     background-color: #e0f2f1; /* Very Light Teal */
+}
+
+/* Career Path Selector on index.html */
+.career-path-selector {
+    text-align: center;
+    margin: 40px 0;
+    padding: 30px;
+    background-color: #e0f2f1; /* Very Light Teal to match table rows */
+    border-radius: 8px;
+}
+
+.career-path-selector select {
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+    font-size: 16px;
+    min-width: 200px; /* Give the select box a bit more width */
+}
+
+/* Centering for filter buttons */
+.filter-category {
+    text-align: center; /* Center the inline-block buttons */
+    margin: 20px auto; /* Center the div itself */
+}
+
+.filter-category button {
+    margin: 0 5px; /* Adjust horizontal margin for buttons */
 }
 
 /* Responsive Design */
