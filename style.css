@@ -5,6 +5,7 @@ body {
     margin: 0;
     background-color: #f4f7f6;
     color: #333;
+    transition: background-color 0.3s ease;
 }
 
 .container {
@@ -133,6 +134,24 @@ form input[disabled] {
     opacity: 0.7;
 }
 
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper input {
+    padding-right: 40px; /* Add space for the icon */
+}
+
+.password-wrapper .toggle-password {
+    position: absolute;
+    right: 15px;
+    cursor: pointer;
+    color: #555;
+}
+
+
 /* Table Styling */
 table {
     width: 100%;
@@ -228,6 +247,32 @@ tr:nth-child(even) {
     transform: translateX(100%);
 }
 
+/* Red Theme for Admin Login */
+.red-theme {
+    background-color: #fbe9e7; /* Lightest Red */
+}
+
+.red-theme .navbar {
+    background-color: #c62828; /* Dark Red */
+}
+
+.red-theme button,
+.red-theme input[type="submit"] {
+    background-color: #d32f2f; /* Red */
+}
+
+.red-theme button:hover,
+.red-theme input[type="submit"]:hover {
+    background-color: #c62828; /* Darker Red on hover */
+}
+
+.red-theme .role-switch .slider {
+    background-color: #d32f2f; /* Red */
+}
+
+.red-theme h1 {
+    color: #c62828; /* Dark Red */
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {

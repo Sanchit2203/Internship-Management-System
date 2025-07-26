@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="../firebase-config.js"></script>
@@ -27,8 +28,19 @@
             <input type="text" id="username" required>
             <label for="email">Email</label>
             <input type="email" id="email" required>
+
             <label for="password">Password</label>
-            <input type="password" id="password" required>
+            <div class="password-wrapper">
+                <input type="password" id="password" required>
+                <i class="fas fa-eye toggle-password"></i>
+            </div>
+
+            <label for="re-password">Re-enter Password</label>
+            <div class="password-wrapper">
+                <input type="password" id="re-password" required>
+                <i class="fas fa-eye toggle-password"></i>
+            </div>
+
             <button type="submit">Register</button>
             <div id="feedback-message" style="text-align: center; margin-top: 20px;"></div>
             <div class="login-link" style="text-align: center; margin-top: 20px;">
@@ -47,6 +59,13 @@
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+            const rePassword = document.getElementById('re-password').value;
+
+            if (password !== rePassword) {
+                feedbackMessage.textContent = 'Passwords do not match.';
+                feedbackMessage.style.color = 'red';
+                return;
+            }
 
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
@@ -60,6 +79,15 @@
                     feedbackMessage.textContent = error.message;
                     feedbackMessage.style.color = 'red';
                 });
+        });
+
+        document.querySelectorAll('.toggle-password').forEach(icon => {
+            icon.addEventListener('click', function () {
+                const passwordField = this.previousElementSibling;
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+                this.classList.toggle('fa-eye-slash');
+            });
         });
     </script>
 </body>
