@@ -3,15 +3,18 @@ body {
     font-family: 'Arial', sans-serif; /* Using a common professional font */
     line-height: 1.6;
     margin: 0;
-    padding: 0;
+    padding: 20px; /* Add some padding to the body */
     background-color: #f8f8f8; /* Light gray background for the page */
     color: #333; /* Default text color */
+    /* Add a subtle background pattern */
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+CjxyZXRhbmd3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9IiNmOGY4ZjgiLz4KPGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9IiNlMGUwZTAiLz4KPC9zdmc+'); /* Light dots pattern */
+    background-repeat: repeat;
 }
 
 .container {
     max-width: 1200px; /* Wider container */
-    margin: 20px auto;
-    padding: 20px;
+    margin: 20px auto; /* Center the container and add vertical margin */
+    padding: 20px; /* Add padding inside the container */
     background-color: #fff; /* White background for content areas */
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Softer shadow */
@@ -19,12 +22,24 @@ body {
 
 h1, h2, h3 {
     color: #1a237e; /* Deep blue for headings (can be overridden by theme) */
-    margin-bottom: 15px;
+    margin-top: 20px; /* Add top margin to headings */
+    margin-bottom: 15px; /* Maintain bottom margin */
     text-align: center; /* Center all headings */
+    font-weight: 700; /* Make headings bolder */
+}
+
+h1 {
+    font-size: 32px; /* Larger size for main heading */
+    margin-bottom: 30px; /* More space below main heading */
+}
+
+h2 {
+     font-size: 24px; /* Slightly larger size for subheadings */
+     margin-bottom: 20px; /* More space below subheadings */
 }
 
 p {
-    margin-bottom: 15px;
+    margin-bottom: 15px; /* Maintain bottom margin for paragraphs */
 }
 
 /* Navigation Styles (Example - you might have a nav menu) */
@@ -211,4 +226,81 @@ table button {
     text-align: center;
     margin-top: 20px; /* Optional: Add some space above */
     margin-bottom: 20px; /* Optional: Add some space below */
+}
+
+/* Added some basic responsive adjustments */
+@media (max-width: 768px) {
+    body {
+        padding: 10px; /* Further reduce body padding on very small screens */
+    }
+    .container {
+        padding: 15px; /* Reduce padding on smaller screens */
+        margin: 15px;
+    }
+
+    h1 {
+        font-size: 24px; /* Reduce heading size on smaller screens */
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+
+    button, input[type="submit"] {
+        font-size: 14px;
+        padding: 8px 15px;
+    }
+
+    table,
+    thead,
+    tbody,
+    th,
+    td,
+    tr {
+        display: block; /* Stack table elements */
+    }
+
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    tr {
+        border: 1px solid #ccc; /* Add border to stacked rows */
+        margin-bottom: 10px;
+    }
+
+    td {
+        border: none; /* Remove borders from stacked cells */
+        border-bottom: 1px solid #eee; /* Add a light bottom border */
+        position: relative;
+        padding-left: 50%; /* Make space for the pseudo-element label */
+        text-align: right; /* Align content to the right */
+    }
+
+    td:before {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        content: attr(data-label); /* Use data-label for the column header */
+        font-weight: bold;
+        text-align: left; /* Align labels to the left */
+    }
+
+     /* Add data-label attributes to table cells in HTML for accessibility */
+
+    .filter-category button {
+        display: block; /* Stack filter buttons on smaller screens */
+        margin-bottom: 10px;
+        width: 100%;
+    }
+
+    .blue-theme select#career-type {
+        width: 100%;
+        margin-bottom: 10px;
+    }
 }
