@@ -1,0 +1,8 @@
+[
+      {
+        "origin": ["*"],  // Or specify your development origin: "https://5500-firebase-internship-1753088610339.cluster-zumahodzirciuujpqvsniawo3o.cloudworkstations.dev"
+        "method": ["GET", "PUT", "POST", "DELETE"],
+        "maxAgeSeconds": 3600,
+        "responseHeader": ["Content-Type"]
+      }
+    ]
