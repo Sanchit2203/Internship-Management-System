@@ -5,11 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Law Internships</title>
     <link rel="stylesheet" href="../style.css">
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script> <!-- If using Authentication -->
+    <script src="../firebase-config.js"></script>
+
+    <script>
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      // Get Firestore and Auth instances (if using)
+      var db = firebase.firestore();
+      var auth = firebase.auth(); // If using Authentication
+    </script>
+    <script src="../main.js"></script>
 </head>
 <body class="purple-theme">
     <h1>Law Internship Opportunities</h1>
 
-    <table>
+    <table id="internship-listings-table">
         <thead>
             <tr>
                 <th>Title</th>
@@ -20,24 +34,14 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>Legal Research Intern</td>
-                <td>Tilak Nagar Road, Navneet Nagar,Rukanpura, Baily Road, Patna, Bihar 800014</td>
-                <td>Assist legal team with case research and analysis.</td>
-                <td>2024-04-10</td>
-                <td><button onclick="location.href='internship_registration.html?title=' + encodeURIComponent('Legal Research Intern') + ''">Apply</button></td>
-            </tr>
-            <tr>
-                <td>Casework Intern</td>
-                <td>Tilak Nagar Road, Navneet Nagar,Rukanpura, Baily Road, Patna, Bihar 800014</td>
-                <td>Support attorneys on active cases.</td>
-                <td>2024-04-15</td>
-                <td><button onclick="location.href='internship_registration.html?title=' + encodeURIComponent('Casework Intern') + ''">Apply</button></td>
-            </tr>
-            <!-- More rows for other Law internship listings -->
+            <!-- Internship listings will be loaded here by JavaScript -->
         </tbody>
     </table>
 
-    <!-- Content for Law internship listings will go here -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            loadInternshipListings('Law');
+        });
+    </script>
 </body>
 </html>

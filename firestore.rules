@@ -1,15 +1,26 @@
+rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Allow write access to the 'internshipApplications' collection
-    match /internshipApplications/{docId} {
-      allow create: if true; // Allow creating new documents
-      allow read, write, delete: if false; // Deny other operations
+    // Allow create, read, write, and delete access to the 'jobs' collection (TEMPORARY - NOT SECURE)
+    match /jobs/{docId} {
+      allow create, read, write, delete: if true;
     }
 
-    // Allow write access to the 'jobApplications' collection
+    // Allow create, read, write, and delete access to the 'internships' collection (TEMPORARY - NOT SECURE)
+    match /internships/{docId} {
+      allow create, read, write, delete: if true;
+    }
+
+    // Allow create access to the 'internshipApplications' collection
+    match /internshipApplications/{docId} {
+      allow create: if true;
+      allow read, write, delete: if false;
+    }
+
+    // Allow create access to the 'jobApplications' collection
     match /jobApplications/{docId} {
-      allow create: if true; // Allow creating new documents
-      allow read, write, delete: if false; // Deny other operations
+      allow create: if true;
+      allow read, write, delete: if false;
     }
 
     // Deny access to all other documents by default

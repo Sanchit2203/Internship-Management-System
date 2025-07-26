@@ -5,11 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Law Jobs</title>
     <link rel="stylesheet" href="../style.css">
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script> <!-- If using Authentication -->
+    <script>
+      // Your Firebase project configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDQPX2zwIyVa8Bm3ggoOPhPmNUsWN9TP3w",
+        authDomain: "internship-47c43.firebaseapp.com",
+        projectId: "internship-47c43",
+        storageBucket: "internship-47c43.firebasestorage.app",
+        messagingSenderId: "180629966091",
+        appId: "1:180629966091:web:b5df3ee2f84b2aeafe660e",
+        measurementId: "G-X16QZ8EP4K"
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      // Get Firestore and Auth instances (if using)
+      var db = firebase.firestore();
+      var auth = firebase.auth(); // If using Authentication
+    </script>
+    <script src="../main.js"></script>
 </head>
 <body class="red-theme">
     <h1>Law Job Opportunities</h1>
 
-    <table>
+    <table id="job-listings-table">
         <thead>
             <tr>
                 <th>Title</th>
@@ -20,24 +42,14 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>Senior Legal Counsel</td>
-                <td>Tilak Nagar Road, Navneet Nagar,Rukanpura, Baily Road, Patna, Bihar 800014</td>
-                <td>Experienced lawyer specializing in corporate law.</td>
-                <td>2024-03-15</td>
-                <td><button onclick="location.href='job_registration.html?title=' + encodeURIComponent('Senior Legal Counsel') + ''">Apply</button></td>
-            </tr>
-            <tr>
-                <td>Legal Assistant</td>
-                <td>Tilak Nagar Road, Navneet Nagar,Rukanpura, Baily Road, Patna, Bihar 800014</td>
-                <td>Provide administrative support to legal professionals.</td>
-                <td>2024-03-20</td>
-                <td><button onclick="location.href='job_registration.html?title=' + encodeURIComponent('Legal Assistant') + ''">Apply</button></td>
-            </tr>
-            <!-- More rows for other Law job listings -->
+            <!-- Job listings will be loaded here by JavaScript -->
         </tbody>
     </table>
 
-    <!-- Content for Law job listings will go here -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            loadJobListings('Law');
+        });
+    </script>
 </body>
 </html>

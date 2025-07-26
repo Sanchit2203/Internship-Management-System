@@ -5,11 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Management Internships</title>
     <link rel="stylesheet" href="../style.css">
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script> <!-- If using Authentication -->
+    <script src="../firebase-config.js"></script>
+
+    <script>
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      // Get Firestore and Auth instances (if using)
+      var db = firebase.firestore();
+      var auth = firebase.auth(); // If using Authentication
+    </script>
+    <script src="../main.js"></script>
 </head>
 <body class="purple-theme">
     <h1>Management Internship Opportunities</h1>
 
-    <table>
+    <table id="internship-listings-table">
         <thead>
             <tr>
                 <th>Title</th>
@@ -20,24 +34,14 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>Operations Intern</td>
-                <td>Tilak Nagar Road, Navneet Nagar,Rukanpura, Baily Road, Patna, Bihar 800014</td>
-                <td>Assist with daily firm operations and administrative tasks.</td>
-                <td>2024-05-01</td>
-                <td><button onclick="location.href='internship_registration.html?title=' + encodeURIComponent('Operations Intern') + ''">Apply</button></td>
-            </tr>
-            <tr>
-                <td>Human Resources Intern</td>
-                <td>Tilak Nagar Road, Navneet Nagar,Rukanpura, Baily Road, Patna, Bihar 800014</td>
-                <td>Support HR functions, including recruitment and onboarding.</td>
-                <td>2024-05-05</td>
-                <td><button onclick="location.href='internship_registration.html?title=' + encodeURIComponent('Human Resources Intern') + ''">Apply</button></td>
-            </tr>
-            <!-- More rows for other Management internship listings -->
+            <!-- Internship listings will be loaded here by JavaScript -->
         </tbody>
     </table>
 
-    <!-- Content for Management internship listings will go here -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            loadInternshipListings('Management');
+        });
+    </script>
 </body>
 </html>

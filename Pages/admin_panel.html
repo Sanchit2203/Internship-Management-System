@@ -11,18 +11,9 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script> <!-- If using Authentication -->
 
-    <script>
-      // Your Firebase project configuration
-      const firebaseConfig = {
-        apiKey: "AIzaSyDQPX2zwIyVa8Bm3ggoOPhPmNUsWN9TP3w",
-        authDomain: "internship-47c43.firebaseapp.com",
-        projectId: "internship-47c43",
-        storageBucket: "internship-47c43.firebasestorage.app",
-        messagingSenderId: "180629966091",
-        appId: "1:180629966091:web:b5df3ee2f84b2aeafe660e",
-        measurementId: "G-X16QZ8EP4K"
-      };
+    <script src="../firebase-config.js"></script>
 
+    <script>
       // Initialize Firebase
       firebase.initializeApp(firebaseConfig);
 
@@ -33,7 +24,7 @@
     </script>
 </head>
 <body class="blue-theme"> <!-- Using blue theme for admin panel -->
-    <h1>Admin Panel - Registrations</h1>
+    <h1>Admin Panel - Registrations and Listings</h1>
 
     <div class="container">
         <h2>Job Registrations</h2>
@@ -69,6 +60,100 @@
             </thead>
             <tbody>
                 <!-- Internship registration data will be loaded here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="container">
+        <h2>Add New Job Listing</h2>
+        <form id="add-job-form">
+            <input type="hidden" id="job-id" name="id">
+            <label for="job-title">Title:</label><br>
+            <input type="text" id="job-title" name="title" required><br><br>
+
+            <label for="job-location">Location:</label><br>
+            <input type="text" id="job-location" name="location" required><br><br>
+
+            <label for="job-description">Description:</label><br>
+            <textarea id="job-description" name="description" rows="4" cols="50" required></textarea><br><br>
+
+            <label for="job-deadline">Deadline:</label><br>
+            <input type="date" id="job-deadline" name="deadline" required><br><br>
+
+            <label for="job-category">Category:</label><br>
+            <select id="job-category" name="category" required>
+                <option value="Law">Law</option>
+                <option value="Tech">Tech</option>
+                <option value="Management">Management</option>
+            </select><br><br>
+
+            <input type="submit" value="Add Job Listing">
+             <button type="button" id="cancel-job-edit" style="display:none;">Cancel Edit</button>
+        </form>
+    </div>
+
+    <div class="container">
+        <h2>Add New Internship Listing</h2>
+        <form id="add-internship-form">
+             <input type="hidden" id="internship-id" name="id">
+            <label for="internship-title">Title:</label><br>
+            <input type="text" id="internship-title" name="title" required><br><br>
+
+            <label for="internship-location">Location:</label><br>
+            <input type="text" id="internship-location" name="location" required><br><br>
+
+            <label for="internship-description">Description:</label><br>
+            <textarea id="internship-description" name="description" rows="4" cols="50" required></textarea><br><br>
+
+            <label for="internship-deadline">Deadline:</label><br>
+            <input type="date" id="internship-deadline" name="deadline" required><br><br>
+
+             <label for="internship-category">Category:</label><br>
+            <select id="internship-category" name="category" required>
+                <option value="Law">Law</option>
+                <option value="Tech">Tech</option>
+                <option value="Management">Management</option>
+            </select><br><br>
+
+            <input type="submit" value="Add Internship Listing">
+             <button type="button" id="cancel-internship-edit" style="display:none;">Cancel Edit</button>
+        </form>
+    </div>
+
+     <div class="container">
+        <h2>Existing Job Listings</h2>
+        <table id="job-listings-admin-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Location</th>
+                    <th>Description</th>
+                    <th>Deadline</th>
+                    <th>Category</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Existing job listings will be loaded here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="container">
+        <h2>Existing Internship Listings</h2>
+        <table id="internship-listings-admin-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Location</th>
+                    <th>Description</th>
+                    <th>Deadline</th>
+                    <th>Category</th>
+                     <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Existing internship listings will be loaded here by JavaScript -->
             </tbody>
         </table>
     </div>
@@ -119,13 +204,246 @@
                 });
             }
 
+            // Function to load and display job listings for admin
+            function loadJobListingsAdmin() {
+                const jobTableBody = document.getElementById('job-listings-admin-table').querySelector('tbody');
+                jobTableBody.innerHTML = ''; // Clear existing rows
+
+                db.collection('jobs').get().then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                        const job = doc.data();
+                        const row = jobTableBody.insertRow();
+                        row.insertCell().textContent = job.title || 'N/A';
+                        row.insertCell().textContent = job.location || 'N/A';
+                        row.insertCell().textContent = job.description || 'N/A';
+                        row.insertCell().textContent = job.deadline || 'N/A';
+                        row.insertCell().textContent = job.category || 'N/A';
+                        const actionsCell = row.insertCell();
+
+                        // Add Edit button
+                        const editButton = document.createElement('button');
+                        editButton.textContent = 'Edit';
+                        editButton.addEventListener('click', function() {
+                            // Populate the job form for editing
+                            document.getElementById('job-id').value = doc.id;
+                            document.getElementById('job-title').value = job.title;
+                            document.getElementById('job-location').value = job.location;
+                            document.getElementById('job-description').value = job.description;
+                            document.getElementById('job-deadline').value = job.deadline;
+                            document.getElementById('job-category').value = job.category;
+
+                            // Change form behavior to update
+                            document.getElementById('add-job-form').querySelector('input[type="submit"]').value = 'Update Job Listing';
+                            document.getElementById('cancel-job-edit').style.display = 'inline-block';
+                        });
+                        actionsCell.appendChild(editButton);
+
+                        // Add Delete button
+                        const deleteButton = document.createElement('button');
+                        deleteButton.textContent = 'Delete';
+                         deleteButton.addEventListener('click', function() {
+                           if (confirm('Are you sure you want to delete this job listing?')) {
+                                db.collection('jobs').doc(doc.id).delete().then(() => {
+                                    console.log("Document successfully deleted!");
+                                     row.remove(); // Remove the row from the table
+                                     alert('Job listing deleted successfully!');
+                                }).catch((error) => {
+                                    console.error("Error removing document: ", error);
+                                     alert('Error deleting job listing. Please try again.');
+                                });
+                           }
+                        });
+                        actionsCell.appendChild(deleteButton);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error getting job documents: ", error);
+                });
+            }
+
+            // Function to load and display internship listings for admin
+            function loadInternshipListingsAdmin() {
+                const internshipTableBody = document.getElementById('internship-listings-admin-table').querySelector('tbody');
+                internshipTableBody.innerHTML = ''; // Clear existing rows
+
+                db.collection('internships').get().then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                        const internship = doc.data();
+                        const row = internshipTableBody.insertRow();
+                        row.insertCell().textContent = internship.title || 'N/A';
+                        row.insertCell().textContent = internship.location || 'N/A';
+                        row.insertCell().textContent = internship.description || 'N/A';
+                        row.insertCell().textContent = internship.deadline || 'N/A';
+                         row.insertCell().textContent = internship.category || 'N/A';
+                        const actionsCell = row.insertCell();
+
+                        // Add Edit button
+                        const editButton = document.createElement('button');
+                        editButton.textContent = 'Edit';
+                        editButton.addEventListener('click', function() {
+                            // Populate the internship form for editing
+                            document.getElementById('internship-id').value = doc.id;
+                            document.getElementById('internship-title').value = internship.title;
+                            document.getElementById('internship-location').value = internship.location;
+                            document.getElementById('internship-description').value = internship.description;
+                            document.getElementById('internship-deadline').value = internship.deadline;
+                            document.getElementById('internship-category').value = internship.category;
+
+                            // Change form behavior to update
+                            document.getElementById('add-internship-form').querySelector('input[type="submit"]').value = 'Update Internship Listing';
+                             document.getElementById('cancel-internship-edit').style.display = 'inline-block';
+                        });
+                        actionsCell.appendChild(editButton);
+
+                        // Add Delete button
+                        const deleteButton = document.createElement('button');
+                        deleteButton.textContent = 'Delete';
+                        deleteButton.addEventListener('click', function() {
+                            if (confirm('Are you sure you want to delete this internship listing?')) {
+                                db.collection('internships').doc(doc.id).delete().then(() => {
+                                    console.log("Document successfully deleted!");
+                                    row.remove(); // Remove the row from the table
+                                     alert('Internship listing deleted successfully!');
+                                }).catch((error) => {
+                                    console.error("Error removing document: ", error);
+                                     alert('Error deleting internship listing. Please try again.');
+                                });
+                            }
+                        });
+                        actionsCell.appendChild(deleteButton);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error getting internship documents: ", error);
+                });
+            }
+
             // Load data when the page loads
             loadJobRegistrations();
             loadInternshipRegistrations();
+            loadJobListingsAdmin();
+            loadInternshipListingsAdmin();
 
             // Optional: Set up real-time listeners for automatic updates
             // db.collection('jobApplications').onSnapshot(loadJobRegistrations);
             // db.collection('internshipApplications').onSnapshot(loadInternshipRegistrations);
+            // db.collection('jobs').onSnapshot(loadJobListingsAdmin);
+            // db.collection('internships').onSnapshot(loadInternshipListingsAdmin);
+
+            // Handle add/edit job form submission
+            const addJobForm = document.getElementById('add-job-form');
+            addJobForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                const id = document.getElementById('job-id').value;
+                const title = document.getElementById('job-title').value;
+                const location = document.getElementById('job-location').value;
+                const description = document.getElementById('job-description').value;
+                const deadline = document.getElementById('job-deadline').value;
+                const category = document.getElementById('job-category').value;
+
+                const listingData = {
+                    title: title,
+                    location: location,
+                    description: description,
+                    deadline: deadline,
+                    category: category
+                };
+
+                if (id) { // If ID exists, update the document
+                    db.collection('jobs').doc(id).update(listingData)
+                    .then(() => {
+                        console.log("Job listing updated successfully!");
+                        alert('Job listing updated successfully!');
+                        addJobForm.reset();
+                        document.getElementById('job-id').value = ''; // Clear the hidden ID
+                        document.getElementById('add-job-form').querySelector('input[type="submit"]').value = 'Add Job Listing';
+                        document.getElementById('cancel-job-edit').style.display = 'none';
+                        loadJobListingsAdmin(); // Refresh the job listings display
+                    })
+                    .catch((error) => {
+                        console.error("Error updating job listing: ", error);
+                        alert('Error updating job listing. Please try again.');
+                    });
+                } else { // If ID doesn't exist, add a new document
+                    db.collection('jobs').add(listingData)
+                    .then((docRef) => {
+                        console.log("Job listing added with ID: ", docRef.id);
+                        alert('Job listing added successfully!');
+                        addJobForm.reset(); // Clear the form
+                        loadJobListingsAdmin(); // Refresh the job listings display
+                    })
+                    .catch((error) => {
+                        console.error("Error adding job listing: ", error);
+                        alert('Error adding job listing. Please try again.');
+                    });
+                }
+            });
+
+            // Handle add/edit internship form submission
+            const addInternshipForm = document.getElementById('add-internship-form');
+            addInternshipForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                 const id = document.getElementById('internship-id').value;
+                const title = document.getElementById('internship-title').value;
+                const location = document.getElementById('internship-location').value;
+                const description = document.getElementById('internship-description').value;
+                const deadline = document.getElementById('internship-deadline').value;
+                 const category = document.getElementById('internship-category').value;
+
+                 const listingData = {
+                    title: title,
+                    location: location,
+                    description: description,
+                    deadline: deadline,
+                    category: category
+                };
+
+                if (id) { // If ID exists, update the document
+                    db.collection('internships').doc(id).update(listingData)
+                    .then(() => {
+                        console.log("Internship listing updated successfully!");
+                        alert('Internship listing updated successfully!');
+                        addInternshipForm.reset();
+                        document.getElementById('internship-id').value = ''; // Clear the hidden ID
+                        document.getElementById('add-internship-form').querySelector('input[type="submit"]').value = 'Add Internship Listing';
+                         document.getElementById('cancel-internship-edit').style.display = 'none';
+                        loadInternshipListingsAdmin(); // Refresh the internship listings display
+                    })
+                    .catch((error) => {
+                        console.error("Error updating internship listing: ", error);
+                        alert('Error updating internship listing. Please try again.');
+                    });
+                } else { // If ID doesn't exist, add a new document
+                    db.collection('internships').add(listingData)
+                    .then((docRef) => {
+                        console.log("Internship listing added with ID: ", docRef.id);
+                        alert('Internship listing added successfully!');
+                        addInternshipForm.reset(); // Clear the form
+                        loadInternshipListingsAdmin(); // Refresh the internship listings display
+                    })
+                    .catch((error) => {
+                        console.error("Error adding internship listing: ", error);
+                        alert('Error adding internship listing. Please try again.');
+                    });
+                }
+            });
+
+            // Cancel edit functionality
+            document.getElementById('cancel-job-edit').addEventListener('click', function() {
+                document.getElementById('add-job-form').reset();
+                document.getElementById('job-id').value = '';
+                document.getElementById('add-job-form').querySelector('input[type="submit"]').value = 'Add Job Listing';
+                document.getElementById('cancel-job-edit').style.display = 'none';
+            });
+
+             document.getElementById('cancel-internship-edit').addEventListener('click', function() {
+                document.getElementById('add-internship-form').reset();
+                document.getElementById('internship-id').value = '';
+                document.getElementById('add-internship-form').querySelector('input[type="submit"]').value = 'Add Internship Listing';
+                document.getElementById('cancel-internship-edit').style.display = 'none';
+            });
         });
     </script>
 </body>
