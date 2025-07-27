@@ -75,10 +75,11 @@
                     // Signed in
                     var user = userCredential.user;
 
-                    // Save additional user details to Firestore
+                    // Save additional user details to Firestore with the 'role' field
                     return db.collection('users').doc(user.uid).set({
                         username: username,
                         email: email,
+                        role: 'user' // Add the default role here
                         // Add any other details you want to store
                     });
                 })

@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script> <!-- Added Firestore SDK -->
     <script src="../firebase-config.js"></script>
 </head>
 <body>
@@ -31,7 +32,7 @@
                 <label for="adminRole">Admin</label>
                 <span class="slider"></span>
             </div>
-            <label for="email">Email / Username</label>
+            <label for="email">Email</label>
             <input type="text" id="email" required>
             <label for="password">Password</label>
             <div class="password-wrapper">
@@ -49,6 +50,7 @@
     <script>
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
+        const db = firebase.firestore(); // Initialize Firestore
         const userRole = document.getElementById('userRole');
         const adminRole = document.getElementById('adminRole');
         const registerLink = document.querySelector('.register-link');
@@ -70,33 +72,53 @@
 
         document.getElementById('loginForm').addEventListener('submit', function(event) {
             event.preventDefault();
-            const isAdmin = document.getElementById('adminRole').checked;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+            const isAdminLoginAttempt = document.getElementById('adminRole').checked;
 
             if (email === '' || password === '') {
-                feedbackMessage.textContent = 'Please enter both email/username and password.';
+                feedbackMessage.textContent = 'Please enter both email and password.';
                 feedbackMessage.style.color = 'red';
                 return;
             }
 
-            if (isAdmin) {
-                if (email === 'admin' && password === 'admin123') {
-                    window.location.href = '../admin/admin_panel.html';
-                } else {
-                    feedbackMessage.textContent = 'Invalid admin credentials.';
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Signed in
+                    var user = userCredential.user;
+
+                    // Fetch user's role from Firestore
+                    return db.collection('users').doc(user.uid).get();
+                })
+                .then((doc) => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        if (isAdminLoginAttempt) {
+                            // Admin login attempt: check if user is indeed an admin
+                            if (userData.role === 'admin') {
+                                window.location.href = '../admin/admin_panel.html'; // Redirect to admin panel
+                            } else {
+                                // Not an admin, even though admin role was selected
+                                auth.signOut(); // Sign out the non-admin user who tried to log in as admin
+                                feedbackMessage.textContent = 'You do not have admin privileges.';
+                                feedbackMessage.style.color = 'red';
+                            }
+                        } else {
+                            // Normal user login attempt: redirect to index
+                            window.location.href = '../index.html';
+                        }
+                    } else {
+                         // User document doesn't exist (shouldn't happen with proper registration)
+                         auth.signOut(); // Sign out if authentication somehow succeeded but no user doc
+                         feedbackMessage.textContent = 'Login failed: User data not found.';
+                         feedbackMessage.style.color = 'red';
+                    }
+                })
+                .catch((error) => {
+                    // Handle authentication errors (e.g., invalid email, wrong password)
+                    feedbackMessage.textContent = 'Login failed: ' + error.message;
                     feedbackMessage.style.color = 'red';
-                }
-            } else {
-                auth.signInWithEmailAndPassword(email, password)
-                    .then((userCredential) => {
-                        window.location.href = '../index.html';
-                    })
-                    .catch((error) => {
-                        feedbackMessage.textContent = error.message;
-                        feedbackMessage.style.color = 'red';
-                    });
-            }
+                });
         });
 
         document.querySelector('.toggle-password').addEventListener('click', function () {
