@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Internship Listings</title>
     <link rel="stylesheet" href="../style.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="../firebase-config.js"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -13,7 +16,8 @@
             <li><a href="../index.html">Home</a></li>
             <li><a href="jobs_listing.html">Jobs</a></li>
             <li><a href="internship_listing.html">Internships</a></li>
-            <li><a href="login.html">Login</a></li>
+            <li><a href="user.html" id="user-dashboard-link" style="display: none;">Dashboard</a></li>
+            <li><a href="#" id="login-logout-link">Login</a></li>
         </ul>
     </nav>
 
@@ -28,5 +32,45 @@
             <button onclick="location.href='internship_management.html'">Management</button>
         </div>
     </div>
+
+    <script>
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const loginLogoutLink = document.getElementById('login-logout-link');
+        const userDashboardLink = document.getElementById('user-dashboard-link');
+
+        // Function to handle logout
+        function handleLogout() {
+            auth.signOut().then(() => {
+                // Redirect to login page after logout
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                console.error('Error signing out:', error);
+            });
+        }
+
+        // Check authentication state and update login/logout link and dashboard link
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                // User is signed in
+                loginLogoutLink.textContent = 'Logout';
+                loginLogoutLink.href = '#'; // Prevent default link behavior
+                loginLogoutLink.removeEventListener('click', handleLogout);
+                loginLogoutLink.addEventListener('click', handleLogout);
+
+                // Show user dashboard link
+                userDashboardLink.style.display = 'block';
+                userDashboardLink.href = 'user.html';
+            } else {
+                // User is signed out
+                loginLogoutLink.textContent = 'Login';
+                loginLogoutLink.href = 'login.html'; // Link to login page
+                loginLogoutLink.removeEventListener('click', handleLogout);
+
+                // Hide user dashboard link
+                userDashboardLink.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>

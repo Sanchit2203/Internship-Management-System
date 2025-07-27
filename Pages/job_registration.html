@@ -9,6 +9,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="../firebase-config.js"></script>
 </head>
 <body>
@@ -18,7 +19,7 @@
             <li><a href="../index.html">Home</a></li>
             <li><a href="jobs_listing.html">Jobs</a></li>
             <li><a href="internship_listing.html">Internships</a></li>
-            <li><a href="login.html">Login</a></li>
+            <li><a href="#" id="login-logout-link">Login</a></li>
         </ul>
     </nav>
 
@@ -38,7 +39,8 @@
             <input type="tel" id="phone" name="phone" required>
 
             <label for="resume">Upload Resume: <span style="color: red;">*</span></label>
-            <input type="file" id="resume" name="resume" required>
+            <input type="file" id="resume" name="resume">
+            <span id="resumeFileName"></span>
 
             <label for="cover_letter">Cover Letter (Optional):</label>
             <textarea id="cover_letter" name="cover_letter" rows="4"></textarea>
@@ -53,6 +55,42 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const storage = firebase.storage();
+        const auth = firebase.auth();
+        const loginLogoutLink = document.getElementById('login-logout-link');
+
+        let currentUser = null;
+        let existingApplicationDocRef = null; // To store the document reference of the existing application
+
+        // Function to handle logout
+        function handleLogout() {
+            auth.signOut().then(() => {
+                // Redirect to login page after logout
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                console.error('Error signing out:', error);
+            });
+        }
+
+        // Check authentication state and update login/logout link
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                // User is signed in
+                currentUser = user;
+                loginLogoutLink.textContent = 'Logout';
+                loginLogoutLink.href = '#'; // Prevent default link behavior
+                loginLogoutLink.removeEventListener('click', handleLogout);
+                loginLogoutLink.addEventListener('click', handleLogout);
+                checkExistingApplication(); // Check for existing application after login
+            } else {
+                // User is signed out
+                loginLogoutLink.textContent = 'Login';
+                loginLogoutLink.href = 'login.html'; // Link to login page
+                loginLogoutLink.removeEventListener('click', handleLogout);
+                // If the user logs out from this page, redirect them to the login page.
+                // No need to set redirect_after_login here as they are already on the application page.
+                 window.location.href = 'login.html';
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', function () {
             const urlParams = new URLSearchParams(window.location.search);
@@ -63,8 +101,73 @@
 
             const jobApplicationForm = document.getElementById('job-application-form');
             const feedbackMessage = document.getElementById('feedback-message');
+            const submitButton = jobApplicationForm.querySelector('input[type="submit"]');
 
-            jobApplicationForm.addEventListener('submit', function (event) {
+            // Function to check for existing application
+            async function checkExistingApplication() {
+                if (!currentUser) return; // Ensure user is logged in
+
+                const jobTitle = document.getElementById('job_title').value;
+                if (!jobTitle) return; // Ensure job title is available
+
+                try {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const applicationId = urlParams.get('id');
+
+                    let querySnapshot;
+                    if (applicationId) {
+                         // Fetch by document ID if available (from user dashboard edit link)
+                         const applicationDoc = await db.collection('jobApplications').doc(applicationId).get();
+                         if (applicationDoc.exists) {
+                              querySnapshot = { docs: [applicationDoc] };
+                         } else {
+                              querySnapshot = { empty: true };
+                         }
+                    } else {
+                         // Fetch by email, title, and userId for new applications or initial load
+                         querySnapshot = await db.collection('jobApplications')
+                            .where('email', '==', currentUser.email) // Assuming email is unique per user
+                            .where('title', '==', jobTitle)
+                         .where('userId', '==', currentUser.uid) // Added this condition
+                        .limit(1)
+                        .get();
+                    }
+
+                    if (querySnapshot.empty) {
+                        // No existing application
+                         document.getElementById('resume').setAttribute('required', '');
+                    } else {
+                        // Existing application found
+                        existingApplicationDocRef = querySnapshot.docs[0].ref;
+                        const existingData = querySnapshot.docs[0].data();
+                        populateForm(existingData);
+                         document.getElementById('resume').removeAttribute('required'); // Resume is not required for editing
+                    }
+                } catch (error) {
+                    console.error('Error checking existing application:', error);
+                    feedbackMessage.textContent = 'Error checking for existing application.';
+                    feedbackMessage.style.color = 'red';
+                }
+            }
+
+            // Function to populate the form with existing data
+            function populateForm(data) {
+                document.getElementById('full_name').value = data.full_name || '';
+                document.getElementById('email').value = data.email || '';
+                document.getElementById('phone').value = data.phone || '';
+                document.getElementById('university').value = data.university || '';
+                document.getElementById('major').value = data.major || '';
+                document.getElementById('cover_letter').value = data.cover_letter || '';
+
+                // Display the name of the uploaded resume file
+                const resumeFileNameSpan = document.getElementById('resumeFileName');
+                if (data.resumeURL) {
+                     const fileName = data.resumeURL.split('%')[1].split('?')[0]; // Basic attempt to extract filename
+                     resumeFileNameSpan.textContent = 'Current Resume: ' + decodeURIComponent(fileName);
+                }
+            }
+
+            jobApplicationForm.addEventListener('submit', async function (event) {
                 event.preventDefault();
 
                 const formData = new FormData(jobApplicationForm);
@@ -76,31 +179,61 @@
                     registrationData[key] = value;
                 });
                 registrationData.title = document.getElementById('job_title').value;
-                registrationData.status = 'pending'; // Set default status
+                registrationData.status = 'pending'; // Set default status (can be updated on edit if needed)
+                registrationData.userId = currentUser.uid; // Add the user ID
 
-                const storageRef = storage.ref();
-                const resumeRef = storageRef.child('resumes/' + resumeFile.name);
+                try {
+                    if (existingApplicationDocRef) {
+                        // Editing existing application
+                         if (resumeFile && resumeFile.size > 0) {
+                             // Upload new resume if a file is selected
+                             const storageRef = storage.ref();
+                             const resumeRef = storageRef.child('resumes/' + resumeFile.name);
+                             const snapshot = await resumeRef.put(resumeFile);
+                             const downloadURL = await snapshot.ref.getDownloadURL();
+                             registrationData.resumeURL = downloadURL;
+                         } else {
+                             // No new resume uploaded, keep the existing one
+                             // We don't need to do anything here, as existingData already contains resumeURL if it exists
+                              delete registrationData.resumeURL; // Do not update resumeURL if no new file is selected
+                         }
+                        await existingApplicationDocRef.update(registrationData);
+                        feedbackMessage.textContent = 'Job application updated successfully!';
+                        feedbackMessage.style.color = 'green';
+                    } else {
+                        // Submitting a new application
+                         if (!resumeFile || resumeFile.size === 0) {
+                            feedbackMessage.textContent = 'Please upload your resume.';
+                            feedbackMessage.style.color = 'red';
+                            return;
+                         }
+                        const storageRef = storage.ref();
+                        const resumeRef = storageRef.child('resumes/' + resumeFile.name);
 
-                resumeRef.put(resumeFile).then((snapshot) => {
-                    snapshot.ref.getDownloadURL().then((downloadURL) => {
+                        const snapshot = await resumeRef.put(resumeFile);
+                        const downloadURL = await snapshot.ref.getDownloadURL();
                         registrationData.resumeURL = downloadURL;
 
-                        db.collection('jobApplications').add(registrationData)
-                        .then((docRef) => {
-                            feedbackMessage.textContent = 'Job application submitted successfully!';
-                            feedbackMessage.style.color = 'green';
-                            jobApplicationForm.reset();
-                        })
-                        .catch((error) => {
-                            feedbackMessage.textContent = 'Error submitting job application. Please try again.';
-                            feedbackMessage.style.color = 'red';
-                        });
-                    });
-                }).catch((error) => {
-                    feedbackMessage.textContent = 'Error uploading resume. Please try again.';
+                        await db.collection('jobApplications').add(registrationData);
+                        feedbackMessage.textContent = 'Job application submitted successfully!';
+                        feedbackMessage.style.color = 'green';
+
+                         document.getElementById('resume').removeAttribute('required'); // Resume is not required for editing
+                        // Re-check existing application to get the doc ref for future edits
+                        checkExistingApplication();
+                    }
+                } catch (error) {
+                    console.error('Error saving application:', error);
+                    feedbackMessage.textContent = 'Error saving job application. Please try again.';
                     feedbackMessage.style.color = 'red';
-                });
+                }
             });
+
+            // Initial check when the page loads after authentication state is determined
+            if (auth.currentUser) {
+                 currentUser = auth.currentUser;
+                 checkExistingApplication();
+            }
         });
     </script>
 </body>

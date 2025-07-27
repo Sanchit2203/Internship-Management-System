@@ -96,7 +96,14 @@
                         if (isAdminLoginAttempt) {
                             // Admin login attempt: check if user is indeed an admin
                             if (userData.role === 'admin') {
-                                window.location.href = '../admin/admin_panel.html'; // Redirect to admin panel
+                                 // Check for redirect URL in local storage
+                                const redirectUrl = localStorage.getItem('redirect_after_login');
+                                if (redirectUrl) {
+                                    localStorage.removeItem('redirect_after_login'); // Clear the stored URL
+                                    window.location.href = redirectUrl; // Redirect to the stored URL
+                                } else {
+                                    window.location.href = '../admin/admin_panel.html'; // Redirect to admin panel if no stored URL
+                                }
                             } else {
                                 // Not an admin, even though admin role was selected
                                 auth.signOut(); // Sign out the non-admin user who tried to log in as admin
@@ -104,8 +111,14 @@
                                 feedbackMessage.style.color = 'red';
                             }
                         } else {
-                            // Normal user login attempt: redirect to index
-                            window.location.href = '../index.html';
+                            // Normal user login attempt: redirect to index or stored URL
+                            const redirectUrl = localStorage.getItem('redirect_after_login');
+                            if (redirectUrl) {
+                                localStorage.removeItem('redirect_after_login'); // Clear the stored URL
+                                window.location.href = redirectUrl; // Redirect to the stored URL
+                            } else {
+                                window.location.href = '../index.html'; // Redirect to index if no stored URL
+                            }
                         }
                     } else {
                          // User document doesn't exist (shouldn't happen with proper registration)
