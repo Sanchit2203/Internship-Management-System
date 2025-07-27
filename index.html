@@ -5,10 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rajpati and Associate Law Firm - Careers</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-    <script src="firebase-config.js"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -17,7 +13,8 @@
             <li><a href="index.html">Home</a></li>
             <li><a href="Pages/jobs_listing.html">Jobs</a></li>
             <li><a href="Pages/internship_listing.html">Internships</a></li>
-            <li><a href="Pages/login.html" id="login-logout-link">Login</a></li>
+            <li id="auth-link"></li>
+            <li id="user-display" style="display:none; color: white; margin-left: 10px;"></li>
         </ul>
     </nav>
 
@@ -43,36 +40,13 @@
         </div>
     </div>
 
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="auth.js"></script>
     <script>
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-
-        const loginLogoutLink = document.getElementById('login-logout-link');
-
-        auth.onAuthStateChanged(function(user) {
-            if (user) {
-                // User is signed in, change link to Logout
-                loginLogoutLink.textContent = 'Logout';
-                loginLogoutLink.href = '#'; // Prevent default navigation
-                loginLogoutLink.addEventListener('click', handleLogout);
-            } else {
-                // User is signed out, change link to Login
-                loginLogoutLink.textContent = 'Login';
-                loginLogoutLink.href = 'Pages/login.html';
-                loginLogoutLink.removeEventListener('click', handleLogout);
-            }
-        });
-
-        function handleLogout(event) {
-            event.preventDefault();
-            auth.signOut().then(() => {
-                // Redirect to login page after logout
-                window.location.href = 'Pages/login.html';
-            }).catch((error) => {
-                console.error('Logout failed:', error);
-                // Optionally display an error message to the user
-            });
-        }
 
         function goToCareerPage() {
             const selectElement = document.getElementById('career-type');
