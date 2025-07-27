@@ -164,6 +164,7 @@
                                 <th>Full Name</th>
                                 <th>Email</th>
                                 <th>Phone</th>
+                                <th>Certificate</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -251,7 +252,8 @@
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     const row = tableBody.insertRow();
-                    row.insertCell().textContent = data.title || 'N/A';
+                    const titleCell = row.insertCell();
+                    titleCell.textContent = data.title || 'N/A';
                     row.insertCell().textContent = data.full_name || 'N/A';
                     row.insertCell().textContent = data.email || 'N/A';
                     row.insertCell().textContent = data.phone || 'N/A';
@@ -371,6 +373,17 @@
                     row.insertCell().textContent = data.full_name;
                     row.insertCell().textContent = data.email;
                     row.insertCell().textContent = data.phone;
+                    // Add Certificate column
+                    const certificateCell = row.insertCell();
+                    const generateCertificateButton = document.createElement('button');
+                    generateCertificateButton.textContent = 'Generate Certificate';
+                    // You would add functionality here to generate the certificate
+                    generateCertificateButton.onclick = () => {
+                        alert('Generate certificate for ' + data.full_name);
+                        // Implement certificate generation logic here
+                    };
+                    certificateCell.appendChild(generateCertificateButton);
+
                     const actionsCell = row.insertCell();
                     const archiveButton = document.createElement('button');
                     archiveButton.textContent = 'Archive';
