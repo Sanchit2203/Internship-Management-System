@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script> <!-- Added Firestore SDK -->
     <script src="../firebase-config.js"></script>
 </head>
 <body>
@@ -52,11 +53,13 @@
     <script>
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
+        const db = firebase.firestore(); // Initialize Firestore
         const registrationForm = document.getElementById('registrationForm');
         const feedbackMessage = document.getElementById('feedback-message');
 
         registrationForm.addEventListener('submit', (e) => {
             e.preventDefault();
+            const username = document.getElementById('username').value; // Get username
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const rePassword = document.getElementById('re-password').value;
@@ -69,6 +72,17 @@
 
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
+                    // Signed in
+                    var user = userCredential.user;
+
+                    // Save additional user details to Firestore
+                    return db.collection('users').doc(user.uid).set({
+                        username: username,
+                        email: email,
+                        // Add any other details you want to store
+                    });
+                })
+                .then(() => {
                     feedbackMessage.textContent = 'Registration successful! Redirecting to login...';
                     feedbackMessage.style.color = 'green';
                     setTimeout(() => {

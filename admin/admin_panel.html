@@ -19,6 +19,8 @@
                 <li><a href="#" class="active" data-target="registrations">Registrations</a></li>
                 <li><a href="#" data-target="job-listings">Job Listings</a></li>
                 <li><a href="#" data-target="internship-listings">Internship Listings</a></li>
+                <li><a href="#" data-target="active-interns">Active Interns</a></li>
+                <li><a href="#" data-target="archived-interns">Archived Interns</a></li>
             </ul>
         </aside>
         <main class="main-content">
@@ -67,26 +69,27 @@
                 </div>
             </div>
             <div id="job-listings" class="content-section">
+                <!-- Job Listings Content -->
                 <h1>Job Listings</h1>
                 <div class="container">
-                    <h2>Add New Job Listing</h2>
+                    <h2>Add/Edit Job Listing</h2>
                     <form id="add-job-form">
-                        <input type="hidden" id="job-id" name="id">
-                        <label for="job-title">Title:</label>
-                        <input type="text" id="job-title" name="title" required>
-                        <label for="job-location">Location:</label>
-                        <input type="text" id="job-location" name="location" required>
-                        <label for="job-description">Description:</label>
-                        <textarea id="job-description" name="description" rows="4" required></textarea>
-                        <label for="job-deadline">Deadline:</label>
-                        <input type="date" id="job-deadline" name="deadline" required>
-                        <label for="job-category">Category:</label>
-                        <select id="job-category" name="category" required>
+                        <input type="hidden" id="job-id">
+                        <label for="job-title-input">Title:</label>
+                        <input type="text" id="job-title-input" required>
+                        <label for="job-location-input">Location:</label>
+                        <input type="text" id="job-location-input" required>
+                        <label for="job-description-input">Description:</label>
+                        <textarea id="job-description-input" rows="4" required></textarea>
+                        <label for="job-deadline-input">Deadline:</label>
+                        <input type="date" id="job-deadline-input" required>
+                        <label for="job-category-select">Category:</label>
+                        <select id="job-category-select" required>
                             <option value="Law">Law</option>
                             <option value="Tech">Tech</option>
                             <option value="Management">Management</option>
                         </select>
-                        <input type="submit" value="Add Job Listing">
+                        <input type="submit" value="Save Job Listing">
                         <button type="button" id="cancel-job-edit" style="display:none;">Cancel Edit</button>
                     </form>
                 </div>
@@ -107,26 +110,27 @@
                 </div>
             </div>
             <div id="internship-listings" class="content-section">
-                <h1>Internship Listings</h1>
+                <!-- Internship Listings Content -->
+                 <h1>Internship Listings</h1>
                 <div class="container">
-                    <h2>Add New Internship Listing</h2>
+                    <h2>Add/Edit Internship Listing</h2>
                     <form id="add-internship-form">
-                        <input type="hidden" id="internship-id" name="id">
-                        <label for="internship-title">Title:</label>
-                        <input type="text" id="internship-title" name="title" required>
-                        <label for="internship-location">Location:</label>
-                        <input type="text" id="internship-location" name="location" required>
-                        <label for="internship-description">Description:</label>
-                        <textarea id="internship-description" name="description" rows="4" required></textarea>
-                        <label for="internship-deadline">Deadline:</label>
-                        <input type="date" id="internship-deadline" name="deadline" required>
-                        <label for="internship-category">Category:</label>
-                        <select id="internship-category" name="category" required>
+                        <input type="hidden" id="internship-id">
+                        <label for="internship-title-input">Title:</label>
+                        <input type="text" id="internship-title-input" required>
+                        <label for="internship-location-input">Location:</label>
+                        <input type="text" id="internship-location-input" required>
+                        <label for="internship-description-input">Description:</label>
+                        <textarea id="internship-description-input" rows="4" required></textarea>
+                        <label for="internship-deadline-input">Deadline:</label>
+                        <input type="date" id="internship-deadline-input" required>
+                        <label for="internship-category-select">Category:</label>
+                        <select id="internship-category-select" required>
                             <option value="Law">Law</option>
                             <option value="Tech">Tech</option>
                             <option value="Management">Management</option>
                         </select>
-                        <input type="submit" value="Add Internship Listing">
+                        <input type="submit" value="Save Internship Listing">
                         <button type="button" id="cancel-internship-edit" style="display:none;">Cancel Edit</button>
                     </form>
                 </div>
@@ -139,6 +143,42 @@
                                 <th>Location</th>
                                 <th>Deadline</th>
                                 <th>Category</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="active-interns" class="content-section">
+                <h1>Active Interns</h1>
+                <div class="container">
+                    <h2>Currently Active Interns</h2>
+                    <table id="active-interns-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="archived-interns" class="content-section">
+                <h1>Archived Interns</h1>
+                <div class="container">
+                    <h2>Archived Interns List</h2>
+                    <table id="archived-interns-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -167,18 +207,18 @@
             });
         });
 
-        // Load data functions
+        // Functions to load registrations
         function loadJobRegistrations() {
-            const tableBody = document.getElementById('job-registrations-table').querySelector('tbody');
-            db.collection('jobApplications').onSnapshot(snapshot => {
+            db.collection('jobApplications').where('status', '==', 'pending').onSnapshot(snapshot => {
+                const tableBody = document.getElementById('job-registrations-table').querySelector('tbody');
                 tableBody.innerHTML = '';
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     const row = tableBody.insertRow();
-                    row.insertCell().textContent = data.title;
-                    row.insertCell().textContent = data.full_name;
-                    row.insertCell().textContent = data.email;
-                    row.insertCell().textContent = data.phone;
+                    row.insertCell().textContent = data.title || 'N/A';
+                    row.insertCell().textContent = data.full_name || 'N/A';
+                    row.insertCell().textContent = data.email || 'N/A';
+                    row.insertCell().textContent = data.phone || 'N/A';
                     const resumeCell = row.insertCell();
                     if (data.resumeURL) {
                         const link = document.createElement('a');
@@ -202,19 +242,19 @@
 
         function loadInternshipRegistrations() {
             const tableBody = document.getElementById('internship-registrations-table').querySelector('tbody');
-            db.collection('internshipApplications').onSnapshot(snapshot => {
+            db.collection('internshipApplications').where('status', '==', 'pending').onSnapshot(snapshot => {
                 tableBody.innerHTML = '';
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     const row = tableBody.insertRow();
-                    row.insertCell().textContent = data.title;
-                    row.insertCell().textContent = data.full_name;
-                    row.insertCell().textContent = data.email;
-                    row.insertCell().textContent = data.phone;
-                    row.insertCell().textContent = data.university;
-                    row.insertCell().textContent = data.major;
+                    row.insertCell().textContent = data.title || 'N/A';
+                    row.insertCell().textContent = data.full_name || 'N/A';
+                    row.insertCell().textContent = data.email || 'N/A';
+                    row.insertCell().textContent = data.phone || 'N/A';
+                    row.insertCell().textContent = data.university || 'N/A';
+                    row.insertCell().textContent = data.major || 'N/A';
                     const resumeCell = row.insertCell();
-                    if (data.resumeURL) {
+                     if (data.resumeURL) {
                         const link = document.createElement('a');
                         link.href = data.resumeURL;
                         link.textContent = 'View Resume';
@@ -222,6 +262,14 @@
                         resumeCell.appendChild(link);
                     }
                     const actionsCell = row.insertCell();
+                    const addButton = document.createElement('button');
+                    addButton.textContent = 'Add to Active';
+                    addButton.onclick = () => {
+                        if (confirm('Move this intern to Active Interns?')) {
+                            db.collection('internshipApplications').doc(doc.id).update({ status: 'active' });
+                        }
+                    };
+                    actionsCell.appendChild(addButton);
                     const deleteButton = document.createElement('button');
                     deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
                     deleteButton.onclick = () => {
@@ -233,87 +281,152 @@
                 });
             });
         }
-
-        function loadJobListingsAdmin() {
-            const tableBody = document.getElementById('job-listings-admin-table').querySelector('tbody');
-            db.collection('jobs').onSnapshot(snapshot => {
-                tableBody.innerHTML = '';
-                snapshot.forEach(doc => {
-                    const job = doc.data();
-                    const row = tableBody.insertRow();
-                    row.insertCell().textContent = job.title;
-                    row.insertCell().textContent = job.location;
-                    row.insertCell().textContent = job.deadline;
-                    row.insertCell().textContent = job.category;
-                    const actionsCell = row.insertCell();
-                    const editButton = document.createElement('button');
-                    editButton.textContent = 'Edit';
-                    editButton.onclick = () => { /* edit logic */ };
-                    const deleteButton = document.createElement('button');
-                    deleteButton.textContent = 'Delete';
-                    deleteButton.onclick = () => {
-                        if (confirm('Are you sure you want to delete this job listing?')) {
-                            db.collection('jobs').doc(doc.id).delete();
-                        }
-                    };
-                    actionsCell.append(editButton, deleteButton);
-                });
-            });
-        }
-
-        function loadInternshipListingsAdmin() {
-            const tableBody = document.getElementById('internship-listings-admin-table').querySelector('tbody');
-            db.collection('internships').onSnapshot(snapshot => {
-                tableBody.innerHTML = '';
-                snapshot.forEach(doc => {
-                    const internship = doc.data();
-                    const row = tableBody.insertRow();
-                    row.insertCell().textContent = internship.title;
-                    row.insertCell().textContent = internship.location;
-                    row.insertCell().textContent = internship.deadline;
-                    row.insertCell().textContent = internship.category;
-                    const actionsCell = row.insertCell();
-                    const editButton = document.createElement('button');
-                    editButton.textContent = 'Edit';
-                    editButton.onclick = () => { /* edit logic */ };
-                    const deleteButton = document.createElement('button');
-                    deleteButton.textContent = 'Delete';
-                    deleteButton.onclick = () => {
-                        if (confirm('Are you sure you want to delete this internship listing?')) {
-                            db.collection('internships').doc(doc.id).delete();
-                        }
-                    };
-                    actionsCell.append(editButton, deleteButton);
-                });
-            });
-        }
         
-        document.getElementById('add-job-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData.entries());
-            db.collection('jobs').add(data).then(() => {
-                e.target.reset();
-            });
-        });
+        // Functions to load and manage listings
+        function setupListingForm(formId, collectionName, idFieldId, titleFieldId, locationFieldId, descriptionFieldId, deadlineFieldId, categoryFieldId, cancelBtnId) {
+            const form = document.getElementById(formId);
+            
+            form.addEventListener('submit', e => {
+                e.preventDefault();
+                const data = {
+                    title: document.getElementById(titleFieldId).value,
+                    location: document.getElementById(locationFieldId).value,
+                    description: document.getElementById(descriptionFieldId).value,
+                    deadline: document.getElementById(deadlineFieldId).value,
+                    category: document.getElementById(categoryFieldId).value,
+                };
 
-        document.getElementById('add-internship-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData.entries());
-            db.collection('internships').add(data).then(() => {
-                e.target.reset();
+                const id = document.getElementById(idFieldId).value;
+                if (id) {
+                    db.collection(collectionName).doc(id).update(data).then(() => {
+                        form.reset();
+                        document.getElementById(idFieldId).value = '';
+                        document.getElementById(cancelBtnId).style.display = 'none';
+                        form.querySelector('input[type="submit"]').value = `Save ${collectionName === 'jobs' ? 'Job' : 'Internship'} Listing`;
+                    });
+                } else {
+                    db.collection(collectionName).add(data).then(() => form.reset());
+                }
             });
-        });
+
+            document.getElementById(cancelBtnId).addEventListener('click', () => {
+                form.reset();
+                document.getElementById(idFieldId).value = '';
+                document.getElementById(cancelBtnId).style.display = 'none';
+                form.querySelector('input[type="submit"]').value = `Save ${collectionName === 'jobs' ? 'Job' : 'Internship'} Listing`;
+            });
+        }
+
+        function loadListings(collectionName, tableId, formId, idFieldId, titleFieldId, locationFieldId, descriptionFieldId, deadlineFieldId, categoryFieldId, cancelBtnId) {
+            const tableBody = document.getElementById(tableId).querySelector('tbody');
+            db.collection(collectionName).onSnapshot(snapshot => {
+                tableBody.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const row = tableBody.insertRow();
+                    row.insertCell().textContent = data.title;
+                    row.insertCell().textContent = data.location;
+                    row.insertCell().textContent = data.deadline;
+                    row.insertCell().textContent = data.category;
+                    const actionsCell = row.insertCell();
+                    
+                    const editButton = document.createElement('button');
+                    editButton.textContent = 'Edit';
+                    editButton.onclick = () => {
+                        document.getElementById(idFieldId).value = doc.id;
+                        document.getElementById(titleFieldId).value = data.title;
+                        document.getElementById(locationFieldId).value = data.location;
+                        document.getElementById(descriptionFieldId).value = data.description;
+                        document.getElementById(deadlineFieldId).value = data.deadline;
+                        document.getElementById(categoryFieldId).value = data.category;
+                        document.getElementById(cancelBtnId).style.display = 'inline-block';
+                        document.getElementById(formId).querySelector('input[type="submit"]').value = 'Update Listing';
+                    };
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Delete';
+                    deleteButton.onclick = () => {
+                        if (confirm('Are you sure you want to delete this listing?')) {
+                            db.collection(collectionName).doc(doc.id).delete();
+                        }
+                    };
+                    actionsCell.append(editButton, deleteButton);
+                });
+            });
+        }
+
+        // Functions for Active and Archived Interns
+        function loadActiveInterns() {
+            const tableBody = document.getElementById('active-interns-table').querySelector('tbody');
+            db.collection('internshipApplications').where('status', '==', 'active').onSnapshot(snapshot => {
+                tableBody.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const row = tableBody.insertRow();
+                    row.insertCell().textContent = data.title || 'N/A';
+                    row.insertCell().textContent = data.full_name;
+                    row.insertCell().textContent = data.email;
+                    row.insertCell().textContent = data.phone;
+                    const actionsCell = row.insertCell();
+                    const archiveButton = document.createElement('button');
+                    archiveButton.textContent = 'Archive';
+                    archiveButton.onclick = () => db.collection('internshipApplications').doc(doc.id).update({ status: 'archived' });
+                    actionsCell.appendChild(archiveButton);
+                    const deleteButton = document.createElement('button');
+                    deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                    deleteButton.onclick = () => {
+                        if (confirm('Are you sure you want to delete this intern record?')) {
+                            db.collection('internshipApplications').doc(doc.id).delete();
+                        }
+                    };
+                    actionsCell.appendChild(deleteButton);
+                });
+            });
+        }
+
+        function loadArchivedInterns() {
+            const tableBody = document.getElementById('archived-interns-table').querySelector('tbody');
+            db.collection('internshipApplications').where('status', '==', 'archived').onSnapshot(snapshot => {
+                tableBody.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const row = tableBody.insertRow();
+                    row.insertCell().textContent = data.title || 'N/A';
+                    row.insertCell().textContent = data.full_name;
+                    row.insertCell().textContent = data.email;
+                    row.insertCell().textContent = data.phone;
+                    const actionsCell = row.insertCell();
+                    const activateButton = document.createElement('button');
+                    activateButton.textContent = 'Activate';
+                    activateButton.onclick = () => db.collection('internshipApplications').doc(doc.id).update({ status: 'active' });
+                    actionsCell.appendChild(activateButton);
+                    const deleteButton = document.createElement('button');
+                    deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                    deleteButton.onclick = () => {
+                        if (confirm('Are you sure you want to delete this intern record?')) {
+                            db.collection('internshipApplications').doc(doc.id).delete();
+                        }
+                    };
+                    actionsCell.appendChild(deleteButton);
+                });
+            });
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             showSection('registrations');
+            
             loadJobRegistrations();
             loadInternshipRegistrations();
-            loadJobListingsAdmin();
-            loadInternshipListingsAdmin();
+            
+            setupListingForm('add-job-form', 'jobs', 'job-id', 'job-title-input', 'job-location-input', 'job-description-input', 'job-deadline-input', 'job-category-select', 'cancel-job-edit');
+            setupListingForm('add-internship-form', 'internships', 'internship-id', 'internship-title-input', 'internship-location-input', 'internship-description-input', 'internship-deadline-input', 'internship-category-select', 'cancel-internship-edit');
+            
+            loadListings('jobs', 'job-listings-admin-table', 'add-job-form', 'job-id', 'job-title-input', 'job-location-input', 'job-description-input', 'job-deadline-input', 'job-category-select', 'cancel-job-edit');
+            loadListings('internships', 'internship-listings-admin-table', 'add-internship-form', 'internship-id', 'internship-title-input', 'internship-location-input', 'internship-description-input', 'internship-deadline-input', 'internship-category-select', 'cancel-internship-edit');
+            
+            loadActiveInterns();
+            loadArchivedInterns();
         });
-        
     </script>
 </body>
 </html>

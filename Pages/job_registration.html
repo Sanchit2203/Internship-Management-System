@@ -76,6 +76,7 @@
                     registrationData[key] = value;
                 });
                 registrationData.title = document.getElementById('job_title').value;
+                registrationData.status = 'pending'; // Set default status
 
                 const storageRef = storage.ref();
                 const resumeRef = storageRef.child('resumes/' + resumeFile.name);
