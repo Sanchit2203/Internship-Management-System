@@ -15,8 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="dropdown">
                     <button class="dropbtn">${username}</button>
                     <div class="dropdown-content">
-                        <a href="/Pages/user.html">Profile</a>
-                        <a href="#" id="logout-link">Logout</a>
+                        <a href="/Pages/user.html" style="padding: 12px 16px; display: block; text-decoration: none; color: black; font-weight: bold;">Dashboard</a>
+                        <a href="#" id="logout-link" style="padding: 12px 16px; display: block; text-decoration: none; color: black; font-weight: bold;">Logout</a>
                     </div>
                 </div>
             `;
