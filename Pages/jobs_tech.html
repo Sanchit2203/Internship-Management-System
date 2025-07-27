@@ -18,7 +18,8 @@
             <li><a href="../index.html">Home</a></li>
             <li><a href="jobs_listing.html">Jobs</a></li>
             <li><a href="internship_listing.html">Internships</a></li>
-            <li><a href="#" id="login-logout-link">Login</a></li>
+            <li id="auth-link"></li>
+            <li id="user-display" style="display:none; color: white; margin-left: 10px;"></li>
         </ul>
     </nav>
 
@@ -41,38 +42,11 @@
     </div>
 
     <script src="../main.js"></script>
+    <script src="../auth.js"></script>
     <script>
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        const auth = firebase.auth();
-        const loginLogoutLink = document.getElementById('login-logout-link');
-
-        // Function to handle logout
-        function handleLogout() {
-            auth.signOut().then(() => {
-                // Redirect to login page after logout
-                window.location.href = 'login.html';
-            }).catch((error) => {
-                console.error('Error signing out:', error);
-            });
-        }
-
-        // Check authentication state and update login/logout link
-        auth.onAuthStateChanged(function(user) {
-            if (user) {
-                // User is signed in
-                loginLogoutLink.textContent = 'Logout';
-                loginLogoutLink.href = '#'; // Prevent default link behavior
-                loginLogoutLink.removeEventListener('click', handleLogout);
-                loginLogoutLink.addEventListener('click', handleLogout);
-            } else {
-                // User is signed out
-                loginLogoutLink.textContent = 'Login';
-                loginLogoutLink.href = 'login.html'; // Link to login page
-                loginLogoutLink.removeEventListener('click', handleLogout);
-            }
-        });
 
         document.addEventListener('DOMContentLoaded', function () {
             loadJobListings('Tech');

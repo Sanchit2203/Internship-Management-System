@@ -19,8 +19,8 @@
             <li><a href="../index.html">Home</a></li>
             <li><a href="jobs_listing.html">Jobs</a></li>
             <li><a href="internship_listing.html">Internships</a></li>
-            <li><a href="user.html" id="user-dashboard-link" style="display: none;">Dashboard</a></li>
-            <li><a href="#" id="login-logout-link">Login</a></li>
+            <li id="auth-link"></li>
+            <li id="user-display" style="display:none; color: white; margin-left: 10px;"></li>
         </ul>
     </nav>
 
@@ -57,57 +57,16 @@
         <div id="feedback-message" style="text-align: center; margin-top: 20px;"></div>
     </div>
 
+    <script src="../auth.js"></script>
     <script>
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const storage = firebase.storage();
         const auth = firebase.auth();
-        const loginLogoutLink = document.getElementById('login-logout-link');
-        const userDashboardLink = document.getElementById('user-dashboard-link');
-
+        
         let currentUser = null;
-        let existingApplicationDocRef = null; // To store the document reference of the existing application
-
-        // Function to handle logout
-        function handleLogout() {
-            auth.signOut().then(() => {
-                // Redirect to login page after logout
-                window.location.href = 'login.html';
-            }).catch((error) => {
-                console.error('Error signing out:', error);
-            });
-        }
-
-        // Check authentication state and update login/logout link and dashboard link
-        auth.onAuthStateChanged(function(user) {
-            if (user) {
-                // User is signed in
-                currentUser = user;
-                loginLogoutLink.textContent = 'Logout';
-                loginLogoutLink.href = '#'; // Prevent default link behavior
-                loginLogoutLink.removeEventListener('click', handleLogout);
-                loginLogoutLink.addEventListener('click', handleLogout);
-
-                // Show user dashboard link
-                userDashboardLink.style.display = 'block';
-                userDashboardLink.href = 'user.html';
-
-                checkExistingApplication(); // Check for existing application after login
-            } else {
-                // User is signed out
-                loginLogoutLink.textContent = 'Login';
-                loginLogoutLink.href = 'login.html'; // Link to login page
-                loginLogoutLink.removeEventListener('click', handleLogout);
-
-                // Hide user dashboard link
-                userDashboardLink.style.display = 'none';
-
-                // If the user logs out from this page, redirect them to the login page.
-                // No need to set redirect_after_login here as they are already on the application page.
-                 window.location.href = 'login.html';
-            }
-        });
+        let existingApplicationDocRef = null;
 
         document.addEventListener('DOMContentLoaded', function () {
             const urlParams = new URLSearchParams(window.location.search);
@@ -120,70 +79,44 @@
             const feedbackMessage = document.getElementById('feedback-message');
             const submitButton = internshipApplicationForm.querySelector('input[type="submit"]');
 
-            // Function to check for existing application
             async function checkExistingApplication() {
-                console.log("checkExistingApplication called"); // Log when the function is called
-                if (!currentUser) {
-                    console.log("No current user, returning."); // Log if no user
-                    return; // Ensure user is logged in
-                }
+                if (!currentUser) return;
 
                 const internshipTitle = document.getElementById('internship_title').value;
-                if (!internshipTitle) {
-                    console.log("No internship title, returning."); // Log if no title
-                    return; // Ensure internship title is available
-                }
+                if (!internshipTitle) return;
 
                 try {
                     const urlParams = new URLSearchParams(window.location.search);
                     const applicationId = urlParams.get('id');
-                    console.log("Application ID from URL:", applicationId); // Log the application ID
 
                     let querySnapshot;
                     if (applicationId) {
-                         // Fetch by document ID if available (from user dashboard edit link)
                          const applicationDoc = await db.collection('internshipApplications').doc(applicationId).get();
-                         if (applicationDoc.exists) {
-                              console.log("Application document found:", applicationDoc.data()); // Log the document data
-                              querySnapshot = { docs: [applicationDoc] };
-                         } else {
-                              console.log("Application document not found."); // Log if document not found
-                              querySnapshot = { empty: true };
-                         }
+                         querySnapshot = applicationDoc.exists ? { docs: [applicationDoc] } : { empty: true };
                     } else {
-                         // Fetch by email, title, and userId for new applications or initial load
-                         console.log("No application ID in URL, querying by user, email, and title."); // Log if no ID in URL
                          querySnapshot = await db.collection('internshipApplications')
-                            .where('email', '==', currentUser.email) // Assuming email is unique per user
+                            .where('email', '==', currentUser.email)
                             .where('title', '==', internshipTitle)
-                            .where('userId', '==', currentUser.uid) // Added this condition
+                            .where('userId', '==', currentUser.uid)
                             .limit(1)
                             .get();
-                             console.log("Query result:", querySnapshot.docs.map(doc => doc.data())); // Log query results
                     }
 
                     if (querySnapshot.empty) {
-                        console.log("Query snapshot is empty."); // Log if snapshot is empty
                          document.getElementById('resume').setAttribute('required', '');
                     } else {
-                        console.log("Query snapshot is not empty, processing data."); // Log if snapshot is not empty
-                        // Existing application found
                         existingApplicationDocRef = querySnapshot.docs[0].ref;
                         const existingData = querySnapshot.docs[0].data();
-                        console.log("Existing data:", existingData); // Log the existing data
                         populateForm(existingData);
-                         document.getElementById('resume').removeAttribute('required'); // Resume is not required for editing
+                         document.getElementById('resume').removeAttribute('required');
                     }
                 } catch (error) {
-                    console.error('Error checking existing application:', error);
                     feedbackMessage.textContent = 'Error checking for existing application.';
                     feedbackMessage.style.color = 'red';
                 }
             }
 
-            // Function to populate the form with existing data
             function populateForm(data) {
-                console.log("populateForm called with data:", data); // Log data received by populateForm
                 document.getElementById('full_name').value = data.full_name || '';
                 document.getElementById('email').value = data.email || '';
                 document.getElementById('phone').value = data.phone || '';
@@ -191,10 +124,9 @@
                 document.getElementById('major').value = data.major || '';
                 document.getElementById('cover_letter').value = data.cover_letter || '';
 
-                // Display the name of the uploaded resume file
                 const resumeFileNameSpan = document.getElementById('resumeFileName');
                 if (data.resumeURL) {
-                    const fileName = data.resumeURL.split('%')[1].split('?')[0]; // Basic attempt to extract filename
+                    const fileName = data.resumeURL.split('%')[1].split('?')[0];
                      resumeFileNameSpan.textContent = 'Current Resume: ' + decodeURIComponent(fileName);
                 }
             }
@@ -211,62 +143,50 @@
                     registrationData[key] = value;
                 });
                 registrationData.title = document.getElementById('internship_title').value;
-                registrationData.status = 'pending'; // Set default status (can be updated on edit if needed)
-                registrationData.userId = currentUser.uid; // Add the user ID
+                registrationData.status = 'pending';
+                registrationData.userId = currentUser.uid;
 
                 try {
                     if (existingApplicationDocRef) {
-                        // Editing existing application
                          if (resumeFile && resumeFile.size > 0) {
-                             // Upload new resume if a file is selected
                              const storageRef = storage.ref();
-                             const resumeRef = storageRef.child('resumes/' + resumeFile.name);
+                             const resumeRef = storageRef.child(`resumes/${currentUser.uid}-${resumeFile.name}`);
                              const snapshot = await resumeRef.put(resumeFile);
-                             const downloadURL = await snapshot.ref.getDownloadURL();
-                             registrationData.resumeURL = downloadURL;
-                         } else {
-                             // No new resume uploaded, keep the existing one
-                             // We don't need to do anything here, as existingData already contains resumeURL if it exists
-                              delete registrationData.resumeURL; // Do not update resumeURL if no new file is selected
+                             registrationData.resumeURL = await snapshot.ref.getDownloadURL();
                          }
                         await existingApplicationDocRef.update(registrationData);
                         feedbackMessage.textContent = 'Internship application updated successfully!';
                         feedbackMessage.style.color = 'green';
                     } else {
-                        // Submitting a new application
                          if (!resumeFile || resumeFile.size === 0) {
                             feedbackMessage.textContent = 'Please upload your resume.';
                             feedbackMessage.style.color = 'red';
                             return;
                          }
                         const storageRef = storage.ref();
-                        const resumeRef = storageRef.child('resumes/' + resumeFile.name);
-
+                        const resumeRef = storageRef.child(`resumes/${currentUser.uid}-${resumeFile.name}`);
                         const snapshot = await resumeRef.put(resumeFile);
-                        const downloadURL = await snapshot.ref.getDownloadURL();
-                        registrationData.resumeURL = downloadURL;
+                        registrationData.resumeURL = await snapshot.ref.getDownloadURL();
 
                         await db.collection('internshipApplications').add(registrationData);
                         feedbackMessage.textContent = 'Internship application submitted successfully!';
                         feedbackMessage.style.color = 'green';
-                        // After successful submission, update the button to 'Edit'
-
-                         document.getElementById('resume').removeAttribute('required'); // Resume is not required for editing
-                        // Re-check existing application to get the doc ref for future edits
                         checkExistingApplication();
                     }
                 } catch (error) {
-                    console.error('Error saving application:', error);
                     feedbackMessage.textContent = 'Error saving internship application. Please try again.';
                     feedbackMessage.style.color = 'red';
                 }
             });
 
-            // Initial check when the page loads after authentication state is determined
-            if (auth.currentUser) {
-                 currentUser = auth.currentUser;
-                 checkExistingApplication();
-            }
+            auth.onAuthStateChanged(function(user) {
+                if (user) {
+                    currentUser = user;
+                    checkExistingApplication();
+                } else {
+                     window.location.href = 'login.html';
+                }
+            });
         });
     </script>
 </body>

@@ -9,6 +9,7 @@
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="../firebase-config.js"></script>
 </head>
 <body>
@@ -28,11 +29,13 @@
                 <div class="logo"><img src="../image.png" alt="CareerConnect Logo" class="navbar-logo"></div>
                 <ul class="nav-links">
                     <li><a href="../index.html">Home</a></li>
-                    <li><a href="../Pages/login.html">Logout</a></li>
+                    <li id="auth-link"></li>
+                    <li id="user-display" style="display:none; color: white; margin-left: 10px;"></li>
                 </ul>
             </nav>
             <div id="registrations" class="content-section active">
-                <h1>Registrations</h1>
+                <!-- Registrations Content -->
+                 <h1>Registrations</h1>
                 <div class="container">
                     <h2>Job Registrations</h2>
                     <table id="job-registrations-table">
@@ -70,7 +73,7 @@
             </div>
             <div id="job-listings" class="content-section">
                 <!-- Job Listings Content -->
-                <h1>Job Listings</h1>
+                 <h1>Job Listings</h1>
                 <div class="container">
                     <h2>Add/Edit Job Listing</h2>
                     <form id="add-job-form">
@@ -189,6 +192,7 @@
         </main>
     </div>
 
+    <script src="../auth.js"></script>
     <script>
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();

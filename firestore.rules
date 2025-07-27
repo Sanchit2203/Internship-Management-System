@@ -1,43 +1,34 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Allow create, read, write, and delete access to the 'jobs' collection (TEMPORARY - NOT SECURE)
-    match /jobs/{docId} {
-      allow create, read, write, delete: if true;
+
+    // Publicly readable collections
+    match /jobs/{jobId} {
+      allow read: if true;
+      allow write: if request.auth != null; // Only authenticated users can create/edit/delete
     }
 
-    // Allow create, read, write, and delete access to the 'internships' collection (TEMPORARY - NOT SECURE)
-    match /internships/{docId} {
-      allow create, read, write, delete: if true;
+    match /internships/{internshipId} {
+      allow read: if true;
+      allow write: if request.auth != null; // Only authenticated users can create/edit/delete
     }
 
-    // Allow authenticated users to create and read their own internship application
-    // and update their own internship application
-    match /internshipApplications/{docId} {
-      allow create: if request.auth != null;
-      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
-      allow delete: if false;
-    }
-
-    // Allow authenticated users to create and read their own job application
-    // and update their own job application
-    match /jobApplications/{docId} {
-      allow create: if request.auth != null;
-      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
-      allow delete: if false;
-    }
-
-    // Allow authenticated users to create their own user document in the 'users' collection
-    // and read their own user document.
+    // Users can only read their own user data
     match /users/{userId} {
-      allow create: if request.auth != null && request.auth.uid == userId;
-      allow read: if request.auth != null && request.auth.uid == userId;
-      // Add rules for admin read access later if needed
+      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Deny access to all other documents by default
-    match /{document=**} {
-      allow read, write: if false;
+    // Application collections
+    match /jobApplications/{applicationId} {
+      allow create: if request.auth != null; // Allow authenticated users to create
+      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId; // User can manage their own
+      allow list, delete, update: if request.auth != null; // Admin can manage all
+    }
+
+    match /internshipApplications/{applicationId} {
+      allow create: if request.auth != null; // Allow authenticated users to create
+      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId; // User can manage their own
+      allow list, delete, update: if request.auth != null; // Admin can manage all
     }
   }
 }
