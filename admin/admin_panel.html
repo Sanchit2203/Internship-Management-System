@@ -216,12 +216,13 @@
 
         document.querySelectorAll('.sidebar ul li a').forEach(link => {
             link.addEventListener('click', (e) => {
-                e.preventDefault();
+                // e.preventDefault();
                 // Check if the clicked link has a data-target (for internal sections) or an href (for external pages)
                 if (link.dataset.target) {
+                    e.preventDefault();
                     showSection(link.dataset.target);
                 } else if (link.href) {
-                    window.location.href = link.href; // Navigate to the new page
+                    // allow default href behavior
                 }
             });
         });
@@ -391,10 +392,10 @@
                     const certificateCell = row.insertCell();
                     const generateCertificateButton = document.createElement('button');
                     generateCertificateButton.textContent = 'Generate Certificate';
-                    // You would add functionality here to generate the certificate
                     generateCertificateButton.onclick = () => {
-                        alert('Generate certificate for ' + data.full_name);
-                        // Implement certificate generation logic here
+                        const name = encodeURIComponent(data.full_name);
+                        const title = encodeURIComponent(data.title);
+                        window.location.href = `certificate_generator.html?name=${name}&title=${title}`;
                     };
                     certificateCell.appendChild(generateCertificateButton);
 

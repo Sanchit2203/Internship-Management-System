@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Certificate Generator</title>
+    <title>Certificate Generator</title>
     
-    <!-- Libraries -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.11/interact.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -15,7 +14,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        :root {
+            --primary-color: #4a5568;
+            --secondary-color: #f7fafc;
+            --text-color: #2d3748;
+            --bg-color: #edf2f7;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
         .preview-area {
             background-size: cover;
             background-position: center;
@@ -24,198 +36,230 @@
             transition: all 0.3s ease-in-out;
             position: relative;
             overflow: hidden;
+            border: 1px solid var(--border-color);
+            background-color: white;
         }
+
         .draggable {
             touch-action: none;
             user-select: none;
             position: absolute !important;
             box-sizing: border-box;
-            border: 2px dashed rgba(0, 123, 255, 0);
+            border: 2px dashed transparent;
             transition: border-color 0.2s;
             padding: 5px;
-        }
-        .draggable.can-drag {
             cursor: move;
         }
+
         .draggable.selected {
-            border-color: rgba(0, 123, 255, 0.5);
+            border-color: var(--primary-color);
             z-index: 1000;
         }
+
         .tab-btn {
-            transition: all 0.2s;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: #718096;
         }
+
         .tab-btn.active {
-            border-color: #4f46e5;
-            background-color: #eef2ff;
-            color: #4f46e5;
+            border-bottom-color: var(--primary-color);
+            color: var(--primary-color);
         }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: #fff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(74, 85, 104, 0.2);
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .orientation-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2d3748;
+        }
+
         .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #4f46e5;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid white;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             animation: spin 1s linear infinite;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        /* Hide file input visually but keep it accessible */
-        .hidden-file-input {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border-width: 0;
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .controls-panel {
+             background: white; 
+             padding: 2rem; 
+             border-radius: 8px; 
+             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .space-y-4 > *:not(:last-child) {
+            margin-bottom: 1rem;
+        }
+        .hidden {
+            display: none;
         }
     </style>
 </head>
-<body class="bg-gray-100">
+<body>
+    <nav class="navbar">
+        <div class="logo"><img src="../image.png" alt="CareerConnect Logo" class="navbar-logo"></div>
+        <ul class="nav-links">
+            <li><a href="admin_panel.html">Admin Home</a></li>
+        </ul>
+    </nav>
 
-    <div class="container mx-auto p-4 lg:p-8">
-        <header class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-gray-900">Ultimate Certificate Generator</h1>
-            <p class="text-lg text-gray-600 mt-2">Design, customize, and batch-generate certificates.</p>
-        </header>
-
-        <main class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Left Column: Controls -->
-            <div class="lg:col-span-4 bg-white p-6 rounded-lg shadow-md">
-                <!-- Tabs -->
-                <div class="mb-6 border-b border-gray-200">
-                    <nav class="flex -mb-px" aria-label="Tabs">
-                        <button class="tab-btn active" data-tab="content">Content</button>
-                        <button class="tab-btn" data-tab="customize">Customize</button>
-                        <button class="tab-btn" data-tab="batch">Batch</button>
-                    </nav>
+    <div class="container" style="max-width: 1400px; margin: auto; padding: 2rem;">
+        <main style="display: grid; grid-template-columns: 400px 1fr; gap: 2rem;">
+            <div class="controls-panel">
+                <div class="tabs" style="display: flex; border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem;">
+                    <button class="tab-btn active" data-tab="content">Content</button>
+                    <button class="tab-btn" data-tab="customize">Customize</button>
+                    <button class="tab-btn" data-tab="batch">Batch</button>
                 </div>
 
-                <!-- Tab Panels -->
                 <div id="tab-panels">
-                    <!-- Content Tab -->
                     <div id="tab-content" class="space-y-4">
-                        <h3 class="text-xl font-bold">Certificate Content</h3>
+                        <h3 style="font-size: 1.25rem; font-weight: 600;">Certificate Content</h3>
                         <div>
-                            <label for="field-recipientName" class="block text-sm font-medium text-gray-700">Recipient's Name</label>
+                            <label for="field-recipientName" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Recipient's Name</label>
                             <input type="text" id="field-recipientName" data-field="recipientName" class="form-input" value="Jane Doe">
                         </div>
                         <div>
-                            <label for="field-courseName" class="block text-sm font-medium text-gray-700">Course/Internship Title</label>
+                            <label for="field-courseName" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Course/Internship Title</label>
                             <input type="text" id="field-courseName" data-field="courseName" class="form-input" value="Web Development Masterclass">
                         </div>
-                         <div>
-                            <label for="field-completionText" class="block text-sm font-medium text-gray-700">Completion Text</label>
+                        <div>
+                            <label for="field-completionText" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Completion Text</label>
                             <input type="text" id="field-completionText" data-field="completionText" class="form-input" value="has successfully completed">
                         </div>
                         <div>
-                            <label for="field-date" class="block text-sm font-medium text-gray-700">Date of Issue</label>
+                            <label for="field-date" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Date of Issue</label>
                             <input type="date" id="field-date" data-field="date" class="form-input">
                         </div>
                     </div>
 
-                    <!-- Customize Tab -->
                     <div id="tab-customize" class="hidden space-y-4">
-                        <h3 class="text-xl font-bold">Layout & Style</h3>
+                        <h3 style="font-size: 1.25rem; font-weight: 600;">Layout & Style</h3>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Orientation</label>
-                            <div class="mt-2 grid grid-cols-2 gap-3">
-                                <button id="orientation-landscape" class="orientation-btn active"><i class="fas fa-grip-horizontal mr-2"></i>Landscape</button>
-                                <button id="orientation-portrait" class="orientation-btn"><i class="fas fa-grip-vertical mr-2"></i>Portrait</button>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Orientation</label>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button id="orientation-landscape" class="orientation-btn btn active">Landscape</button>
+                                <button id="orientation-portrait" class="orientation-btn btn">Portrait</button>
                             </div>
                         </div>
                         <div>
-                            <label for="bg-image" class="block text-sm font-medium text-gray-700">Background Image</label>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Background Image</label>
                             <input type="file" id="bg-image" accept="image/*" class="form-input">
                         </div>
-                        <div id="element-styler" class="hidden border-t pt-4">
-                            <h4 class="text-lg font-bold mb-2" id="styler-label"></h4>
-                            <div class="grid grid-cols-2 gap-4">
+                        <div id="element-styler" class="hidden" style="border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 1rem;">
+                            <h4 id="styler-label" style="font-weight: 600; margin-bottom: 1rem;"></h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                                 <div>
-                                    <label class="text-sm">Font Size</label>
+                                    <label>Font Size (px)</label>
                                     <input type="number" id="styler-fontSize" class="form-input">
                                 </div>
                                 <div>
-                                    <label class="text-sm">Font Family</label>
-                                    <select id="styler-fontFamily" class="form-input">
+                                    <label>Font Family</label>
+                                    <select id="styler-fontFamily" class="form-select">
                                         <option value="'Playfair Display', serif">Serif</option>
                                         <option value="'Inter', sans-serif">Sans-serif</option>
                                         <option value="'Roboto Mono', monospace">Monospace</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="text-sm">Color</label>
-                                    <input type="color" id="styler-color" class="w-full h-10 p-1 border rounded-md">
+                                    <label>Color</label>
+                                    <input type="color" id="styler-color" class="form-input" style="padding: 5px;">
                                 </div>
-                                <div>
-                                    <label class="text-sm">Bold</label>
-                                    <input type="checkbox" id="styler-fontWeight" class="h-5 w-5 rounded">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="styler-fontWeight" style="width: 20px; height: 20px;">
+                                    <label>Bold</label>
                                 </div>
                             </div>
-                             <div class="mt-4">
-                                <label class="text-sm">Alignment</label>
-                                <div class="grid grid-cols-3 gap-2 mt-1">
-                                    <button class="align-btn" data-align="left"><i class="fas fa-align-left"></i></button>
-                                    <button class="align-btn" data-align="center"><i class="fas fa-align-center"></i></button>
-                                    <button class="align-btn" data-align="right"><i class="fas fa-align-right"></i></button>
+                            <div style="margin-top: 1rem;">
+                                <label style="display: block; margin-bottom: 0.5rem;">Alignment</label>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="align-btn btn" data-align="left"><i class="fas fa-align-left"></i></button>
+                                    <button class="align-btn btn" data-align="center"><i class="fas fa-align-center"></i></button>
+                                    <button class="align-btn btn" data-align="right"><i class="fas fa-align-right"></i></button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Batch Tab -->
                     <div id="tab-batch" class="hidden space-y-4">
-                        <h3 class="text-xl font-bold">Batch Generation</h3>
-                        <p class="text-sm text-gray-600">Upload an Excel (.xlsx) file with columns like 'Name', 'Title', 'Date'.</p>
+                        <h3 style="font-size: 1.25rem; font-weight: 600;">Batch Generation</h3>
+                        <p style="font-size: 0.9rem; color: #718096;">Upload an Excel (.xlsx) file with columns: 'Name', 'Title', 'Date'.</p>
                         <input type="file" id="excel-file" accept=".xlsx" class="form-input">
-                        <button id="batch-generate-btn" class="btn-primary w-full flex justify-center items-center">
+                        <button id="batch-generate-btn" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
                             <span id="batch-btn-text">Generate from Excel</span>
-                            <div id="batch-loader" class="loader hidden ml-3"></div>
+                            <div id="batch-loader" class="loader hidden" style="margin-left: 10px;"></div>
                         </button>
                     </div>
                 </div>
 
-                <div class="mt-8 border-t pt-6">
-                     <button id="generate-pdf-btn" class="btn-primary w-full !text-lg">Generate Single PDF</button>
+                <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                     <button id="generate-pdf-btn" class="btn btn-primary" style="width: 100%; font-size: 1.1rem;">
+                        <i class="fas fa-file-pdf" style="margin-right: 0.5rem;"></i>
+                        Generate Single PDF
+                     </button>
                 </div>
             </div>
 
-            <!-- Right Column: Live Preview -->
-            <div class="lg:col-span-8">
-                <div id="preview-container" class="w-full">
-                    <div id="preview-area" class="preview-area mx-auto bg-white">
-                        <div id="el-certificateTitle" data-id="certificateTitle" class="draggable can-drag">Certificate of Completion</div>
-                        <div id="el-completionText" data-id="completionText" class="draggable can-drag">has successfully completed</div>
-                        <div id="el-recipientName" data-id="recipientName" class="draggable can-drag">Jane Doe</div>
-                        <div id="el-courseName" data-id="courseName" class="draggable can-drag">Web Development Masterclass</div>
-                        <div id="el-date" data-id="date" class="draggable can-drag">July 28, 2025</div>
-                        <div id="el-signature" data-id="signature" class="draggable can-drag">_________________________</div>
-                        <div id="el-signatureTitle" data-id="signatureTitle" class="draggable can-drag">Authorized Signatory</div>
-                    </div>
+            <div id="preview-container" style="background: var(--secondary-color); padding: 2rem; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                <div id="preview-area" class="preview-area">
+                    <div id="el-certificateTitle" data-id="certificateTitle" class="draggable">Certificate of Completion</div>
+                    <div id="el-completionText" data-id="completionText" class="draggable">has successfully completed</div>
+                    <div id="el-recipientName" data-id="recipientName" class="draggable">Jane Doe</div>
+                    <div id="el-courseName" data-id="courseName" class="draggable">Web Development Masterclass</div>
+                    <div id="el-date" data-id="date" class="draggable">July 28, 2025</div>
+                    <div id="el-signature" data-id="signature" class="draggable">_________________________</div>
+                    <div id="el-signatureTitle" data-id="signatureTitle" class="draggable">Authorized Signatory</div>
                 </div>
             </div>
         </main>
     </div>
-    
-    <!-- Modal for AI Suggestions / Template Loading -->
-    <div id="modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="modal-title" class="text-xl font-bold">Modal Title</h3>
-                <button id="close-modal-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
-            </div>
-            <div id="modal-body" class="space-y-2 max-h-80 overflow-y-auto"></div>
-        </div>
-    </div>
-
 
 <script>
-// --- INITIALIZATION ---
 window.jsPDF = window.jspdf.jsPDF;
 let state = {};
 
-// --- DOM ELEMENTS ---
 const previewArea = document.getElementById('preview-area');
 const styler = {
     panel: document.getElementById('element-styler'),
@@ -228,21 +272,32 @@ const styler = {
 };
 let selectedElementId = null;
 
-// --- STATE MANAGEMENT ---
 function initializeState() {
     state = {
         orientation: 'landscape',
         backgroundImage: null,
         elements: {
-            certificateTitle: { text: "Certificate of Completion", x: 0, y: 15, style: { fontSize: 50, fontFamily: "'Playfair Display', serif", color: '#000000', fontWeight: 'bold', textAlign: 'center' } },
-            completionText:   { text: "has successfully completed", x: 0, y: 35, style: { fontSize: 20, fontFamily: "'Inter', sans-serif", color: '#333333', fontWeight: 'normal', textAlign: 'center' } },
-            recipientName:    { text: "Jane Doe", x: 0, y: 45, style: { fontSize: 40, fontFamily: "'Playfair Display', serif", color: '#000000', fontWeight: 'bold', textAlign: 'center' } },
-            courseName:       { text: "Web Development Masterclass", x: 0, y: 60, style: { fontSize: 25, fontFamily: "'Inter', sans-serif", color: '#333333', fontWeight: 'normal', textAlign: 'center' } },
-            date:             { text: "July 28, 2025", x: 0, y: 75, style: { fontSize: 18, fontFamily: "'Inter', sans-serif", color: '#555555', fontWeight: 'normal', textAlign: 'center' } },
-            signature:        { text: "_________________________", x: 20, y: 85, style: { fontSize: 18, fontFamily: "'Inter', sans-serif", color: '#000000', fontWeight: 'normal', textAlign: 'left' } },
-            signatureTitle:   { text: "Authorized Signatory", x: 20, y: 90, style: { fontSize: 16, fontFamily: "'Inter', sans-serif", color: '#333333', fontWeight: 'normal', textAlign: 'left' } },
+            certificateTitle: { text: "Certificate of Completion", x: 50, y: 20, style: { fontSize: 30, fontFamily: "'Playfair Display', serif", color: '#000000', fontWeight: 'bold', textAlign: 'center' } },
+            completionText:   { text: "proudly presented to", x: 50, y: 40, style: { fontSize: 20, fontFamily: "'Inter', sans-serif", color: '#333333', fontWeight: 'normal', textAlign: 'center' } },
+            recipientName:    { text: "Name", x: 50, y: 50, style: { fontSize: 40, fontFamily: "'Playfair Display', serif", color: '#000000', fontWeight: 'bold', textAlign: 'center' } },
+            courseName:       { text: "for successfully completing the Web Development Masterclass", x: 50, y: 65, style: { fontSize: 22, fontFamily: "'Inter', sans-serif", color: '#333333', fontWeight: 'normal', textAlign: 'center' } },
+            date:             { text: "Issued on", x: 50, y: 80, style: { fontSize: 18, fontFamily: "'Inter', sans-serif", color: '#555555', fontWeight: 'normal', textAlign: 'center' } },
+            signature:        { text: "_________________________", x: 20, y: 88, style: { fontSize: 18, fontFamily: "'Inter', sans-serif", color: '#000000', fontWeight: 'normal', textAlign: 'left' } },
+            signatureTitle:   { text: "Authorized Signatory", x: 20, y: 92, style: { fontSize: 16, fontFamily: "'Inter', sans-serif", color: '#333333', fontWeight: 'normal', textAlign: 'left' } },
         }
     };
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const name = urlParams.get('name');
+    const title = urlParams.get('title');
+
+    if (name) {
+        document.getElementById('field-recipientName').value = decodeURIComponent(name);
+    }
+    if (title) {
+        document.getElementById('field-courseName').value = decodeURIComponent(title);
+    }
+
     document.getElementById('field-date').valueAsDate = new Date();
     updateStateFromInput();
     renderPreview();
@@ -252,31 +307,31 @@ function updateStateFromInput() {
     document.querySelectorAll('#tab-content .form-input').forEach(input => {
         const field = input.dataset.field;
         if (state.elements[field]) {
-            if (input.type === 'date' && input.value) {
-                const dateObj = new Date(input.value);
-                const correctedDate = new Date(dateObj.getTime() + dateObj.getTimezoneOffset() * 60000);
-                state.elements[field].text = correctedDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-            } else {
-                state.elements[field].text = input.value;
-            }
+            state.elements[field].text = input.value;
         }
     });
     renderPreview();
 }
 
-// --- RENDER LOGIC ---
 function renderPreview() {
     const isLandscape = state.orientation === 'landscape';
-    const scale = 0.5; // Adjust this to fit your screen layout
-    const baseWidth = isLandscape ? 842 : 595;
-    const baseHeight = isLandscape ? 595 : 842;
-    
-    previewArea.style.width = `${baseWidth}px`;
-    previewArea.style.height = `${baseHeight}px`;
-    previewArea.style.transform = `scale(${scale})`;
-    previewArea.style.transformOrigin = 'top left';
-    document.getElementById('preview-container').style.height = `${baseHeight * scale}px`;
+    const container = document.getElementById('preview-container');
+    const containerWidth = container.offsetWidth - 64; // padding
+    const containerHeight = container.offsetHeight - 64; // padding
 
+    const aspectRatio = isLandscape ? 842 / 595 : 595 / 842;
+    let width, height;
+
+    if (containerWidth / containerHeight > aspectRatio) {
+        height = containerHeight;
+        width = height * aspectRatio;
+    } else {
+        width = containerWidth;
+        height = width / aspectRatio;
+    }
+    
+    previewArea.style.width = `${width}px`;
+    previewArea.style.height = `${height}px`;
     previewArea.style.backgroundImage = state.backgroundImage ? `url(${state.backgroundImage})` : 'none';
 
     for (const id in state.elements) {
@@ -284,53 +339,46 @@ function renderPreview() {
         const el = document.getElementById(`el-${id}`);
         if (el) {
             el.textContent = elData.text;
-            el.style.left = `${elData.x}%`;
-            el.style.top = `${elData.y}%`;
-            
-            const widthPercentage = 100 - elData.x;
-            el.style.width = elData.style.textAlign === 'center' ? '100%' : `${widthPercentage}%`;
-            el.style.transform = elData.style.textAlign === 'center' ? 'translateX(-50%)' : 'none';
-            if (elData.style.textAlign === 'center') {
-                el.style.left = '50%';
-            } else {
-                 el.style.left = `${elData.x}%`;
-            }
+            el.style.fontSize = `${elData.style.fontSize}px`;
+            el.style.fontFamily = elData.style.fontFamily;
+            el.style.color = elData.style.color;
+            el.style.fontWeight = elData.style.fontWeight;
+            el.style.textAlign = elData.style.textAlign;
 
-            Object.assign(el.style, elData.style);
+            el.style.position = 'absolute';
+            el.style.top = `${elData.y}%`;
+            el.style.left = `${elData.x}%`;
+            
+            if (elData.style.textAlign === 'center') {
+                el.style.transform = 'translateX(-50%)';
+            } else {
+                el.style.transform = 'none';
+            }
         }
     }
 }
 
-// --- INTERACTIVITY (DRAG & DROP) ---
 interact('.draggable').draggable({
     listeners: {
         move(event) {
             const target = event.target;
             const id = target.dataset.id;
             if (!state.elements[id]) return;
-            
+
             const elData = state.elements[id];
             const previewRect = previewArea.getBoundingClientRect();
-
-            // Calculate movement delta as a percentage of the preview area's dimensions
+            
             const dxPercent = (event.dx / previewRect.width) * 100;
             const dyPercent = (event.dy / previewRect.height) * 100;
 
-            elData.x = (parseFloat(elData.x) || 0) + dxPercent;
-            elData.y = (parseFloat(elData.y) || 0) + dyPercent;
-
-            // Clamp values to stay within bounds
-            elData.x = Math.max(0, Math.min(100, elData.x));
-            elData.y = Math.max(0, Math.min(100, elData.y));
+            elData.x = Math.max(0, Math.min(100, (parseFloat(elData.x) || 0) + dxPercent));
+            elData.y = Math.max(0, Math.min(100, (parseFloat(elData.y) || 0) + dyPercent));
 
             renderPreview();
         }
     }
 });
 
-// --- UI EVENT LISTENERS ---
-
-// Tab switching
 document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -338,17 +386,8 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
         document.querySelectorAll('#tab-panels > div').forEach(p => p.classList.add('hidden'));
         document.getElementById(`tab-${btn.dataset.tab}`).classList.remove('hidden');
     });
-    btn.classList.add('py-4', 'px-1', 'text-center', 'border-b-2', 'font-medium', 'text-sm', 'border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300', 'flex-1');
 });
 
-
-// Content input
-document.querySelectorAll('#tab-content .form-input').forEach(input => {
-    input.addEventListener('input', updateStateFromInput);
-    input.classList.add('mt-1', 'block', 'w-full', 'px-3', 'py-2', 'bg-white', 'border', 'border-gray-300', 'rounded-md', 'shadow-sm', 'focus:outline-none', 'focus:ring-indigo-500', 'focus:border-indigo-500');
-});
-
-// Orientation buttons
 document.querySelectorAll('.orientation-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         document.querySelectorAll('.orientation-btn').forEach(b => b.classList.remove('active'));
@@ -356,13 +395,12 @@ document.querySelectorAll('.orientation-btn').forEach(btn => {
         state.orientation = btn.id.includes('landscape') ? 'landscape' : 'portrait';
         renderPreview();
     });
-    btn.classList.add('p-2', 'border', 'rounded-md', 'flex', 'items-center', 'justify-center');
-    if(!btn.classList.contains('active')) btn.classList.add('bg-white');
 });
-document.querySelectorAll('.orientation-btn.active').forEach(b => b.classList.add('bg-indigo-100', 'text-indigo-700', 'border-indigo-300'));
 
+document.querySelectorAll('#tab-content .form-input').forEach(input => {
+    input.addEventListener('input', updateStateFromInput);
+});
 
-// Background image
 document.getElementById('bg-image').addEventListener('change', (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -375,7 +413,6 @@ document.getElementById('bg-image').addEventListener('change', (event) => {
     }
 });
 
-// Element selection for styling
 previewArea.addEventListener('click', (event) => {
     const target = event.target.closest('.draggable');
     document.querySelectorAll('.draggable').forEach(d => d.classList.remove('selected'));
@@ -393,16 +430,16 @@ previewArea.addEventListener('click', (event) => {
 function updateStylerUI() {
     if (!selectedElementId) return;
     const style = state.elements[selectedElementId].style;
-    styler.label.textContent = `Styling: ${state.elements[selectedElementId].text.substring(0,20)}`;
+    const text = state.elements[selectedElementId].text;
+    styler.label.textContent = `Styling: "${text.substring(0,20)}${text.length > 20 ? '...' : ''}"`;
     styler.fontSize.value = style.fontSize;
     styler.fontFamily.value = style.fontFamily;
     styler.color.value = style.color;
     styler.fontWeight.checked = style.fontWeight === 'bold';
     styler.alignBtns.forEach(b => b.classList.remove('active'));
-    document.querySelector(`.align-btn[data-align="${style.textAlign}"]`).classList.add('active');
+    document.querySelector(`.align-btn[data-align="${style.textAlign}"]`)?.classList.add('active');
 }
 
-// Styler input changes
 styler.fontSize.addEventListener('input', (e) => { if(selectedElementId) state.elements[selectedElementId].style.fontSize = e.target.value; renderPreview(); });
 styler.fontFamily.addEventListener('change', (e) => { if(selectedElementId) state.elements[selectedElementId].style.fontFamily = e.target.value; renderPreview(); });
 styler.color.addEventListener('input', (e) => { if(selectedElementId) state.elements[selectedElementId].style.color = e.target.value; renderPreview(); });
@@ -411,15 +448,12 @@ styler.alignBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         if(selectedElementId) {
             state.elements[selectedElementId].style.textAlign = btn.dataset.align;
-            styler.alignBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            updateStylerUI();
             renderPreview();
         }
     });
-    btn.classList.add('p-2', 'border', 'rounded-md');
 });
 
-// --- PDF GENERATION ---
 async function generatePdf(data) {
     const doc = new jsPDF({ orientation: state.orientation, unit: 'pt', format: 'a4' });
     const width = doc.internal.pageSize.getWidth();
@@ -427,11 +461,8 @@ async function generatePdf(data) {
 
     if (state.backgroundImage) {
         try {
-            const imgProps = doc.getImageProperties(state.backgroundImage);
-            doc.addImage(state.backgroundImage, imgProps.fileType, 0, 0, width, height);
-        } catch(e) {
-            console.error("Error adding background image to PDF:", e);
-        }
+            doc.addImage(state.backgroundImage, 'PNG', 0, 0, width, height);
+        } catch(e) { console.error("Error adding background image:", e); }
     }
 
     for (const id in state.elements) {
@@ -442,17 +473,10 @@ async function generatePdf(data) {
         doc.setFontSize(elData.style.fontSize);
         doc.setTextColor(elData.style.color);
 
-        let xPos;
-        if (elData.style.textAlign === 'center') {
-            xPos = width / 2;
-        } else if (elData.style.textAlign === 'right') {
-            xPos = (elData.x / 100) * width + el.offsetWidth; // This might need adjustment
-        } else {
-            xPos = (elData.x / 100) * width;
-        }
+        const xPos = (elData.x / 100) * width;
         const yPos = (elData.y / 100) * height;
 
-        doc.text(text, xPos, yPos, { align: elData.style.textAlign });
+        doc.text(text, xPos, yPos, { align: elData.style.textAlign, baseline: 'top' });
     }
     return doc;
 }
@@ -461,71 +485,61 @@ document.getElementById('generate-pdf-btn').addEventListener('click', async () =
     const doc = await generatePdf({
         recipientName: state.elements.recipientName.text,
         courseName: state.elements.courseName.text,
-        date: state.elements.date.text
+        date: state.elements.date.text,
+        completionText: state.elements.completionText.text
     });
     doc.save(`${state.elements.recipientName.text.replace(/\s/g, '_')}_certificate.pdf`);
 });
 
-// --- BATCH GENERATION ---
 document.getElementById('batch-generate-btn').addEventListener('click', async () => {
     const file = document.getElementById('excel-file').files[0];
     if (!file) { alert('Please select an Excel file.'); return; }
 
-    document.getElementById('batch-loader').classList.remove('hidden');
-    document.getElementById('batch-btn-text').textContent = 'Processing...';
+    const loader = document.getElementById('batch-loader');
+    const btnText = document.getElementById('batch-btn-text');
+    loader.classList.remove('hidden');
+    btnText.textContent = 'Processing...';
 
     const reader = new FileReader();
     reader.onload = async (e) => {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-        const json = XLSX.utils.sheet_to_json(worksheet);
+        try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            const json = XLSX.utils.sheet_to_json(worksheet);
 
-        const zip = new JSZip();
-        for (const row of json) {
-            const name = row.Name || row.name || 'Unnamed';
-            const doc = await generatePdf({
-                recipientName: name,
-                courseName: row.Title || row.title || state.elements.courseName.text,
-                date: row.Date || row.date || state.elements.date.text,
-                completionText: row.CompletionText || row.completiontext || state.elements.completionText.text
-            });
-            zip.file(`${name.replace(/\s/g, '_')}.pdf`, await doc.output('blob'));
-        }
+            const zip = new JSZip();
+            for (const row of json) {
+                const name = row.Name || row.name || 'Unnamed';
+                const doc = await generatePdf({
+                    recipientName: name,
+                    courseName: row.Title || row.title || state.elements.courseName.text,
+                    date: row.Date || row.date || state.elements.date.text,
+                    completionText: row.CompletionText || row.completiontext || state.elements.completionText.text
+                });
+                zip.file(`${name.replace(/\s/g, '_')}.pdf`, await doc.output('blob'));
+            }
 
-        zip.generateAsync({ type: 'blob' }).then(content => {
+            const content = await zip.generateAsync({ type: 'blob' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(content);
             link.download = 'certificates.zip';
+            document.body.appendChild(link);
             link.click();
-            document.getElementById('batch-loader').classList.add('hidden');
-            document.getElementById('batch-btn-text').textContent = 'Generate from Excel';
-        });
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error('Error during batch generation:', error);
+            alert('An error occurred during batch generation. Please check the console.');
+        } finally {
+            loader.classList.add('hidden');
+            btnText.textContent = 'Generate from Excel';
+        }
     };
     reader.readAsArrayBuffer(file);
 });
 
-
-// --- MODAL UTILS ---
-function showModal(title) {
-    document.getElementById('modal-title').textContent = title;
-    document.getElementById('modal').classList.remove('hidden');
-    document.getElementById('modal').classList.add('flex');
-}
-function hideModal() {
-    document.getElementById('modal').classList.add('hidden');
-    document.getElementById('modal').classList.remove('flex');
-}
-document.getElementById('close-modal-btn').addEventListener('click', hideModal);
-
-
-// --- STYLING UTILS ---
-document.querySelectorAll('.btn-primary').forEach(b => b.classList.add('py-2', 'px-4', 'bg-indigo-600', 'text-white', 'font-semibold', 'rounded-lg', 'shadow-md', 'hover:bg-indigo-700', 'focus:outline-none', 'focus:ring-2', 'focus:ring-indigo-500', 'focus:ring-opacity-75'));
-document.querySelectorAll('.btn-secondary').forEach(b => b.classList.add('py-2', 'px-4', 'bg-gray-200', 'text-gray-800', 'font-semibold', 'rounded-lg', 'hover:bg-gray-300', 'focus:outline-none'));
-
-
-// --- INITIALIZE APP ---
+window.addEventListener('resize', renderPreview);
 initializeState();
 </script>
 </body>
