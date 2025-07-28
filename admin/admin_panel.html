@@ -17,12 +17,12 @@
         <aside class="sidebar">
             <h2>Admin Menu</h2>
             <ul>
-                <li><a href="#" class="active" data-target="registrations">Registrations</a></li>
-                <li><a href="#" data-target="job-listings">Job Listings</a></li>
+                <li><a href="#" data-target="registrations">Registrations</a></li>
+                <li><a href="#" class="active" data-target="job-listings">Job Listings</a></li>
                 <li><a href="#" data-target="internship-listings">Internship Listings</a></li>
                 <li><a href="#" data-target="active-interns">Active Interns</a></li>
                 <li><a href="#" data-target="archived-interns">Archived Interns</a></li>
-                <li><a href="#" data-target="certificate-generator">Certificate Generator</a></li>
+                <li><a href="certificate_generator.html">Certificate Generator</a></li>
             </ul>
         </aside>
         <main class="main-content">
@@ -34,7 +34,7 @@
                     <li id="user-display" style="display:none; color: white; margin-left: 10px;"></li>
                 </ul>
             </nav>
-            <div id="registrations" class="content-section active">
+            <div id="registrations" class="content-section">
                 <!-- Registrations Content -->
                  <h1>Registrations</h1>
                 <div class="container">
@@ -72,7 +72,7 @@
                     </table>
                 </div>
             </div>
-            <div id="job-listings" class="content-section">
+            <div id="job-listings" class="content-section active">
                 <!-- Job Listings Content -->
                  <h1>Job Listings</h1>
                 <div class="container">
@@ -217,7 +217,12 @@
         document.querySelectorAll('.sidebar ul li a').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
-                showSection(link.dataset.target);
+                // Check if the clicked link has a data-target (for internal sections) or an href (for external pages)
+                if (link.dataset.target) {
+                    showSection(link.dataset.target);
+                } else if (link.href) {
+                    window.location.href = link.href; // Navigate to the new page
+                }
             });
         });
 
@@ -439,7 +444,8 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            showSection('registrations');
+            // showSection('registrations'); // Removed initial showSection for registrations
+            showSection('job-listings'); // Set job-listings as the default active section
             
             loadJobRegistrations();
             loadInternshipRegistrations();

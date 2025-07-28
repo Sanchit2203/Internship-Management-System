@@ -11,10 +11,15 @@ function loadJobListings(category) {
     const jobTableBody = document.getElementById('job-listings-table').querySelector('tbody');
     jobTableBody.innerHTML = ''; // Clear existing rows
 
-    db.collection('jobs').where('category', '==', category).get().then((querySnapshot) => {
+    let query = db.collection('jobs');
+    if (category) {
+        query = query.where('category', '==', category);
+    }
+
+    query.get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             const job = doc.data();
-            const row = jobTableBody.insertCell();
+            const row = jobTableBody.insertRow(); // Changed from insertCell() to insertRow()
             row.insertCell().textContent = job.title || 'N/A';
             row.insertCell().textContent = job.location || 'N/A';
             row.insertCell().textContent = job.description || 'N/A';
@@ -36,10 +41,15 @@ function loadInternshipListings(category) {
     const internshipTableBody = document.getElementById('internship-listings-table').querySelector('tbody');
     internshipTableBody.innerHTML = ''; // Clear existing rows
 
-    db.collection('internships').where('category', '==', category).get().then((querySnapshot) => {
+    let query = db.collection('internships');
+    if (category) {
+        query = query.where('category', '==', category);
+    }
+
+    query.get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             const internship = doc.data();
-            const row = internshipTableBody.insertRow();
+            const row = internshipTableBody.insertRow(); // Changed from insertCell() to insertRow()
             row.insertCell().textContent = internship.title || 'N/A';
             row.insertCell().textContent = internship.location || 'N/A';
             row.insertCell().textContent = internship.description || 'N/A';
