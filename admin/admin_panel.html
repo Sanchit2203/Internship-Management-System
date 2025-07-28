@@ -18,7 +18,7 @@
             <h2>Admin Menu</h2>
             <ul>
                 <li><a href="#" data-target="registrations">Registrations</a></li>
-                <li><a href="#" class="active" data-target="job-listings">Job Listings</a></li>
+                <li><a href="#" data-target="job-listings">Job Listings</a></li>
                 <li><a href="#" data-target="internship-listings">Internship Listings</a></li>
                 <li><a href="#" data-target="active-interns">Active Interns</a></li>
                 <li><a href="#" data-target="archived-interns">Archived Interns</a></li>
@@ -445,8 +445,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // showSection('registrations'); // Removed initial showSection for registrations
-            showSection('job-listings'); // Set job-listings as the default active section
+            showSection('registrations'); // Set registrations as the default active section
             
             loadJobRegistrations();
             loadInternshipRegistrations();
