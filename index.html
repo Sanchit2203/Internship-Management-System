@@ -31,11 +31,7 @@
         <div class="career-path-selector">
             <h2>Choose Your Career Path</h2>
             <div>
-                <select id="career-type">
-                    <option value="jobs">Jobs</option>
-                    <option value="internship">Internship</option>
-                </select>
-                <button onclick="goToCareerPage()">Go</button>
+                <button onclick="goToCareerPage()">Apply Internship</button>
             </div>
         </div>
     </div>
@@ -49,13 +45,7 @@
         firebase.initializeApp(firebaseConfig);
 
         function goToCareerPage() {
-            const selectElement = document.getElementById('career-type');
-            const selectedValue = selectElement.value;
-            if (selectedValue === 'jobs') {
-                window.location.href = 'Pages/jobs_listing.html';
-            } else if (selectedValue === 'internship') {
-                window.location.href = 'Pages/internship_listing.html';
-            }
+            window.location.href = 'Pages/internship_listing.html';
         }
     </script>
 </body>
