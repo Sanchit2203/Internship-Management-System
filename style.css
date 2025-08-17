@@ -16,7 +16,7 @@ body {
 
 h1, h2, h3 {
     color: #1a0033; /* Dark Purple */
-    margin-bottom: 20px;
+    margin-bottom: 20px; 
     text-align: center;
     font-weight: 600;
 }
@@ -35,9 +35,11 @@ p {
 
 /* Navigation Bar */
 .navbar {
-    background-color: #1a0033; /* Dark Purple */
-    padding: 15px 0;
-    color: white;
+ background-color: #ffffff; /* White background for the header */
+ padding: 15px 20px;
+ box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+ border-bottom: 1px solid #eee;
+    color: #333; /* Black text */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -67,13 +69,13 @@ p {
 }
 
 .navbar .nav-links a {
-    color: white;
+ color: #555; /* Darker text for links */
     text-decoration: none;
     font-weight: bold;
     transition: color 0.3s;
 }
 
-.navbar .nav-links a:hover {
+.navbar .nav-links a:hover, .navbar .nav-links a.active {
     color: #e6ccff; /* Light Purple for hover */
 }
 
@@ -85,7 +87,7 @@ p {
 
 .dropbtn {
     background-color: transparent; /* Make button background transparent */
-    color: white;
+    color: #555; /* Match nav link color */
     padding: 10px;
     font-size: 16px;
     border: none;
@@ -128,13 +130,12 @@ input[type="submit"] {
     cursor: pointer;
     font-size: 16px;
     transition: background-color 0.3s ease;
-    background-color: #00796b; /* Teal */
+ background-color: #673ab7; /* Vibrant Purple */
     color: #ffffff; /* White */
 }
 
 button:hover,
 input[type="submit"]:hover {
-    background-color: #004d40; /* Darker Teal on hover */
     background-color: #330066; /* Darker Purple on hover */
 }
 
@@ -209,12 +210,13 @@ th, td {
 }
 
 th {
-    background-color: #330066; /* Dark Purple */
-    color: white;
+ background-color: #1a0033; /* Dark Purple */ 
 }
 
 tr:nth-child(even) {
-    background-color: #e0f2f1; /* Very Light Teal */
+ /* Very Light Teal */
+ color: #333; /* Dark text for readability */
+
     background-color: #f3e5f5; /* Very Light Purple */
 }
 
@@ -223,7 +225,7 @@ tr:nth-child(even) {
     text-align: center;
     margin: 40px 0;
     padding: 30px;
-    background-color: #f3e5f5; /* Very Light Purple to match table rows */
+ background-color: #f9f9f9; /* Slightly different background for cards */
     border-radius: 8px;
 }
 
