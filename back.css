@@ -15,7 +15,7 @@ body {
 }
 
 h1, h2, h3 {
-    color: #1a0033; /* Dark Purple */
+    color: #004d40; /* Dark Teal */
     margin-bottom: 20px;
     text-align: center;
     font-weight: 600;
@@ -35,7 +35,7 @@ p {
 
 /* Navigation Bar */
 .navbar {
-    background-color: #1a0033; /* Dark Purple */
+    background-color: #004d40; /* Dark Teal */
     padding: 15px 0;
     color: white;
     display: flex;
@@ -74,7 +74,7 @@ p {
 }
 
 .navbar .nav-links a:hover {
-    color: #e6ccff; /* Light Purple for hover */
+    color: #b2dfdb; /* Light Teal for hover */
 }
 
 /* Dropdown Styles */
@@ -129,13 +129,12 @@ input[type="submit"] {
     font-size: 16px;
     transition: background-color 0.3s ease;
     background-color: #00796b; /* Teal */
-    color: #ffffff; /* White */
+    color: white;
 }
 
 button:hover,
 input[type="submit"]:hover {
     background-color: #004d40; /* Darker Teal on hover */
-    background-color: #330066; /* Darker Purple on hover */
 }
 
 
@@ -209,13 +208,12 @@ th, td {
 }
 
 th {
-    background-color: #330066; /* Dark Purple */
+    background-color: #00796b; /* Teal */
     color: white;
 }
 
 tr:nth-child(even) {
     background-color: #e0f2f1; /* Very Light Teal */
-    background-color: #f3e5f5; /* Very Light Purple */
 }
 
 /* Career Path Selector on index.html */
@@ -223,7 +221,7 @@ tr:nth-child(even) {
     text-align: center;
     margin: 40px 0;
     padding: 30px;
-    background-color: #f3e5f5; /* Very Light Purple to match table rows */
+    background-color: #e0f2f1; /* Very Light Teal to match table rows */
     border-radius: 8px;
 }
 
@@ -278,7 +276,6 @@ tr:nth-child(even) {
     width: 50%;
     height: 100%;
     background-color: #00796b;
-    background-color: #673ab7; /* Vibrant Purple */
     border-radius: 20px;
     transition: transform 0.3s ease;
 }
@@ -322,7 +319,7 @@ tr:nth-child(even) {
 .admin-wrapper {
     display: flex;
 }
-/* Admin Panel Sidebar */
+
 .sidebar {
     width: 250px;
     background-color: #004d40; /* Dark Teal */
@@ -330,13 +327,7 @@ tr:nth-child(even) {
     padding: 20px;
     height: 100vh;
 }
-.sidebar {
-    width: 250px;
-    background-color: #1a0033; /* Dark Purple */
-    color: white;
-    padding: 20px;
-    height: 100vh;
-}
+
 .sidebar h2 {
     color: white;
     text-align: left;
@@ -359,7 +350,7 @@ tr:nth-child(even) {
 
 .sidebar ul li a:hover,
 .sidebar ul li a.active {
-    background-color: #673ab7; /* Vibrant Purple */
+    background-color: #00796b; /* Teal */
 }
 
 .main-content {
