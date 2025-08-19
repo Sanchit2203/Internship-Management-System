@@ -16,8 +16,6 @@
             <li id="user-display" style="display:none; color: white; margin-left: 10px;"></li>
         </ul>
     </nav>
-
-    <div class="container">
         <h1>Internship Opportunities</h1>
         <p>Explore exciting internship opportunities in Law, Technology, and Management at our firm. Our internships provide hands-on experience, mentorship, and exposure to challenging projects in a dynamic environment. Whether you're interested in legal research, tech-driven legal solutions, or firm management, our programs offer valuable learning experiences to help you grow your career.</p>
         <hr>
@@ -28,14 +26,44 @@
             <button onclick="location.href='internship_management.html'">Management</button>
         </div>
     </div>
-
+ <div id="internship-listings-container" class="container"></div>
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <script src="../firebase-config.js"></script>
     <script src="../auth.js"></script>
     <script>
         firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const internshipListingsContainer = document.getElementById('internship-listings-container');
+
+        function displayInternships(internships) {
+            internshipListingsContainer.innerHTML = '<h1>Available Internships</h1>'; // Clear previous listings and add a heading
+            if (internships.length === 0) {
+                internshipListingsContainer.innerHTML += '<p>No internships available at the moment.</p>';
+                return;
+            }
+            
+            internships.forEach(internship => {
+                const listingElement = document.createElement('div');
+                listingElement.classList.add('internship-listing'); // Add a class for styling
+                listingElement.innerHTML = `
+                    <h2>${internship.title}</h2>
+                    <p><strong>Location:</strong> ${internship.location}</p>
+                    <p><strong>Deadline:</strong> ${internship.deadline}</p>
+                    <p>${internship.description}</p>
+                    <hr>
+                `;
+                internshipListingsContainer.appendChild(listingElement);
+            });
+        }
+
+        // Fetch and display internships on page load
+        db.collection('internships').get().then(snapshot => {
+            const internships = snapshot.docs.map(doc => doc.data());
+            displayInternships(internships);
+        });
     </script>
 </body>
 </html>

@@ -205,13 +205,18 @@ table {
 
 th, td {
     border: 1px solid #ddd;
-    color: white;
+ color: #000; /* Black for table data */
     padding: 15px;
     text-align: left;
 }
 
 th {
  background-color: #4a148c; /* Darker Purple for header */
+}
+
+/* Ensure table header text is white */
+th {
+    color: #fff;
 }
 
 tr:nth-child(even) {
