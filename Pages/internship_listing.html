@@ -26,7 +26,6 @@
             <button onclick="location.href='internship_management.html'">Management</button>
         </div>
     </div>
- <div id="internship-listings-container" class="container"></div>
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
@@ -39,7 +38,7 @@
         const internshipListingsContainer = document.getElementById('internship-listings-container');
 
         function displayInternships(internships) {
-            internshipListingsContainer.innerHTML = '<h1>Available Internships</h1>'; // Clear previous listings and add a heading
+            internshipListingsContainer.innerHTML = ''; // Clear previous listings
             if (internships.length === 0) {
                 internshipListingsContainer.innerHTML += '<p>No internships available at the moment.</p>';
                 return;
