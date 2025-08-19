@@ -205,18 +205,16 @@ table {
 
 th, td {
     border: 1px solid #ddd;
+    color: white;
     padding: 15px;
     text-align: left;
 }
 
 th {
- background-color: #1a0033; /* Dark Purple */ 
+ background-color: #4a148c; /* Darker Purple for header */
 }
 
 tr:nth-child(even) {
- /* Very Light Teal */
- color: #333; /* Dark text for readability */
-
     background-color: #f3e5f5; /* Very Light Purple */
 }
 
