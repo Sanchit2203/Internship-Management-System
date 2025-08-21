@@ -16,6 +16,7 @@
             <li id="user-display" style="display:none; color: white; margin-left: 10px;"></li>
         </ul>
     </nav>
+ <div class="container">
         <h1>Internship Opportunities</h1>
         <p>Explore exciting internship opportunities in Law, Technology, and Management at our firm. Our internships provide hands-on experience, mentorship, and exposure to challenging projects in a dynamic environment.</p> 
         <p>Whether you're interested in legal research, tech-driven legal solutions, or firm management, our programs offer valuable learning experiences to help you grow your career.</p>
@@ -27,7 +28,8 @@
             <button onclick="location.href='internship_management.html'">Management</button>
         </div>
     </div>
-    <!-- Firebase SDKs -->
+ <div id="internship-listings-container" class="container"></div>
+    
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
@@ -44,19 +46,6 @@
                 internshipListingsContainer.innerHTML += '<p>No internships available at the moment.</p>';
                 return;
             }
-            
-            internships.forEach(internship => {
-                const listingElement = document.createElement('div');
-                listingElement.classList.add('internship-listing'); // Add a class for styling
-                listingElement.innerHTML = `
-                    <h2>${internship.title}</h2>
-                    <p><strong>Location:</strong> ${internship.location}</p>
-                    <p><strong>Deadline:</strong> ${internship.deadline}</p>
-                    <p>${internship.description}</p>
-                    <hr>
-                `;
-                internshipListingsContainer.appendChild(listingElement);
-            });
         }
 
         // Fetch and display internships on page load
