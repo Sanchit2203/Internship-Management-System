@@ -1,6 +1,7 @@
 // This script should be included in every page that has a navbar.
 document.addEventListener('DOMContentLoaded', () => {
-    const auth = firebase.auth();
+    // Check if firebase.auth is defined before calling it
+    const auth = firebase.auth(); // Now it's safe to call firebase.auth()
     const authLink = document.getElementById('auth-link');
     const userDisplay = document.getElementById('user-display'); // Keep this for now
 
