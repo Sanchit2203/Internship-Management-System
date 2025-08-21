@@ -25,33 +25,70 @@
 
     <div class="container">
         <h1>Internship Application Form</h1>
-        <form id="internship-application-form">
-            <label for="internship_title">Applying For:</label>
-            <input type="text" id="internship_title" name="internship_title" disabled>
+        <form id="internship-application-form" class="two-column-form">
+            <div class="form-column">
+                <label for="internship_title">Applying For:</label>
+                <input type="text" id="internship_title" name="internship_title" disabled>
 
-            <label for="full_name">Full Name: <span style="color: red;">*</span></label>
-            <input type="text" id="full_name" name="full_name" required>
+                <label for="full_name">Full Name: <span style="color: red;">*</span></label>
+                <input type="text" id="full_name" name="full_name" required>
 
-            <label for="email">Email: <span style="color: red;">*</span></label>
-            <input type="email" id="email" name="email" required>
+                <label for="email">Email: <span style="color: red;">*</span></label>
+                <input type="email" id="email" name="email" required>
 
-            <label for="phone">Phone: <span style="color: red;">*</span></label>
-            <input type="tel" id="phone" name="phone" required>
+                <label for="phone">Phone: <span style="color: red;">*</span></label>
+                <input type="tel" id="phone" name="phone" required>
 
-            <label for="university">University/College:</label>
-            <input type="text" id="university" name="university">
+                <label for="university">University/College: <span style="color: red;">*</span></label>
+                <input type="text" id="university" name="university" required>
 
-            <label for="major">Major/Field of Study:</label>
-            <input type="text" id="major" name="major">
+                <label for="major">Major/Field of Study: <span style="color: red;">*</span></label>
+                <input type="text" id="major" name="major" required>
 
-            <label for="resume">Upload Resume: <span style="color: red;">*</span></label>
-            <input type="file" id="resume" name="resume">
-            <span id="resumeFileName"></span>
+                <label for="year_of_study">Year of Study: <span style="color: red;">*</span></label>
+                <select id="year_of_study" name="year_of_study" required>
+                    <option value="">Select Year</option>
+                    <option value="1st Year">1st Year</option>
+                    <option value="2nd Year">2nd Year</option>
+                    <option value="3rd Year">3rd Year</option>
+                    <option value="4th Year">4th Year</option>
+                    <option value="Postgraduate">Postgraduate</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
 
-            <label for="cover_letter">Cover Letter (Optional):</label>
-            <textarea id="cover_letter" name="cover_letter" rows="4"></textarea>
+            <div class="form-column">
+                <label for="tenth_marks">10th Marks (%): <span style="color: red;">*</span></label>
+                <input type="number" id="tenth_marks" name="tenth_marks" step="0.01" required>
 
-            <input type="submit" value="Submit Application">
+                <label for="tenth_marksheet">Upload 10th Marksheet: <span style="color: red;">*</span></label>
+                <input type="file" id="tenth_marksheet" name="tenth_marksheet" required>
+                <span id="tenthMarksheetFileName"></span>
+
+                <label for="twelfth_marks">12th Marks (%): <span style="color: red;">*</span></label>
+                <input type="number" id="twelfth_marks" name="twelfth_marks" step="0.01" required>
+
+                <label for="twelfth_marksheet">Upload 12th Marksheet: <span style="color: red;">*</span></label>
+                <input type="file" id="twelfth_marksheet" name="twelfth_marksheet" required>
+                <span id="twelfthMarksheetFileName"></span>
+
+                <label for="current_cgpa">Current Semester CGPA: <span style="color: red;">*</span></label>
+                <input type="number" id="current_cgpa" name="current_cgpa" step="0.01" required>
+
+                <label for="cgpa_proof">Upload CGPA Proof: <span style="color: red;">*</span></label>
+                <input type="file" id="cgpa_proof" name="cgpa_proof" required>
+                <span id="cgpaProofFileName"></span>
+
+                <label for="resume">Upload Resume: <span style="color: red;">*</span></label>
+                <input type="file" id="resume" name="resume" required>
+                <span id="resumeFileName"></span>
+
+                <label for="cover_letter">Cover Letter (Optional):</label>
+                <textarea id="cover_letter" name="cover_letter" rows="4"></textarea>
+            </div>
+            <div class="full-width">
+                <input type="submit" value="Submit Application">
+            </div>
         </form>
         <div id="feedback-message" style="text-align: center; margin-top: 20px;"></div>
     </div>
@@ -122,6 +159,20 @@
                 document.getElementById('university').value = data.university || '';
                 document.getElementById('major').value = data.major || '';
                 document.getElementById('cover_letter').value = data.cover_letter || '';
+ document.getElementById('year_of_study').value = data.year_of_study || '';
+ document.getElementById('tenth_marks').value = data.tenth_marks || '';
+ document.getElementById('twelfth_marks').value = data.twelfth_marks || '';
+ document.getElementById('current_cgpa').value = data.current_cgpa || '';
+
+ if (data.tenth_marksheetURL) {
+ document.getElementById('tenthMarksheetFileName').textContent = 'Current: ' + decodeURIComponent(data.tenth_marksheetURL.split('%')[1].split('?')[0]);
+ }
+ if (data.twelfth_marksheetURL) {
+ document.getElementById('twelfthMarksheetFileName').textContent = 'Current: ' + decodeURIComponent(data.twelfth_marksheetURL.split('%')[1].split('?')[0]);
+ }
+ if (data.cgpa_proofURL) {
+ document.getElementById('cgpaProofFileName').textContent = 'Current: ' + decodeURIComponent(data.cgpa_proofURL.split('%')[1].split('?')[0]);
+ }
 
                 const resumeFileNameSpan = document.getElementById('resumeFileName');
                 if (data.resumeURL) {
@@ -133,13 +184,23 @@
             internshipApplicationForm.addEventListener('submit', async function (event) {
                 event.preventDefault();
 
+                feedbackMessage.textContent = 'Submitting application...';
+                feedbackMessage.style.color = 'blue';
+
                 const formData = new FormData(internshipApplicationForm);
                 const registrationData = {};
-                const resumeFile = formData.get('resume');
 
-                formData.delete('resume');
+                // Files to upload
+                const resumeFile = formData.get('resume');
+                const tenthMarksheetFile = formData.get('tenth_marksheet');
+                const twelfthMarksheetFile = formData.get('twelfth_marksheet');
+                const cgpaProofFile = formData.get('cgpa_proof');
+
+                // Collect text data
                 formData.forEach((value, key) => {
-                    registrationData[key] = value;
+                    if (key !== 'resume' && key !== 'tenth_marksheet' && key !== 'twelfth_marksheet' && key !== 'cgpa_proof') {
+                        registrationData[key] = value;
+                    }
                 });
                 registrationData.title = document.getElementById('internship_title').value;
                 registrationData.status = 'pending';

@@ -150,11 +150,29 @@ form {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
+/* Two-column form layout */
+form.two-column {
+ display: grid;
+ grid-template-columns: 1fr 1fr;
+ gap: 20px; /* Space between columns and rows */
+ max-width: 800px; /* Adjust max width for two columns */
+}
+
+form.two-column .full-width {
+ grid-column: span 2; /* Make this element span across both columns */
+}
+
+form.two-column label {
+ margin-bottom: 0; /* Adjust label margin for grid layout */
+ align-self: center; /* Vertically align labels in the grid */
+}
+
 form label {
     display: block;
     margin-bottom: 8px;
     font-weight: bold;
 }
+
 
 form input[type="text"],
 form input[type="email"],
