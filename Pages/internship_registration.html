@@ -127,12 +127,13 @@
                          <label for="resume">Upload Resume: <span style="color: red;">*</span></label>
                          <input type="file" id="resume" name="resume" required>
                          <span id="resumeFileName"></span>
-                     </div>
-                     <div class="form-column">
-                         <label for="certificates">Upload Certificates (Optional):</label>
-                         <input type="file" id="certificates" name="certificates" multiple>
-                         <span id="certificatesFileName"></span>
-                     </div>
+ </div>
+ <div class="form-column" id="certificates-upload-section">
+                         <label>Upload Certificates (Up to 5, Optional):</label>
+ <div id="certificates-container">
+ <!-- Dynamic certificate inputs will be added here -->
+ </div>
+ <button type="button" id="add-certificate-btn">Add Certificate</button>
                 </div>
                 <div class="form-row full-width">
                      <label for="cover_letter">Cover Letter (Optional):</label>
@@ -150,6 +151,9 @@
     <script src="../auth.js"></script>
     <script>
         // Initialize Firebase
+ let certificateFiles = []; // Array to store selected certificate files
+ let uploadedCertificateUrls = []; // Array to store URLs of existing certificates
+
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const storage = firebase.storage();
@@ -165,6 +169,8 @@
                 document.getElementById('internship_title').value = decodeURIComponent(internshipTitle);
             }
 
+            const addCertificateBtn = document.getElementById('add-certificate-btn');
+            const certificatesContainer = document.getElementById('certificates-container');
             const internshipApplicationForm = document.getElementById('internship-application-form');
             const feedbackMessage = document.getElementById('feedback-message');
             const submitButton = internshipApplicationForm.querySelector('input[type="submit"]');
@@ -206,6 +212,89 @@
                 }
             }
 
+            function addCertificateInput(file = null, url = null) {
+                if (certificateFiles.length + uploadedCertificateUrls.length >= 5) {
+                    feedbackMessage.textContent = 'You can upload a maximum of 5 certificates.';
+                    feedbackMessage.style.color = 'orange';
+                    return;
+                }
+
+                const certificateDiv = document.createElement('div');
+                certificateDiv.classList.add('certificate-item');
+
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.classList.add('certificate-file-input');
+
+                const fileNameSpan = document.createElement('span');
+                fileNameSpan.classList.add('certificate-file-name');
+
+                const removeButton = document.createElement('button');
+                removeButton.type = 'button';
+                removeButton.textContent = 'Remove';
+                removeButton.classList.add('remove-certificate-btn');
+
+                certificateDiv.appendChild(fileNameSpan); // Append file name span first
+                certificateDiv.appendChild(fileInput);
+                certificateDiv.appendChild(removeButton); // Append remove button
+
+                certificatesContainer.appendChild(certificateDiv);
+
+                if (file) {
+                    // Handle file object
+                    fileInput.files = dataTransfer.files; // Not a standard way, need alternative
+                    fileNameSpan.textContent = file.name;
+                    certificateFiles.push(file);
+                    fileInput.style.display = 'none'; // Hide file input after selection
+                } else if (url) {
+                    // Handle existing URL
+                    const fileName = decodeURIComponent(url.split('%2F').pop().split('?')[0]);
+                    fileNameSpan.textContent = 'Current: ' + fileName;
+                    uploadedCertificateUrls.push(url);
+                    fileInput.style.display = 'none'; // Hide file input for existing files
+                }
+
+                // Event listener for file input change
+                fileInput.addEventListener('change', function() {
+                    const selectedFile = this.files[0];
+                    if (selectedFile) {
+                        if (certificateFiles.length + uploadedCertificateUrls.length >= 5) {
+                             feedbackMessage.textContent = 'You can upload a maximum of 5 certificates.';
+                             feedbackMessage.style.color = 'orange';
+                            this.value = ''; // Clear the input
+                            return;
+                        }
+                        fileNameSpan.textContent = selectedFile.name;
+                        certificateFiles.push(selectedFile);
+                        this.style.display = 'none'; // Hide input after selection
+                        feedbackMessage.textContent = ''; // Clear previous feedback
+                    }
+                });
+
+                // Event listener for remove button
+                removeButton.addEventListener('click', function() {
+                    const index = Array.from(certificatesContainer.children).indexOf(certificateDiv);
+                    if (index > -1) {
+                        // Remove the file from the respective array
+                        if (file && certificateFiles.includes(file)) {
+                            certificateFiles.splice(certificateFiles.indexOf(file), 1);
+                        } else if (url && uploadedCertificateUrls.includes(url)) {
+                            uploadedCertificateUrls.splice(uploadedCertificateUrls.indexOf(url), 1);
+                        } else {
+                             // For newly selected files that haven't been uploaded yet
+                            const inputElement = certificateDiv.querySelector('input[type="file"]');
+                            if (inputElement && inputElement.files.length > 0) {
+                                 const fileToRemove = inputElement.files[0];
+                                if (certificateFiles.includes(fileToRemove)) {
+                                    certificateFiles.splice(certificateFiles.indexOf(fileToRemove), 1);
+                                }
+                            }
+                        }
+                        certificatesContainer.removeChild(certificateDiv);
+                    }
+                });
+            }
+
             function populateForm(data) {
                 document.getElementById('full_name').value = data.full_name || '';
                 document.getElementById('email').value = data.email || '';
@@ -234,11 +323,12 @@
                     const fileName = data.resumeURL.split('%')[1].split('?')[0];
                      resumeFileNameSpan.textContent = 'Current Resume: ' + decodeURIComponent(fileName);
                 }
-                // Populate Certificates file name if URL exists
-                const certificatesFileNameSpan = document.getElementById('certificatesFileName');
-                if (data.certificatesURL) {
-                    const fileName = data.certificatesURL.split('%')[1].split('?')[0];
-                    certificatesFileNameSpan.textContent = 'Current Certificates: ' + decodeURIComponent(fileName);
+                // Populate existing certificates
+                if (data.certificatesURLs && Array.isArray(data.certificatesURLs)) {
+                    uploadedCertificateUrls = data.certificatesURLs;
+                    data.certificatesURLs.forEach(url => {
+                        addCertificateInput(null, url);
+                    });
                 }
             }
 
@@ -256,11 +346,10 @@
                 const tenthMarksheetFile = formData.get('tenth_marksheet');
                 const twelfthMarksheetFile = formData.get('twelfth_marksheet');
                 const cgpaProofFile = formData.get('cgpa_proof');
-                const certificatesFile = formData.get('certificates'); // Get certificates file
 
                 // Collect text data
                 formData.forEach((value, key) => {
-                    if (key !== 'resume' && key !== 'tenth_marksheet' && key !== 'twelfth_marksheet' && key !== 'cgpa_proof' && key !== 'certificates') { // Exclude certificates file
+                    if (key !== 'resume' && key !== 'tenth_marksheet' && key !== 'twelfth_marksheet' && key !== 'cgpa_proof' && !key.startsWith('certificate_')) {
                         registrationData[key] = value;
                     }
                 });
@@ -271,10 +360,24 @@
                  // Function to upload file and return URL
                  async function uploadFile(file, folder) {
                      if (!file || file.size === 0) return null; // Return null if no file is provided
+                     // Generate a more unique file name to prevent conflicts
+                     const uniqueFileName = `${currentUser.uid}-${Date.now()}-${file.name}`;
                      const storageRef = storage.ref();
-                     const fileRef = storageRef.child(`${folder}/${currentUser.uid}-${file.name}`);
+                     const fileRef = storageRef.child(`${folder}/${uniqueFileName}`);
                      const snapshot = await fileRef.put(file);
                      return await snapshot.ref.getDownloadURL();
+                 }
+
+                 // Function to upload multiple files
+                 async function uploadMultipleFiles(files, folder) {
+                     const urls = [];
+                     for (const file of files) {
+                         const url = await uploadFile(file, folder);
+                         if (url) {
+                             urls.push(url);
+                         }
+                     }
+                     return urls;
                  }
 
                 try {
@@ -283,7 +386,12 @@
                     const tenthMarksheetURL = await uploadFile(tenthMarksheetFile, 'marksheets/10th');
                     const twelfthMarksheetURL = await uploadFile(twelfthMarksheetFile, 'marksheets/12th');
                     const cgpaProofURL = await uploadFile(cgpaProofFile, 'cgpa_proofs');
-                    const certificatesURL = await uploadFile(certificatesFile, 'certificates'); // Upload certificates file
+
+                    // Upload new certificates
+                    const newCertificatesURLs = await uploadMultipleFiles(certificateFiles, 'certificates');
+
+                    // Combine existing and new certificates URLs
+                    const allCertificatesURLs = [...uploadedCertificateUrls, ...newCertificatesURLs];
 
                     if (existingApplicationDocRef) {
                          if (resumeURL) registrationData.resumeURL = resumeURL;
@@ -291,7 +399,7 @@
                          if (twelfthMarksheetURL) registrationData.twelfth_marksheetURL = twelfthMarksheetURL;
                          if (cgpaProofURL) registrationData.cgpa_proofURL = cgpaProofURL;
                          if (certificatesURL) registrationData.certificatesURL = certificatesURL; // Add certificates URL
-                        
+ registrationData.certificatesURLs = allCertificatesURLs;
                         await existingApplicationDocRef.update(registrationData);
                         feedbackMessage.textContent = 'Internship application updated successfully!';
                         feedbackMessage.style.color = 'green';
@@ -306,7 +414,7 @@
                          registrationData.tenth_marksheetURL = tenthMarksheetURL;
                          registrationData.twelfth_marksheetURL = twelfthMarksheetURL;
                          registrationData.cgpa_proofURL = cgpaProofURL;
-                         registrationData.certificatesURL = certificatesURL; // Add certificates URL
+ registrationData.certificatesURLs = allCertificatesURLs;
 
                         await db.collection('internshipApplications').add(registrationData);
                         feedbackMessage.textContent = 'Internship application submitted successfully!';
@@ -317,6 +425,11 @@
                     feedbackMessage.textContent = 'Error saving internship application. Please try again.';
                     feedbackMessage.style.color = 'red';
                 }
+            });
+
+            // Event listener for Add Certificate button
+            addCertificateBtn.addEventListener('click', function() {
+                addCertificateInput();
             });
 
             auth.onAuthStateChanged(function(user) {
