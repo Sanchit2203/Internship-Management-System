@@ -423,3 +423,12 @@ tr:nth-child(even) {
         height: auto;
     }
 }
+
+/* Highlight Remove Option for Certificates */
+.remove-certificate-icon {
+ color: red;
+    cursor: pointer;
+}
+.remove-certificate-icon:hover {
+ text-decoration: underline;
+}

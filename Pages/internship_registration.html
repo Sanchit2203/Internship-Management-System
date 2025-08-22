@@ -229,21 +229,23 @@
                 const fileNameSpan = document.createElement('span');
                 fileNameSpan.classList.add('certificate-file-name');
 
-                const removeButton = document.createElement('button');
-                removeButton.type = 'button';
-                removeButton.textContent = 'Remove';
-                removeButton.classList.add('remove-certificate-btn');
+                const removeSpan = document.createElement('span');
+                removeSpan.classList.add('remove-certificate-icon');
+                removeSpan.textContent = ' Remove'; // Use 'x' for a simpler remove indicator
 
-                certificateDiv.appendChild(fileNameSpan); // Append file name span first
                 certificateDiv.appendChild(fileInput);
-                certificateDiv.appendChild(removeButton); // Append remove button
+                certificateDiv.appendChild(fileNameSpan);
+                certificateDiv.appendChild(removeSpan);
 
                 certificatesContainer.appendChild(certificateDiv);
 
                 if (file) {
                     // Handle file object
-                    fileInput.files = dataTransfer.files; // Not a standard way, need alternative
+                    // This is not a standard way to assign files to an input, removed.
                     fileNameSpan.textContent = file.name;
+                    // Store a reference to the file object directly on the div
+                    certificateDiv.dataset.fileObject = JSON.stringify({ name: file.name, type: file.type, size: file.size }); // Store file details
+                    certificateDiv.file = file; // Store the file object
                     certificateFiles.push(file);
                     fileInput.style.display = 'none'; // Hide file input after selection
                 } else if (url) {
@@ -251,48 +253,59 @@
                     const fileName = decodeURIComponent(url.split('%2F').pop().split('?')[0]);
                     fileNameSpan.textContent = 'Current: ' + fileName;
                     uploadedCertificateUrls.push(url);
+                    // Store the URL directly on the div
+                    certificateDiv.dataset.fileUrl = url;
                     fileInput.style.display = 'none'; // Hide file input for existing files
                 }
+
 
                 // Event listener for file input change
                 fileInput.addEventListener('change', function() {
                     const selectedFile = this.files[0];
                     if (selectedFile) {
                         if (certificateFiles.length + uploadedCertificateUrls.length >= 5) {
-                             feedbackMessage.textContent = 'You can upload a maximum of 5 certificates.';
-                             feedbackMessage.style.color = 'orange';
+                            feedbackMessage.textContent = 'You can upload a maximum of 5 certificates.';
                             this.value = ''; // Clear the input
                             return;
                         }
+                        // Remove the previously selected file from certificateFiles if it exists
+                        const previousFileIndex = certificateFiles.findIndex(f => f === certificateDiv.file);
+                        if (previousFileIndex > -1) {
+                            certificateFiles.splice(previousFileIndex, 1);
+                        }
+
                         fileNameSpan.textContent = selectedFile.name;
                         certificateFiles.push(selectedFile);
+                        // Update the file object reference on the div
+                        certificateDiv.dataset.fileObject = JSON.stringify({ name: selectedFile.name, type: selectedFile.type, size: selectedFile.size }); // Store file details
+                         certificateDiv.file = selectedFile; // Store the file object
+
                         this.style.display = 'none'; // Hide input after selection
                         feedbackMessage.textContent = ''; // Clear previous feedback
                     }
                 });
 
-                // Event listener for remove button
-                removeButton.addEventListener('click', function() {
-                    const index = Array.from(certificatesContainer.children).indexOf(certificateDiv);
-                    if (index > -1) {
-                        // Remove the file from the respective array
-                        if (file && certificateFiles.includes(file)) {
-                            certificateFiles.splice(certificateFiles.indexOf(file), 1);
-                        } else if (url && uploadedCertificateUrls.includes(url)) {
-                            uploadedCertificateUrls.splice(uploadedCertificateUrls.indexOf(url), 1);
-                        } else {
-                             // For newly selected files that haven't been uploaded yet
-                            const inputElement = certificateDiv.querySelector('input[type="file"]');
-                            if (inputElement && inputElement.files.length > 0) {
-                                 const fileToRemove = inputElement.files[0];
-                                if (certificateFiles.includes(fileToRemove)) {
-                                    certificateFiles.splice(certificateFiles.indexOf(fileToRemove), 1);
-                                }
-                            }
-                        }
-                        certificatesContainer.removeChild(certificateDiv);
+                // Event listener for remove span
+                removeSpan.addEventListener('click', function() {
+                    const parentDiv = this.parentElement; // Get the parent certificateDiv
+
+                    // Remove the associated file from the arrays
+                    if (parentDiv.file) { // It's a newly added file object
+                         const indexToRemove = certificateFiles.findIndex(f => f === parentDiv.file);
+                         if (indexToRemove > -1) {
+                             certificateFiles.splice(indexToRemove, 1);
+                         }
+                    } else if (parentDiv.dataset.fileUrl) { // It's an existing URL
+                         const urlToRemove = parentDiv.dataset.fileUrl;
+                         const indexToRemove = uploadedCertificateUrls.indexOf(urlToRemove);
+                         if (indexToRemove > -1) {
+                             uploadedCertificateUrls.splice(indexToRemove, 1);
+                         }
                     }
+
+                    certificatesContainer.removeChild(parentDiv); // Remove the certificateDiv
                 });
+
             }
 
             function populateForm(data) {
@@ -398,7 +411,7 @@
                          if (tenthMarksheetURL) registrationData.tenth_marksheetURL = tenthMarksheetURL;
                          if (twelfthMarksheetURL) registrationData.twelfth_marksheetURL = twelfthMarksheetURL;
                          if (cgpaProofURL) registrationData.cgpa_proofURL = cgpaProofURL;
-                         if (certificatesURL) registrationData.certificatesURL = certificatesURL; // Add certificates URL
+
  registrationData.certificatesURLs = allCertificatesURLs;
                         await existingApplicationDocRef.update(registrationData);
                         feedbackMessage.textContent = 'Internship application updated successfully!';
