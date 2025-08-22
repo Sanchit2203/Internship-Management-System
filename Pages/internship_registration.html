@@ -25,26 +25,54 @@
 
     <div class="container">
         <h1>Internship Application Form</h1>
-        <form id="internship-application-form" class="two-column-form">
-            <div class="form-column">
-                <label for="internship_title">Applying For:</label>
+        <form id="internship-application-form">
+            <h2>Applying For</h2>
+            <div class="form-section full-width">
+                <label for="internship_title">Internship Title:</label>
                 <input type="text" id="internship_title" name="internship_title" disabled>
+            </div>
 
-                <label for="full_name">Full Name: <span style="color: red;">*</span></label>
-                <input type="text" id="full_name" name="full_name" required>
+            <h2>Personal and Contact Information</h2>
+            <div class="form-section">
+                <div class="form-row">
+                    <div class="form-column">
+                        <label for="full_name">Full Name: <span style="color: red;">*</span></label>
+                        <input type="text" id="full_name" name="full_name" required>
+                    </div>
+                    <div class="form-column">
+                        <label for="email">Email: <span style="color: red;">*</span></label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                     <div class="form-column">
+                        <label for="phone">Phone: <span style="color: red;">*</span></label>
+                        <input type="tel" id="phone" name="phone" required>
+                     </div>
+                     <div class="form-column">
+                        <!-- Add Address fields here later if needed based on the reference -->
+                     </div>
+                </div>
+            </div>
 
-                <label for="email">Email: <span style="color: red;">*</span></label>
-                <input type="email" id="email" name="email" required>
-
-                <label for="phone">Phone: <span style="color: red;">*</span></label>
-                <input type="tel" id="phone" name="phone" required>
-
-                <label for="university">University/College: <span style="color: red;">*</span></label>
-                <input type="text" id="university" name="university" required>
-
-                <label for="major">Major/Field of Study: <span style="color: red;">*</span></label>
-                <input type="text" id="major" name="major" required>
-
+            <h2>Academic Information</h2>
+            <div class="form-section">
+                <div class="form-row">
+                    <div class="form-column">
+                        <label for="university">University/College: <span style="color: red;">*</span></label>
+                        <input type="text" id="university" name="university" required>
+                    </div>
+                    <div class="form-column">
+                         <label for="branch">Branch: <span style="color: red;">*</span></label>
+                        <input type="text" id="branch" name="branch" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                     <div class="form-column">
+                         <label for="course">Course: <span style="color: red;">*</span></label>
+                        <input type="text" id="course" name="course" required>
+                     </div>
+                     <div class="form-column">
                 <label for="year_of_study">Year of Study: <span style="color: red;">*</span></label>
                 <select id="year_of_study" name="year_of_study" required>
                     <option value="">Select Year</option>
@@ -55,37 +83,63 @@
                     <option value="Postgraduate">Postgraduate</option>
                     <option value="Other">Other</option>
                 </select>
+                     </div>
+                </div>
+                <div class="form-row">
+                     <div class="form-column">
+                         <label for="tenth_marks">10th Marks (%): <span style="color: red;">*</span></label>
+                         <input type="number" id="tenth_marks" name="tenth_marks" step="0.01" required>
+                     </div>
+                     <div class="form-column">
+                         <label for="tenth_marksheet">Upload 10th Marksheet: <span style="color: red;">*</span></label>
+                         <input type="file" id="tenth_marksheet" name="tenth_marksheet" required>
+                         <span id="tenthMarksheetFileName"></span>
+                     </div>
+                </div>
+                <div class="form-row">
+                     <div class="form-column">
+                         <label for="twelfth_marks">12th Marks (%): <span style="color: red;">*</span></label>
+                         <input type="number" id="twelfth_marks" name="twelfth_marks" step="0.01" required>
+                     </div>
+                     <div class="form-column">
+                         <label for="twelfth_marksheet">Upload 12th Marksheet: <span style="color: red;">*</span></label>
+                         <input type="file" id="twelfth_marksheet" name="twelfth_marksheet" required>
+                         <span id="twelfthMarksheetFileName"></span>
+                     </div>
+                </div>
+                <div class="form-row">
+                     <div class="form-column">
+                         <label for="current_cgpa">Current Semester CGPA: <span style="color: red;">*</span></label>
+                         <input type="number" id="current_cgpa" name="current_cgpa" step="0.01" required>
+                     </div>
+                     <div class="form-column">
+                         <label for="cgpa_proof">Upload CGPA Proof: <span style="color: red;">*</span></label>
+                         <input type="file" id="cgpa_proof" name="cgpa_proof" required>
+                         <span id="cgpaProofFileName"></span>
+                     </div>
+                </div>
             </div>
 
-            <div class="form-column">
-                <label for="tenth_marks">10th Marks (%): <span style="color: red;">*</span></label>
-                <input type="number" id="tenth_marks" name="tenth_marks" step="0.01" required>
-
-                <label for="tenth_marksheet">Upload 10th Marksheet: <span style="color: red;">*</span></label>
-                <input type="file" id="tenth_marksheet" name="tenth_marksheet" required>
-                <span id="tenthMarksheetFileName"></span>
-
-                <label for="twelfth_marks">12th Marks (%): <span style="color: red;">*</span></label>
-                <input type="number" id="twelfth_marks" name="twelfth_marks" step="0.01" required>
-
-                <label for="twelfth_marksheet">Upload 12th Marksheet: <span style="color: red;">*</span></label>
-                <input type="file" id="twelfth_marksheet" name="twelfth_marksheet" required>
-                <span id="twelfthMarksheetFileName"></span>
-
-                <label for="current_cgpa">Current Semester CGPA: <span style="color: red;">*</span></label>
-                <input type="number" id="current_cgpa" name="current_cgpa" step="0.01" required>
-
-                <label for="cgpa_proof">Upload CGPA Proof: <span style="color: red;">*</span></label>
-                <input type="file" id="cgpa_proof" name="cgpa_proof" required>
-                <span id="cgpaProofFileName"></span>
-
-                <label for="resume">Upload Resume: <span style="color: red;">*</span></label>
-                <input type="file" id="resume" name="resume" required>
-                <span id="resumeFileName"></span>
-
-                <label for="cover_letter">Cover Letter (Optional):</label>
-                <textarea id="cover_letter" name="cover_letter" rows="4"></textarea>
+            <h2>Documents</h2>
+            <div class="form-section">
+                <div class="form-row">
+                     <div class="form-column">
+                         <label for="resume">Upload Resume: <span style="color: red;">*</span></label>
+                         <input type="file" id="resume" name="resume" required>
+                         <span id="resumeFileName"></span>
+                     </div>
+                     <div class="form-column">
+                         <label for="certificates">Upload Certificates (Optional):</label>
+                         <input type="file" id="certificates" name="certificates" multiple>
+                         <span id="certificatesFileName"></span>
+                     </div>
+                </div>
+                <div class="form-row full-width">
+                     <label for="cover_letter">Cover Letter (Optional):</label>
+                     <textarea id="cover_letter" name="cover_letter" rows="4"></textarea>
+                </div>
             </div>
+
             <div class="full-width">
                 <input type="submit" value="Submit Application">
             </div>
@@ -157,7 +211,8 @@
                 document.getElementById('email').value = data.email || '';
                 document.getElementById('phone').value = data.phone || '';
                 document.getElementById('university').value = data.university || '';
-                document.getElementById('major').value = data.major || '';
+                document.getElementById('branch').value = data.branch || '';
+                document.getElementById('course').value = data.course || '';
                 document.getElementById('cover_letter').value = data.cover_letter || '';
  document.getElementById('year_of_study').value = data.year_of_study || '';
  document.getElementById('tenth_marks').value = data.tenth_marks || '';
@@ -179,6 +234,12 @@
                     const fileName = data.resumeURL.split('%')[1].split('?')[0];
                      resumeFileNameSpan.textContent = 'Current Resume: ' + decodeURIComponent(fileName);
                 }
+                // Populate Certificates file name if URL exists
+                const certificatesFileNameSpan = document.getElementById('certificatesFileName');
+                if (data.certificatesURL) {
+                    const fileName = data.certificatesURL.split('%')[1].split('?')[0];
+                    certificatesFileNameSpan.textContent = 'Current Certificates: ' + decodeURIComponent(fileName);
+                }
             }
 
             internshipApplicationForm.addEventListener('submit', async function (event) {
@@ -195,10 +256,11 @@
                 const tenthMarksheetFile = formData.get('tenth_marksheet');
                 const twelfthMarksheetFile = formData.get('twelfth_marksheet');
                 const cgpaProofFile = formData.get('cgpa_proof');
+                const certificatesFile = formData.get('certificates'); // Get certificates file
 
                 // Collect text data
                 formData.forEach((value, key) => {
-                    if (key !== 'resume' && key !== 'tenth_marksheet' && key !== 'twelfth_marksheet' && key !== 'cgpa_proof') {
+                    if (key !== 'resume' && key !== 'tenth_marksheet' && key !== 'twelfth_marksheet' && key !== 'cgpa_proof' && key !== 'certificates') { // Exclude certificates file
                         registrationData[key] = value;
                     }
                 });
@@ -206,14 +268,30 @@
                 registrationData.status = 'pending';
                 registrationData.userId = currentUser.uid;
 
+                 // Function to upload file and return URL
+                 async function uploadFile(file, folder) {
+                     if (!file || file.size === 0) return null; // Return null if no file is provided
+                     const storageRef = storage.ref();
+                     const fileRef = storageRef.child(`${folder}/${currentUser.uid}-${file.name}`);
+                     const snapshot = await fileRef.put(file);
+                     return await snapshot.ref.getDownloadURL();
+                 }
+
                 try {
+                    // Upload files
+                    const resumeURL = await uploadFile(resumeFile, 'resumes');
+                    const tenthMarksheetURL = await uploadFile(tenthMarksheetFile, 'marksheets/10th');
+                    const twelfthMarksheetURL = await uploadFile(twelfthMarksheetFile, 'marksheets/12th');
+                    const cgpaProofURL = await uploadFile(cgpaProofFile, 'cgpa_proofs');
+                    const certificatesURL = await uploadFile(certificatesFile, 'certificates'); // Upload certificates file
+
                     if (existingApplicationDocRef) {
-                         if (resumeFile && resumeFile.size > 0) {
-                             const storageRef = storage.ref();
-                             const resumeRef = storageRef.child(`resumes/${currentUser.uid}-${resumeFile.name}`);
-                             const snapshot = await resumeRef.put(resumeFile);
-                             registrationData.resumeURL = await snapshot.ref.getDownloadURL();
-                         }
+                         if (resumeURL) registrationData.resumeURL = resumeURL;
+                         if (tenthMarksheetURL) registrationData.tenth_marksheetURL = tenthMarksheetURL;
+                         if (twelfthMarksheetURL) registrationData.twelfth_marksheetURL = twelfthMarksheetURL;
+                         if (cgpaProofURL) registrationData.cgpa_proofURL = cgpaProofURL;
+                         if (certificatesURL) registrationData.certificatesURL = certificatesURL; // Add certificates URL
+                        
                         await existingApplicationDocRef.update(registrationData);
                         feedbackMessage.textContent = 'Internship application updated successfully!';
                         feedbackMessage.style.color = 'green';
@@ -223,10 +301,12 @@
                             feedbackMessage.style.color = 'red';
                             return;
                          }
-                        const storageRef = storage.ref();
-                        const resumeRef = storageRef.child(`resumes/${currentUser.uid}-${resumeFile.name}`);
-                        const snapshot = await resumeRef.put(resumeFile);
-                        registrationData.resumeURL = await snapshot.ref.getDownloadURL();
+
+                         registrationData.resumeURL = resumeURL;
+                         registrationData.tenth_marksheetURL = tenthMarksheetURL;
+                         registrationData.twelfth_marksheetURL = twelfthMarksheetURL;
+                         registrationData.cgpa_proofURL = cgpaProofURL;
+                         registrationData.certificatesURL = certificatesURL; // Add certificates URL
 
                         await db.collection('internshipApplications').add(registrationData);
                         feedbackMessage.textContent = 'Internship application submitted successfully!';
