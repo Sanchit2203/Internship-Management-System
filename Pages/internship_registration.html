@@ -68,7 +68,7 @@
                     </div>
                     <div class="form-column">
                          <label for="branch">Branch: <span style="color: red;">*</span></label>
-                        <input type="text" id="branch" name="branch" required>
+                        <select id="branch" name="branch" required></select>
                     </div>
                 </div>
                 <div class="form-row">
@@ -176,6 +176,26 @@
             const category = urlParams.get('category');
             if (category) {
                 document.getElementById('internship_category').value = decodeURIComponent(category);
+
+                const branchSelect = document.getElementById('branch');
+                branchSelect.innerHTML = ''; // Clear existing options
+
+                // Add the default "Select Branch" option
+                const defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.text = "Select Branch";
+                defaultOption.disabled = true;
+                defaultOption.selected = true;
+                branchSelect.appendChild(defaultOption);
+
+                if (category === 'Law') {
+                    branchSelect.innerHTML += '<option value="">Select Branch</option><option value="LLB">LLB</option><option value="LLM">LLM</option>';
+                } else if (category === 'Tech') {
+                    branchSelect.innerHTML += '<option value="">Select Branch</option><option value="B.Tech">B.Tech</option><option value="M.Tech">M.Tech</option>';
+                } else if (category === 'Management') {
+                    branchSelect.innerHTML += '<option value="">Select Branch</option><option value="BBA">BBA</option><option value="MBA">MBA</option>';
+                }
+
             }
 
             const addCertificateBtn = document.getElementById('add-certificate-btn');
@@ -356,6 +376,37 @@
 
             internshipApplicationForm.addEventListener('submit', async function (event) {
                 event.preventDefault();
+
+                const branchSelect = document.getElementById('branch');
+ if (branchSelect.value === "") {
+ feedbackMessage.textContent = 'Please select your branch.';
+ feedbackMessage.style.color = 'red';
+ return;
+                }
+
+                const tenthMarks = parseFloat(document.getElementById('tenth_marks').value);
+                const twelfthMarks = parseFloat(document.getElementById('twelfth_marks').value);
+                const currentCgpa = parseFloat(document.getElementById('current_cgpa').value);
+
+                if (isNaN(tenthMarks) || tenthMarks < 0 || tenthMarks > 100) {
+                    feedbackMessage.textContent = 'Please enter a valid 10th marks percentage (0-100).';
+                    feedbackMessage.style.color = 'red';
+                    return;
+                }
+
+                if (isNaN(twelfthMarks) || twelfthMarks < 0 || twelfthMarks > 100) {
+                    feedbackMessage.textContent = 'Please enter a valid 12th marks percentage (0-100).';
+                    feedbackMessage.style.color = 'red';
+                    return;
+                }
+
+                if (isNaN(currentCgpa) || currentCgpa < 0 || currentCgpa > 10) {
+                    feedbackMessage.textContent = 'Please enter a valid current CGPA (0-10).';
+                    feedbackMessage.style.color = 'red';
+                    return;
+                }
+
+
 
                 feedbackMessage.textContent = 'Submitting application...';
                 feedbackMessage.style.color = 'blue';
