@@ -47,8 +47,36 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         
+        // Function to load internship listings
+        async function loadInternshipListings(category = null) {
+            const internshipsTableBody = document.querySelector('#internship-listings-table tbody');
+            internshipsTableBody.innerHTML = ''; // Clear existing listings
+
+            let query = db.collection('internships');
+            if (category) {
+                query = query.where('category', '==', category);
+            }
+
+            const snapshot = await query.get();
+            snapshot.forEach(doc => {
+                const internship = doc.data();
+                const row = internshipsTableBody.insertRow();
+                row.insertCell(0).textContent = internship.title;
+                row.insertCell(1).textContent = internship.location;
+                row.insertCell(2).textContent = internship.description;
+                row.insertCell(3).textContent = internship.deadline;
+
+                const applyButton = document.createElement('button');
+                applyButton.textContent = 'Apply';
+                applyButton.onclick = () => {
+                    window.location.href = `internship_registration.html?title=${encodeURIComponent(internship.title)}&category=${encodeURIComponent(internship.category)}`;
+                };
+                row.insertCell(4).appendChild(applyButton);
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
-            loadInternshipListings('Law');
+            loadInternshipListings('Law', 'internship_registration.html?category=Law&title=');
         });
     </script>
 </body>

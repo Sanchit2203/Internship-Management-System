@@ -37,7 +37,7 @@ function loadJobListings(category) {
 }
 
 // Function to fetch and display internship listings from Firestore
-function loadInternshipListings(category) {
+function loadInternshipListings(category, registrationUrlPrefix = 'internship_registration.html?title=') {
     const internshipTableBody = document.getElementById('internship-listings-table').querySelector('tbody');
     internshipTableBody.innerHTML = ''; // Clear existing rows
 
@@ -57,7 +57,7 @@ function loadInternshipListings(category) {
             const applyCell = row.insertCell();
             const applyButton = document.createElement('button');
             applyButton.textContent = 'Apply';
-            applyButton.onclick = function() { location.href = 'internship_registration.html?title=' + encodeURIComponent(internship.title) + ''; };
+            applyButton.onclick = function() { location.href = registrationUrlPrefix + encodeURIComponent(internship.title); };
             applyCell.appendChild(applyButton);
         });
     })

@@ -26,6 +26,10 @@
     <div class="container">
         <h1>Internship Application Form</h1>
         <form id="internship-application-form">
+ <div class="form-section full-width">
+ <label for="internship_category">Internship Category:</label>
+ <input type="text" id="internship_category" name="internship_category" disabled>
+ </div>
             <h2>Applying For</h2>
             <div class="form-section full-width">
                 <label for="internship_title">Internship Title:</label>
@@ -167,6 +171,11 @@
             const internshipTitle = urlParams.get('title');
             if (internshipTitle) {
                 document.getElementById('internship_title').value = decodeURIComponent(internshipTitle);
+            }
+
+            const category = urlParams.get('category');
+            if (category) {
+                document.getElementById('internship_category').value = decodeURIComponent(category);
             }
 
             const addCertificateBtn = document.getElementById('add-certificate-btn');
@@ -367,6 +376,7 @@
                     }
                 });
                 registrationData.title = document.getElementById('internship_title').value;
+ registrationData.category = document.getElementById('internship_category').value;
                 registrationData.status = 'pending';
                 registrationData.userId = currentUser.uid;
 
