@@ -66,6 +66,29 @@ function loadInternshipListings(category, registrationUrlPrefix = 'internship_re
     });
 }
 
+
+// Function to check if the current logged in user is an admin
+let isAdminStatus = null; // Variable to store the admin status
+
+async function isAdmin() {
+    if (isAdminStatus !== null) {
+        return isAdminStatus; // Return the cached status if available
+    }
+    const user = firebase.auth().currentUser;
+    if (user) {
+        try {
+            const doc = await db.collection('users').doc(user.uid).get();
+ isAdminStatus = doc.exists && doc.data().role === 'admin';
+            return isAdminStatus;
+        } catch (error) {
+            console.error("Error checking admin status:", error);
+            isAdminStatus = false; // Assume not admin on error
+        }
+    }
+    return false;
+}
+
+
 // Auto-logout functionality after 30 minutes of inactivity
 const INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes in milliseconds
 let timeoutId;
