@@ -69,7 +69,7 @@
                         <label for="internship-description-input">Description:</label>
                         <textarea id="internship-description-input" rows="4" required></textarea>
                         <label for="internship-deadline-input">Deadline:</label>
-                        <input type="date" id="internship-deadline-input" required>
+ <input type="date" id="internship-deadline-input" required min="">
                         <label for="internship-category-select">Category:</label>
                         <select id="internship-category-select" required>
                             <option value="Law">Law</option>
@@ -155,6 +155,12 @@
             document.querySelectorAll('.sidebar ul li a').forEach(link => link.classList.remove('active'));
             document.querySelector(`.sidebar ul li a[data-target="${targetId}"]`).classList.add('active');
         }
+
+    // Set minimum date for deadline input to today
+    const today = new Date();
+    const todayString = today.toISOString().split('T')[0];
+    document.getElementById('internship-deadline-input').min = todayString;
+
 
         document.querySelectorAll('.sidebar ul li a').forEach(link => {
             link.addEventListener('click', (e) => {
@@ -253,6 +259,10 @@
             const tableBody = document.getElementById(tableId).querySelector('tbody');
             db.collection(collectionName).onSnapshot(snapshot => {
                 tableBody.innerHTML = '';
+
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); // Set to the beginning of the day for comparison
+
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     const row = tableBody.insertRow();
@@ -274,6 +284,13 @@
                         document.getElementById(cancelBtnId).style.display = 'inline-block';
                         document.getElementById(formId).querySelector('input[type="submit"]').value = 'Update Listing';
                     };
+
+                    // Check deadline and mark as expired
+                    const deadlineDate = new Date(data.deadline);
+                    if (deadlineDate < today) {
+                        row.classList.add('expired-listing'); // Add a class for styling
+                    }
+
 
                     const deleteButton = document.createElement('button');
                     deleteButton.textContent = 'Delete';
