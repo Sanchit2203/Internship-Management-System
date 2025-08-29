@@ -80,13 +80,13 @@
                     <table id="internship-registrations-table">
                         <thead>
                             <tr>
-                                <th>Title</th>
+                                <th>S.No</th>
                                 <th>Full Name</th>
-                                <th>Email</th>
                                 <th>Phone</th>
-                                <th>University</th>
-                                <th>Major</th>
-                                <th>Resume</th>
+                                <th>Title</th>
+                                <th>Branch</th>
+                                <th>Score</th>
+                                <th>Details</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -231,24 +231,22 @@
             const tableBody = document.getElementById('internship-registrations-table').querySelector('tbody');
             db.collection('internshipApplications').where('status', '==', 'pending').onSnapshot(snapshot => {
                 tableBody.innerHTML = '';
+                let i = 1;
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     const row = tableBody.insertRow();
-                    const titleCell = row.insertCell();
-                    titleCell.textContent = data.title || 'N/A';
+                    row.insertCell().textContent = i++;
                     row.insertCell().textContent = data.full_name || 'N/A';
-                    row.insertCell().textContent = data.email || 'N/A';
                     row.insertCell().textContent = data.phone || 'N/A';
-                    row.insertCell().textContent = data.university || 'N/A';
+                    row.insertCell().textContent = data.title || 'N/A';
                     row.insertCell().textContent = data.major || 'N/A';
-                    const resumeCell = row.insertCell();
-                     if (data.resumeURL) {
-                        const link = document.createElement('a');
-                        link.href = data.resumeURL;
-                        link.textContent = 'View Resume';
-                        link.target = '_blank';
-                        resumeCell.appendChild(link);
-                    }
+                    row.insertCell().textContent = data.score || 'N/A';
+                    
+                    const detailsCell = row.insertCell();
+                    const universityText = data.university || 'N/A';
+                    const resumeLink = data.resumeURL ? `<a href="${data.resumeURL}" target="_blank">View Resume</a>` : 'No Resume';
+                    detailsCell.innerHTML = `University: ${universityText}<br>${resumeLink}`;
+
                     const actionsCell = row.insertCell();
                     const addButton = document.createElement('button');
                     addButton.textContent = 'Add to Active';
