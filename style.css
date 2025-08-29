@@ -352,6 +352,7 @@ tr:nth-child(even) {
     color: white;
     padding: 20px;
     height: 100vh;
+    transition: width 0.3s ease; /* Smooth transition for width change */
 }
 .sidebar {
     width: 250px;
@@ -398,6 +399,18 @@ tr:nth-child(even) {
     display: block;
 }
 
+/* Hamburger Menu */
+.hamburger {
+    display: none; /* Hidden by default */
+    cursor: pointer;
+}
+
+.hamburger div {
+    width: 25px;
+    height: 3px;
+    background-color: #333;
+    margin: 5px 0;
+}
 /* Responsive Design */
 @media (max-width: 768px) {
     .navbar {
@@ -421,8 +434,35 @@ tr:nth-child(even) {
     .sidebar {
         width: 100%;
         height: auto;
+        position: absolute; /* Take sidebar out of flow */
+        z-index: 1000; /* Ensure it's on top */
+        transform: translateX(-100%); /* Hide it off-screen */
+        transition: transform 0.3s ease-in-out;
     }
+    .sidebar.expanded {
+        transform: translateX(0); /* Show the sidebar */
+    }
+
+    .hamburger {
+        display: block; /* Show the hamburger on smaller screens */
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 1001; /* Make sure it's above the sidebar */
+    }
+    .sidebar:hover {
+    width: 250px; /* Expanded width on hover */
 }
+
+.sidebar:hover .sidebar-text {
+    display: block; /* Show text when expanded */
+}
+
+.sidebar .sidebar-text {
+    display: none; /* Hide text by default when collapsed */
+}
+}
+
 
 /* Highlight Remove Option for Certificates */
 .remove-certificate-icon {
