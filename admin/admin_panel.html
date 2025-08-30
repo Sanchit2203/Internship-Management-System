@@ -313,6 +313,11 @@
 
                 snapshot.forEach(doc => {
                     const data = doc.data();
+                    const deadlineDate = new Date(data.deadline);
+                    if (deadlineDate < today) {
+                        db.collection(collectionName).doc(doc.id).delete();
+                        return;
+                    }
                     const row = tableBody.insertRow();
                     row.insertCell().textContent = data.title;
                     row.insertCell().textContent = data.location;
@@ -332,12 +337,6 @@
                         document.getElementById(cancelBtnId).style.display = 'inline-block';
                         document.getElementById(formId).querySelector('input[type="submit"]').value = 'Update Listing';
                     };
-
-                    // Check deadline and mark as expired
-                    const deadlineDate = new Date(data.deadline);
-                    if (deadlineDate < today) {
-                        row.classList.add('expired-listing'); // Add a class for styling
-                    }
 
 
                     const deleteButton = document.createElement('button');
