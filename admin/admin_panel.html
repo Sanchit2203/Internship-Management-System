@@ -168,7 +168,6 @@
                         <button id="select-all-active" class="bulk-action-btn">Select All</button>
                         <button id="bulk-archive-active" class="bulk-action-btn" disabled>Archive Selected</button>
                         <button id="bulk-delete-active" class="bulk-action-btn" disabled>Delete Selected</button>
-                        <button id="bulk-generate-certificates" class="bulk-action-btn" disabled>Generate Certificates</button>
                     </div>
                     <table id="active-interns-table">
                         <thead>
@@ -696,7 +695,7 @@
                 'active-interns-table',
                 'select-all-active',
                 'select-all-active-checkbox',
-                ['bulk-archive-active', 'bulk-delete-active', 'bulk-generate-certificates']
+                ['bulk-archive-active', 'bulk-delete-active']
             );
 
             const getSelectedArchivedInterns = setupBulkActions(
@@ -752,13 +751,6 @@
                         db.collection('internshipApplications').doc(id).delete();
                     });
                 }
-            });
-
-            document.getElementById('bulk-generate-certificates').addEventListener('click', () => {
-                const selectedIds = getSelectedActiveInterns();
-                // Redirect to certificate generator with selected IDs as query params
-                const idsParam = selectedIds.join(',');
-                window.location.href = `certificate_generator.html?ids=${idsParam}`;
             });
 
             // Handle bulk actions for archived interns
