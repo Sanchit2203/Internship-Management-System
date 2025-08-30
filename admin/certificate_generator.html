@@ -224,13 +224,52 @@
                     </div>
 
                     <div id="tab-batch" class="hidden space-y-4">
-                        <h3 style="font-size: 1.25rem; font-weight: 600;">Batch Generation</h3>
-                        <p style="font-size: 0.9rem; color: #718096;">Upload an Excel (.xlsx) file with columns: 'Name', 'Title', 'Date'.</p>
+                        <h3 style="font-size: 1.25rem; font-weight: 600;">Batch Certificate Generation</h3>
+                        <p style="font-size: 0.9rem; color: #718096;">
+                            Upload an Excel (.xlsx) file. The system will read the columns and allow you to map them to the certificate fields.
+                        </p>
                         <input type="file" id="excel-file" accept=".xlsx" class="form-input">
-                        <button id="batch-generate-btn" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
-                            <span id="batch-btn-text">Generate from Excel</span>
+                        
+                        <div id="column-mapping" class="hidden space-y-4" style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                            <h4 style="font-weight: 600;">Map Excel Columns to Certificate Fields</h4>
+                            <div>
+                                <label for="map-recipientName" style="display: block; margin-bottom: 0.5rem;">Recipient's Name</label>
+                                <select id="map-recipientName" data-field="recipientName" class="form-select column-map-select"></select>
+                            </div>
+                            <div>
+                                <label for="map-courseName" style="display: block; margin-bottom: 0.5rem;">Course/Internship Title</label>
+                                <select id="map-courseName" data-field="courseName" class="form-select column-map-select"></select>
+                            </div>
+                            <div>
+                                <label for="map-date" style="display: block; margin-bottom: 0.5rem;">Date Column (Optional)</label>
+                                <select id="map-date" data-field="date" class="form-select column-map-select">
+                                    <option value="">-- No Date Column --</option>
+                                </select>
+                            </div>
+                            <div style="margin-top: 1rem;">
+                                <label for="batch-issue-date" style="display: block; margin-bottom: 0.5rem;">
+                                    <input type="checkbox" id="use-custom-date" style="margin-right: 0.5rem;">
+                                    Use Custom Issue Date
+                                </label>
+                                <div id="custom-date-input" class="hidden">
+                                    <input type="date" id="batch-issue-date" class="form-input" value="2025-08-31">
+                                    <p style="font-size: 0.875rem; color: #718096; margin-top: 0.5rem;">
+                                        This date will be used for all certificates that don't have a date in the Excel file.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button id="batch-generate-btn" class="btn btn-primary" style="width: 100%; margin-top: 1rem;" disabled>
+                            <span id="batch-btn-text">Generate Certificates</span>
                             <div id="batch-loader" class="loader hidden" style="margin-left: 10px;"></div>
                         </button>
+                        <div id="batch-progress" class="hidden" style="margin-top: 1rem;">
+                            <p id="progress-text" style="text-align: center; margin-bottom: 0.5rem;"></p>
+                            <div style="width: 100%; background: var(--border-color); border-radius: 4px; overflow: hidden;">
+                                <div id="progress-bar" style="width: 0%; height: 10px; background: var(--primary-color); transition: width 0.3s;"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -259,6 +298,14 @@
 <script>
 window.jsPDF = window.jspdf.jsPDF;
 let state = {};
+let batchData = {
+    jsonData: null,
+    mapping: {
+        recipientName: null,
+        courseName: null,
+        date: null
+    }
+};
 
 const previewArea = document.getElementById('preview-area');
 const styler = {
@@ -273,6 +320,10 @@ const styler = {
 let selectedElementId = null;
 
 function initializeState() {
+    const today = new Date('2025-08-31');
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = today.toLocaleDateString('en-US', options);
+    
     state = {
         orientation: 'landscape',
         backgroundImage: null,
@@ -281,7 +332,7 @@ function initializeState() {
             completionText:   { text: "proudly presented to", x: 50, y: 40, style: { fontSize: 20, fontFamily: "'Inter', sans-serif", color: '#333333', fontWeight: 'normal', textAlign: 'center' } },
             recipientName:    { text: "Name", x: 50, y: 50, style: { fontSize: 40, fontFamily: "'Playfair Display', serif", color: '#000000', fontWeight: 'bold', textAlign: 'center' } },
             courseName:       { text: "for successfully completing the Web Development Masterclass", x: 50, y: 65, style: { fontSize: 22, fontFamily: "'Inter', sans-serif", color: '#333333', fontWeight: 'normal', textAlign: 'center' } },
-            date:             { text: "Issued on", x: 50, y: 80, style: { fontSize: 18, fontFamily: "'Inter', sans-serif", color: '#555555', fontWeight: 'normal', textAlign: 'center' } },
+            date:             { text: formattedDate, x: 50, y: 80, style: { fontSize: 18, fontFamily: "'Inter', sans-serif", color: '#555555', fontWeight: 'normal', textAlign: 'center' } },
             signature:        { text: "_________________________", x: 20, y: 88, style: { fontSize: 18, fontFamily: "'Inter', sans-serif", color: '#000000', fontWeight: 'normal', textAlign: 'left' } },
             signatureTitle:   { text: "Authorized Signatory", x: 20, y: 92, style: { fontSize: 16, fontFamily: "'Inter', sans-serif", color: '#333333', fontWeight: 'normal', textAlign: 'left' } },
         }
@@ -298,7 +349,7 @@ function initializeState() {
         document.getElementById('field-courseName').value = decodeURIComponent(title);
     }
 
-    document.getElementById('field-date').valueAsDate = new Date();
+    document.getElementById('field-date').valueAsDate = new Date('2025-08-31');
     updateStateFromInput();
     renderPreview();
 }
@@ -491,52 +542,159 @@ document.getElementById('generate-pdf-btn').addEventListener('click', async () =
     doc.save(`${state.elements.recipientName.text.replace(/\s/g, '_')}_certificate.pdf`);
 });
 
-document.getElementById('batch-generate-btn').addEventListener('click', async () => {
-    const file = document.getElementById('excel-file').files[0];
-    if (!file) { alert('Please select an Excel file.'); return; }
+// Handle custom date visibility
+document.getElementById('use-custom-date').addEventListener('change', function(e) {
+    const customDateInput = document.getElementById('custom-date-input');
+    if (e.target.checked) {
+        customDateInput.classList.remove('hidden');
+    } else {
+        customDateInput.classList.add('hidden');
+    }
+});
 
-    const loader = document.getElementById('batch-loader');
-    const btnText = document.getElementById('batch-btn-text');
-    loader.classList.remove('hidden');
-    btnText.textContent = 'Processing...';
+document.getElementById('excel-file').addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = async (e) => {
+    reader.onload = (e) => {
         try {
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, { type: 'array' });
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
-            const json = XLSX.utils.sheet_to_json(worksheet);
-
-            const zip = new JSZip();
-            for (const row of json) {
-                const name = row.Name || row.name || 'Unnamed';
-                const doc = await generatePdf({
-                    recipientName: name,
-                    courseName: row.Title || row.title || state.elements.courseName.text,
-                    date: row.Date || row.date || state.elements.date.text,
-                    completionText: row.CompletionText || row.completiontext || state.elements.completionText.text
-                });
-                zip.file(`${name.replace(/\s/g, '_')}.pdf`, await doc.output('blob'));
+            
+            batchData.jsonData = XLSX.utils.sheet_to_json(worksheet);
+            
+            if (batchData.jsonData.length === 0) {
+                alert('The selected Excel file is empty or could not be read.');
+                return;
             }
 
-            const content = await zip.generateAsync({ type: 'blob' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(content);
-            link.download = 'certificates.zip';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            const headers = Object.keys(batchData.jsonData[0]);
+            const mappingPanel = document.getElementById('column-mapping');
+            const selectElements = document.querySelectorAll('.column-map-select');
+
+            selectElements.forEach(select => {
+                const field = select.dataset.field;
+                select.innerHTML = '<option value="">-- Select Column --</option>';
+                headers.forEach(header => {
+                    const option = document.createElement('option');
+                    option.value = header;
+                    option.textContent = header;
+                    select.appendChild(option);
+                });
+
+                // Auto-select common names
+                const commonNames = {
+                    recipientName: ['name', 'recipient', 'student'],
+                    courseName: ['course', 'title', 'internship'],
+                    date: ['date', 'issuedate', 'completiondate']
+                };
+
+                const matchingHeader = headers.find(h => commonNames[field].some(name => 
+                    h.toLowerCase().includes(name))
+                );
+                if (matchingHeader) {
+                    select.value = matchingHeader;
+                    batchData.mapping[field] = matchingHeader;
+                }
+            });
+            
+            mappingPanel.classList.remove('hidden');
+            document.getElementById('batch-generate-btn').disabled = false;
+
         } catch (error) {
-            console.error('Error during batch generation:', error);
-            alert('An error occurred during batch generation. Please check the console.');
-        } finally {
-            loader.classList.add('hidden');
-            btnText.textContent = 'Generate from Excel';
+            console.error('Error processing Excel file:', error);
+            alert('There was an error processing the Excel file. Please ensure it is a valid .xlsx file.');
         }
     };
     reader.readAsArrayBuffer(file);
+});
+
+document.querySelectorAll('.column-map-select').forEach(select => {
+    select.addEventListener('change', (event) => {
+        const field = event.target.dataset.field;
+        batchData.mapping[field] = event.target.value;
+    });
+});
+
+document.getElementById('batch-generate-btn').addEventListener('click', async () => {
+    if (!batchData.jsonData) {
+        alert('Please select an Excel file first.');
+        return;
+    }
+
+    if (!batchData.mapping.recipientName) {
+        alert("Please map the column for 'Recipient\\'s Name'.");
+        return;
+    }
+
+    const loader = document.getElementById('batch-loader');
+    const btnText = document.getElementById('batch-btn-text');
+    const progressContainer = document.getElementById('batch-progress');
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+    const generateBtn = document.getElementById('batch-generate-btn');
+
+    loader.classList.remove('hidden');
+    btnText.textContent = 'Processing...';
+    generateBtn.disabled = true;
+    progressContainer.classList.remove('hidden');
+    progressBar.style.width = '0%';
+    progressText.textContent = '';
+
+    try {
+        const zip = new JSZip();
+        const total = batchData.jsonData.length;
+
+        for (let i = 0; i < total; i++) {
+            const row = batchData.jsonData[i];
+            const name = row[batchData.mapping.recipientName] || 'Unnamed';
+            
+            const pdfData = {
+                recipientName: name,
+                courseName: batchData.mapping.courseName ? row[batchData.mapping.courseName] : state.elements.courseName.text,
+                date: batchData.mapping.date && row[batchData.mapping.date] ? 
+                    (new Date(row[batchData.mapping.date])).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) :
+                    (document.getElementById('use-custom-date').checked ? 
+                        (new Date(document.getElementById('batch-issue-date').value)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) :
+                        (new Date('2025-08-31')).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })),
+                completionText: state.elements.completionText.text
+            };
+
+            const doc = await generatePdf(pdfData);
+            zip.file(`${name.replace(/\s/g, '_')}.pdf`, await doc.output('blob'));
+
+            const percentComplete = ((i + 1) / total) * 100;
+            progressBar.style.width = `${percentComplete}%`;
+            progressText.textContent = `Generating certificate ${i + 1} of ${total}...`;
+        }
+
+        progressText.textContent = 'Compressing files into a zip...';
+        const content = await zip.generateAsync({ type: 'blob' });
+        
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(content);
+        link.download = 'certificates.zip';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        progressText.textContent = 'Done!';
+
+    } catch (error) {
+        console.error('Error during batch generation:', error);
+        alert('An error occurred during batch generation. Please check the console.');
+        progressText.textContent = 'An error occurred.';
+    } finally {
+        loader.classList.add('hidden');
+        btnText.textContent = 'Generate Certificates';
+        generateBtn.disabled = false;
+        setTimeout(() => {
+            progressContainer.classList.add('hidden');
+        }, 5000);
+    }
 });
 
 window.addEventListener('resize', renderPreview);
