@@ -409,9 +409,8 @@
                             <div style="margin-bottom: 1rem;">
                                 <label style="display: block; margin-bottom: 0.5rem;">Template Style</label>
                                 <select id="template-selector" class="form-select">
-                                    <option value="default">Professional Certificate</option>
                                     <option value="internship">Internship Certificate</option>
-                                    
+                                    <option value="achievement">Achievement Award</option>
                                 </select>
                             </div>
                             <div>
@@ -583,35 +582,17 @@ const paperSizes = {
 };
 
 const certificateTemplates = {
-    default: {
-        certificateTitle: "Certificate of Achievement",
-        completionText: "This is to certify that the above named individual has successfully completed",
-        courseName: "a comprehensive internship program in Web Development, demonstrating exceptional skills and dedication throughout the duration of the program",
-        signatureTitle: "Program Director"
-    },
-    achievement: {
-        certificateTitle: "Certificate of Excellence",
-        completionText: "is hereby recognized for outstanding achievement in",
-        courseName: "Web Development and Programming, demonstrating exceptional skills and innovative problem-solving abilities",
-        signatureTitle: "Director of Education"
-    },
-    completion: {
-        certificateTitle: "Certificate of Completion",
-        completionText: "has successfully completed all requirements and demonstrated proficiency in",
-        courseName: "Full Stack Web Development, including front-end design, back-end development, and database management",
-        signatureTitle: "Course Instructor"
-    },
     internship: {
         certificateTitle: "Internship Completion Certificate",
         completionText: "has successfully completed an intensive internship program in",
         courseName: "Web Development, acquiring practical experience in modern development practices, team collaboration, and project delivery",
         signatureTitle: "Internship Coordinator"
     },
-    participation: {
-        certificateTitle: "Certificate of Participation",
-        completionText: "has actively participated and contributed to",
-        courseName: "the Web Development Workshop Series, engaging in hands-on projects and collaborative learning experiences",
-        signatureTitle: "Workshop Facilitator"
+    achievement: {
+        certificateTitle: "Certificate of Excellence",
+        completionText: "is hereby recognized for outstanding achievement in",
+        courseName: "Web Development and Programming, demonstrating exceptional skills and innovative problem-solving abilities",
+        signatureTitle: "Director of Education"
     }
 };
 
