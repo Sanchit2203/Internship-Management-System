@@ -617,10 +617,33 @@ const certificateTemplates = {
 
 let customTextBoxCount = 0;
 
+// Function to format date as "Month DD, YYYY"
+function formatDate(date) {
+    const months = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    
+    // Handle string input
+    if (typeof date === 'string') {
+        date = new Date(date);
+    }
+    
+    // Validate date
+    if (!(date instanceof Date) || isNaN(date)) {
+        return '';
+    }
+
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    const year = date.getFullYear();
+    
+    return `${month} ${day}, ${year}`;
+}
+
 function initializeState() {
     const today = new Date('2025-08-31');
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    const formattedDate = today.toLocaleDateString('en-US', options);
+    const formattedDate = formatDate(today);
     
     state = {
         orientation: 'landscape',
@@ -657,7 +680,11 @@ function updateStateFromInput() {
     document.querySelectorAll('#tab-content .form-input').forEach(input => {
         const field = input.dataset.field;
         if (state.elements[field]) {
-            state.elements[field].text = input.value;
+            if (input.type === 'date') {
+                state.elements[field].text = formatDate(new Date(input.value));
+            } else {
+                state.elements[field].text = input.value;
+            }
         }
     });
     renderPreview();
