@@ -91,9 +91,15 @@
                         <button id="sort-by-score" style="margin-right: 10px;">Sort by Score ↓</button>
                         <button id="reset-filters">Reset Filters</button>
                     </div>
+                    <div class="bulk-actions">
+                        <button id="select-all-registrations" class="bulk-action-btn">Select All</button>
+                        <button id="bulk-add-to-active" class="bulk-action-btn" disabled>Add Selected to Active</button>
+                        <button id="bulk-delete-registrations" class="bulk-action-btn" disabled>Delete Selected</button>
+                    </div>
                     <table id="internship-registrations-table">
                         <thead>
                             <tr>
+                                <th><input type="checkbox" id="select-all-registrations-checkbox"></th>
                                 <th>S.No</th>
                                 <th>Full Name</th>
                                 <th>Phone</th>
@@ -135,9 +141,14 @@
                 </div>
                 <div class="container">
                     <h2>Existing Internship Listings</h2>
+                    <div class="bulk-actions">
+                        <button id="select-all-listings" class="bulk-action-btn">Select All</button>
+                        <button id="bulk-delete-listings" class="bulk-action-btn" disabled>Delete Selected</button>
+                    </div>
                     <table id="internship-listings-admin-table">
                         <thead>
                             <tr>
+                                <th><input type="checkbox" id="select-all-listings-checkbox"></th>
                                 <th>Title</th>
                                 <th>Location</th>
                                 <th>Deadline</th>
@@ -153,9 +164,16 @@
                 <h1>Active Interns</h1>
                 <div class="container">
                     <h2>Currently Active Interns</h2>
+                    <div class="bulk-actions">
+                        <button id="select-all-active" class="bulk-action-btn">Select All</button>
+                        <button id="bulk-archive-active" class="bulk-action-btn" disabled>Archive Selected</button>
+                        <button id="bulk-delete-active" class="bulk-action-btn" disabled>Delete Selected</button>
+                        <button id="bulk-generate-certificates" class="bulk-action-btn" disabled>Generate Certificates</button>
+                    </div>
                     <table id="active-interns-table">
                         <thead>
                             <tr>
+                                <th><input type="checkbox" id="select-all-active-checkbox"></th>
                                 <th>Title</th>
                                 <th>Full Name</th>
                                 <th>Email</th>
@@ -172,9 +190,15 @@
                 <h1>Archived Interns</h1>
                 <div class="container">
                     <h2>Archived Interns List</h2>
+                    <div class="bulk-actions">
+                        <button id="select-all-archived" class="bulk-action-btn">Select All</button>
+                        <button id="bulk-activate-archived" class="bulk-action-btn" disabled>Activate Selected</button>
+                        <button id="bulk-delete-archived" class="bulk-action-btn" disabled>Delete Selected</button>
+                    </div>
                     <table id="archived-interns-table">
                         <thead>
                             <tr>
+                                <th><input type="checkbox" id="select-all-archived-checkbox"></th>
                                 <th>Title</th>
                                 <th>Full Name</th>
                                 <th>Email</th>
@@ -303,6 +327,14 @@
                 let i = 1;
                 data.forEach(application => {
                     const row = tableBody.insertRow();
+                    
+                    // Checkbox cell
+                    const checkboxCell = row.insertCell();
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.setAttribute('data-id', application.id);
+                    checkboxCell.appendChild(checkbox);
+                    
                     row.insertCell().textContent = i++;
                     row.insertCell().textContent = application.full_name || 'N/A';
                     row.insertCell().textContent = application.phone || 'N/A';
@@ -392,6 +424,14 @@
                         return;
                     }
                     const row = tableBody.insertRow();
+                    
+                    // Checkbox cell
+                    const checkboxCell = row.insertCell();
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.setAttribute('data-id', doc.id);
+                    checkboxCell.appendChild(checkbox);
+                    
                     row.insertCell().textContent = data.title;
                     row.insertCell().textContent = data.location;
                     row.insertCell().textContent = data.deadline;
@@ -432,6 +472,14 @@
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     const row = tableBody.insertRow();
+                    
+                    // Checkbox cell
+                    const checkboxCell = row.insertCell();
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.setAttribute('data-id', doc.id);
+                    checkboxCell.appendChild(checkbox);
+                    
                     row.insertCell().textContent = data.title || 'N/A';
                     row.insertCell().textContent = data.full_name;
                     row.insertCell().textContent = data.email;
@@ -471,6 +519,14 @@
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     const row = tableBody.insertRow();
+                    
+                    // Checkbox cell
+                    const checkboxCell = row.insertCell();
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.setAttribute('data-id', doc.id);
+                    checkboxCell.appendChild(checkbox);
+                    
                     row.insertCell().textContent = data.title || 'N/A';
                     row.insertCell().textContent = data.full_name;
                     row.insertCell().textContent = data.email;
@@ -555,12 +611,178 @@
             }
         }
 
+        // Bulk actions handlers
+        function setupBulkActions(tableId, selectAllId, selectAllCheckboxId, bulkActionBtns) {
+            const table = document.getElementById(tableId);
+            const selectAllBtn = document.getElementById(selectAllId);
+            const selectAllCheckbox = document.getElementById(selectAllCheckboxId);
+            const actionButtons = {};
+            
+            // Get all bulk action buttons
+            bulkActionBtns.forEach(btn => {
+                actionButtons[btn] = document.getElementById(btn);
+            });
+
+            // Function to update bulk action buttons state
+            function updateBulkActionButtons() {
+                const checkedBoxes = table.querySelectorAll('tbody input[type="checkbox"]:checked');
+                const hasSelection = checkedBoxes.length > 0;
+                
+                bulkActionBtns.forEach(btn => {
+                    actionButtons[btn].disabled = !hasSelection;
+                });
+            }
+
+            // Handle "Select All" checkbox
+            selectAllCheckbox.addEventListener('change', (e) => {
+                const checkboxes = table.querySelectorAll('tbody input[type="checkbox"]');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = e.target.checked;
+                    const row = checkbox.closest('tr');
+                    if (row) {
+                        row.classList.toggle('selected', e.target.checked);
+                    }
+                });
+                updateBulkActionButtons();
+            });
+
+            // Handle "Select All" button
+            selectAllBtn.addEventListener('click', () => {
+                selectAllCheckbox.checked = !selectAllCheckbox.checked;
+                selectAllCheckbox.dispatchEvent(new Event('change'));
+            });
+
+            // Setup row selection
+            table.addEventListener('change', (e) => {
+                if (e.target.type === 'checkbox' && e.target.closest('tbody')) {
+                    const row = e.target.closest('tr');
+                    row.classList.toggle('selected', e.target.checked);
+                    
+                    // Update "Select All" checkbox state
+                    const checkboxes = table.querySelectorAll('tbody input[type="checkbox"]');
+                    const checkedBoxes = table.querySelectorAll('tbody input[type="checkbox"]:checked');
+                    selectAllCheckbox.checked = checkboxes.length === checkedBoxes.length;
+                    
+                    updateBulkActionButtons();
+                }
+            });
+
+            // Return selected IDs function
+            return function getSelectedIds() {
+                const selectedRows = table.querySelectorAll('tbody input[type="checkbox"]:checked');
+                return Array.from(selectedRows).map(checkbox => checkbox.getAttribute('data-id'));
+            };
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             showSection('registrations'); // Set registrations as the default active section
             
+            // Setup bulk actions for each table
+            const getSelectedRegistrations = setupBulkActions(
+                'internship-registrations-table',
+                'select-all-registrations',
+                'select-all-registrations-checkbox',
+                ['bulk-add-to-active', 'bulk-delete-registrations']
+            );
+
+            const getSelectedListings = setupBulkActions(
+                'internship-listings-admin-table',
+                'select-all-listings',
+                'select-all-listings-checkbox',
+                ['bulk-delete-listings']
+            );
+
+            const getSelectedActiveInterns = setupBulkActions(
+                'active-interns-table',
+                'select-all-active',
+                'select-all-active-checkbox',
+                ['bulk-archive-active', 'bulk-delete-active', 'bulk-generate-certificates']
+            );
+
+            const getSelectedArchivedInterns = setupBulkActions(
+                'archived-interns-table',
+                'select-all-archived',
+                'select-all-archived-checkbox',
+                ['bulk-activate-archived', 'bulk-delete-archived']
+            );
+
+            // Handle bulk actions for registrations
+            document.getElementById('bulk-add-to-active').addEventListener('click', () => {
+                const selectedIds = getSelectedRegistrations();
+                if (confirm(`Move ${selectedIds.length} selected registration(s) to Active Interns?`)) {
+                    selectedIds.forEach(id => {
+                        db.collection('internshipApplications').doc(id).update({ status: 'active' });
+                    });
+                }
+            });
+
+            document.getElementById('bulk-delete-registrations').addEventListener('click', () => {
+                const selectedIds = getSelectedRegistrations();
+                if (confirm(`Delete ${selectedIds.length} selected registration(s)?`)) {
+                    selectedIds.forEach(id => {
+                        db.collection('internshipApplications').doc(id).delete();
+                    });
+                }
+            });
+
+            // Handle bulk actions for listings
+            document.getElementById('bulk-delete-listings').addEventListener('click', () => {
+                const selectedIds = getSelectedListings();
+                if (confirm(`Delete ${selectedIds.length} selected listing(s)?`)) {
+                    selectedIds.forEach(id => {
+                        db.collection('internships').doc(id).delete();
+                    });
+                }
+            });
+
+            // Handle bulk actions for active interns
+            document.getElementById('bulk-archive-active').addEventListener('click', () => {
+                const selectedIds = getSelectedActiveInterns();
+                if (confirm(`Archive ${selectedIds.length} selected intern(s)?`)) {
+                    selectedIds.forEach(id => {
+                        db.collection('internshipApplications').doc(id).update({ status: 'archived' });
+                    });
+                }
+            });
+
+            document.getElementById('bulk-delete-active').addEventListener('click', () => {
+                const selectedIds = getSelectedActiveInterns();
+                if (confirm(`Delete ${selectedIds.length} selected intern(s)?`)) {
+                    selectedIds.forEach(id => {
+                        db.collection('internshipApplications').doc(id).delete();
+                    });
+                }
+            });
+
+            document.getElementById('bulk-generate-certificates').addEventListener('click', () => {
+                const selectedIds = getSelectedActiveInterns();
+                // Redirect to certificate generator with selected IDs as query params
+                const idsParam = selectedIds.join(',');
+                window.location.href = `certificate_generator.html?ids=${idsParam}`;
+            });
+
+            // Handle bulk actions for archived interns
+            document.getElementById('bulk-activate-archived').addEventListener('click', () => {
+                const selectedIds = getSelectedArchivedInterns();
+                if (confirm(`Activate ${selectedIds.length} selected intern(s)?`)) {
+                    selectedIds.forEach(id => {
+                        db.collection('internshipApplications').doc(id).update({ status: 'active' });
+                    });
+                }
+            });
+
+            document.getElementById('bulk-delete-archived').addEventListener('click', () => {
+                const selectedIds = getSelectedArchivedInterns();
+                if (confirm(`Delete ${selectedIds.length} selected intern(s)?`)) {
+                    selectedIds.forEach(id => {
+                        db.collection('internshipApplications').doc(id).delete();
+                    });
+                }
+            });
+            
             loadInternshipRegistrations();
             
- setupListingForm('add-internship-form', 'internships', 'internship-id', 'internship-title-input', 'internship-location-input', 'internship-description-input', 'internship-deadline-input', 'internship-category-select', 'cancel-internship-edit');
+            setupListingForm('add-internship-form', 'internships', 'internship-id', 'internship-title-input', 'internship-location-input', 'internship-description-input', 'internship-deadline-input', 'internship-category-select', 'cancel-internship-edit');
             
             loadListings('internships', 'internship-listings-admin-table', 'add-internship-form', 'internship-id', 'internship-title-input', 'internship-location-input', 'internship-description-input', 'internship-deadline-input', 'internship-category-select', 'cancel-internship-edit');
             loadActiveInterns();
@@ -666,6 +888,80 @@
 
         .document-link:hover {
             text-decoration: underline;
+        }
+
+        /* Bulk Actions Styling */
+        .bulk-actions {
+            margin: 18px 0;
+            padding: 12px 16px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+
+        .bulk-action-btn {
+            padding: 8px 16px;
+            border-radius: 5px;
+            font-size: 13.5px;
+            background-color: #673ab7;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            height: 36px;
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+            font-weight: 500;
+            min-width: 90px;
+            justify-content: center;
+        }
+
+        .bulk-action-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .bulk-action-btn:not(:disabled):hover {
+            background-color: #5e35b1;
+        }
+
+        /* Checkbox styling */
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            border: 2px solid #673ab7;
+            border-radius: 3px;
+            appearance: none;
+            -webkit-appearance: none;
+            position: relative;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+
+        input[type="checkbox"]:checked {
+            background-color: #673ab7;
+        }
+
+        input[type="checkbox"]:checked::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 14px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Row selection styling */
+        tr.selected {
+            background-color: #ede7f6 !important;
         }
     </style>
 </body>
