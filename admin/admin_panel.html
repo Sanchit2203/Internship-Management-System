@@ -308,7 +308,11 @@
                     row.insertCell().textContent = application.phone || 'N/A';
                     row.insertCell().textContent = application.title || 'N/A';
                     row.insertCell().textContent = application.branch || 'N/A';
-                    row.insertCell().textContent = application.score || 'N/A';
+                    const scoreCell = row.insertCell();
+                    const score = parseFloat(application.score) || 0;
+                    scoreCell.textContent = score;
+                    scoreCell.style.color = score >= 7 ? '#28a745' : '#dc3545'; // green if >=7, red otherwise
+                    scoreCell.style.fontWeight = 'bold';
                     
                     const detailsCell = row.insertCell();
                     const viewDetailsBtn = document.createElement('button');
