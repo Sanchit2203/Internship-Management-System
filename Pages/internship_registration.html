@@ -26,10 +26,10 @@
     <div class="container">
         <h1>Internship Application Form</h1>
         <form id="internship-application-form">
- <div class="form-section full-width">
- <label for="internship_category">Internship Category:</label>
- <input type="text" id="internship_category" name="internship_category" disabled>
- </div>
+            <div class="form-section full-width">
+                <label for="internship_category">Internship Category:</label>
+                <input type="text" id="internship_category" name="internship_category" disabled>
+            </div>
             <h2>Applying For</h2>
             <div class="form-section full-width">
                 <label for="internship_title">Internship Title:</label>
@@ -131,13 +131,14 @@
                          <label for="resume">Upload Resume: <span style="color: red;">*</span></label>
                          <input type="file" id="resume" name="resume" required>
                          <span id="resumeFileName"></span>
- </div>
- <div class="form-column" id="certificates-upload-section">
+                     </div>
+                     <div class="form-column" id="certificates-upload-section">
                          <label>Upload Certificates (Up to 5, Optional):</label>
- <div id="certificates-container">
- <!-- Dynamic certificate inputs will be added here -->
- </div>
- <button type="button" id="add-certificate-btn">Add Certificate</button>
+                         <div id="certificates-container">
+                             <!-- Dynamic certificate inputs will be added here -->
+                         </div>
+                         <button type="button" id="add-certificate-btn">Add Certificate</button>
+                    </div>
                 </div>
                 <div class="form-row full-width">
                      <label for="cover_letter">Cover Letter (Optional):</label>
@@ -153,10 +154,11 @@
     </div>
 
     <script src="../auth.js"></script>
+    <script src="../score.js"></script> <!-- Link to score.js -->
     <script>
         // Initialize Firebase
- let certificateFiles = []; // Array to store selected certificate files
- let uploadedCertificateUrls = []; // Array to store URLs of existing certificates
+        let certificateFiles = []; // Array to store selected certificate files
+        let uploadedCertificateUrls = []; // Array to store URLs of existing certificates
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
@@ -307,7 +309,7 @@
                         certificateFiles.push(selectedFile);
                         // Update the file object reference on the div
                         certificateDiv.dataset.fileObject = JSON.stringify({ name: selectedFile.name, type: selectedFile.type, size: selectedFile.size }); // Store file details
-                         certificateDiv.file = selectedFile; // Store the file object
+                        certificateDiv.file = selectedFile; // Store the file object
 
                         this.style.display = 'none'; // Hide input after selection
                         feedbackMessage.textContent = ''; // Clear previous feedback
@@ -345,20 +347,20 @@
                 document.getElementById('branch').value = data.branch || '';
                 document.getElementById('course').value = data.course || '';
                 document.getElementById('cover_letter').value = data.cover_letter || '';
- document.getElementById('year_of_study').value = data.year_of_study || '';
- document.getElementById('tenth_marks').value = data.tenth_marks || '';
- document.getElementById('twelfth_marks').value = data.twelfth_marks || '';
- document.getElementById('current_cgpa').value = data.current_cgpa || '';
+                document.getElementById('year_of_study').value = data.year_of_study || '';
+                document.getElementById('tenth_marks').value = data.tenth_marks || '';
+                document.getElementById('twelfth_marks').value = data.twelfth_marks || '';
+                document.getElementById('current_cgpa').value = data.current_cgpa || '';
 
- if (data.tenth_marksheetURL) {
- document.getElementById('tenthMarksheetFileName').textContent = 'Current: ' + decodeURIComponent(data.tenth_marksheetURL.split('%')[1].split('?')[0]);
- }
- if (data.twelfth_marksheetURL) {
- document.getElementById('twelfthMarksheetFileName').textContent = 'Current: ' + decodeURIComponent(data.twelfth_marksheetURL.split('%')[1].split('?')[0]);
- }
- if (data.cgpa_proofURL) {
- document.getElementById('cgpaProofFileName').textContent = 'Current: ' + decodeURIComponent(data.cgpa_proofURL.split('%')[1].split('?')[0]);
- }
+                if (data.tenth_marksheetURL) {
+                    document.getElementById('tenthMarksheetFileName').textContent = 'Current: ' + decodeURIComponent(data.tenth_marksheetURL.split('%')[1].split('?')[0]);
+                }
+                if (data.twelfth_marksheetURL) {
+                    document.getElementById('twelfthMarksheetFileName').textContent = 'Current: ' + decodeURIComponent(data.twelfth_marksheetURL.split('%')[1].split('?')[0]);
+                }
+                if (data.cgpa_proofURL) {
+                    document.getElementById('cgpaProofFileName').textContent = 'Current: ' + decodeURIComponent(data.cgpa_proofURL.split('%')[1].split('?')[0]);
+                }
 
                 const resumeFileNameSpan = document.getElementById('resumeFileName');
                 if (data.resumeURL) {
@@ -378,10 +380,10 @@
                 event.preventDefault();
 
                 const branchSelect = document.getElementById('branch');
- if (branchSelect.value === "") {
- feedbackMessage.textContent = 'Please select your branch.';
- feedbackMessage.style.color = 'red';
- return;
+                if (branchSelect.value === "") {
+                    feedbackMessage.textContent = 'Please select your branch.';
+                    feedbackMessage.style.color = 'red';
+                    return;
                 }
 
                 const tenthMarks = parseFloat(document.getElementById('tenth_marks').value);
@@ -406,8 +408,6 @@
                     return;
                 }
 
-
-
                 feedbackMessage.textContent = 'Submitting application...';
                 feedbackMessage.style.color = 'blue';
 
@@ -427,9 +427,13 @@
                     }
                 });
                 registrationData.title = document.getElementById('internship_title').value;
- registrationData.category = document.getElementById('internship_category').value;
+                registrationData.category = document.getElementById('internship_category').value;
                 registrationData.status = 'pending';
                 registrationData.userId = currentUser.uid;
+                
+                // Calculate the score using the function from score.js
+                const applicantScore = calculateScore(tenthMarks, twelfthMarks, currentCgpa);
+                registrationData.score = applicantScore; // Store the calculated score
 
                  // Function to upload file and return URL
                  async function uploadFile(file, folder) {
@@ -473,7 +477,7 @@
                          if (twelfthMarksheetURL) registrationData.twelfth_marksheetURL = twelfthMarksheetURL;
                          if (cgpaProofURL) registrationData.cgpa_proofURL = cgpaProofURL;
 
- registrationData.certificatesURLs = allCertificatesURLs;
+                         registrationData.certificatesURLs = allCertificatesURLs;
                         await existingApplicationDocRef.update(registrationData);
                         feedbackMessage.textContent = 'Internship application updated successfully!';
                         feedbackMessage.style.color = 'green';
@@ -488,7 +492,7 @@
                          registrationData.tenth_marksheetURL = tenthMarksheetURL;
                          registrationData.twelfth_marksheetURL = twelfthMarksheetURL;
                          registrationData.cgpa_proofURL = cgpaProofURL;
- registrationData.certificatesURLs = allCertificatesURLs;
+                         registrationData.certificatesURLs = allCertificatesURLs;
 
                         await db.collection('internshipApplications').add(registrationData);
                         feedbackMessage.textContent = 'Internship application submitted successfully!';
