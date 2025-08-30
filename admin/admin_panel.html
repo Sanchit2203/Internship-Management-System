@@ -11,6 +11,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="../firebase-config.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         .sidebar {
             position: fixed;
@@ -235,10 +236,220 @@
                 <h1>Certificate Generator</h1>
                 <div class="container">
                     <h2>Generate Certificates for Interns</h2>
-                    <p>This section will contain tools to generate internship completion certificates.</p>
-                    <!-- Certificate generation form/table will go here -->
+                    <div class="certificate-controls">
+                        <div class="certificate-form">
+                            <h3>Certificate Settings</h3>
+                            <form id="certificate-settings-form">
+                                <div class="form-group">
+                                    <label for="certificate-template">Template Style:</label>
+                                    <select id="certificate-template" required>
+                                        <option value="classic">Classic Design</option>
+                                        <option value="modern">Modern Design</option>
+                                        <option value="professional">Professional Design</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="certificate-title">Certificate Title:</label>
+                                    <input type="text" id="certificate-title" placeholder="e.g., Certificate of Completion" value="Certificate of Completion" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="company-name">Company Name:</label>
+                                    <input type="text" id="company-name" placeholder="Your Company Name" value="CareerConnect" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="company-logo">Company Logo:</label>
+                                    <input type="file" id="company-logo" accept="image/*">
+                                </div>
+                                <div class="form-group">
+                                    <label for="signature-image">Signature Image:</label>
+                                    <input type="file" id="signature-image" accept="image/*">
+                                </div>
+                                <div class="form-group">
+                                    <label for="certificate-color">Color Theme:</label>
+                                    <input type="color" id="certificate-color" value="#3498db">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="certificate-preview">
+                            <h3>Preview</h3>
+                            <div id="certificate-preview-container">
+                                <!-- Preview will be rendered here -->
+                                <div class="certificate-template" id="preview-certificate">
+                                    <div class="certificate-header">
+                                        <img src="../image.png" alt="Company Logo" class="company-logo">
+                                    </div>
+                                    <div class="certificate-content">
+                                        <h1 id="preview-title">Certificate of Completion</h1>
+                                        <p class="recipient">This is to certify that</p>
+                                        <h2 class="intern-name">[Intern Name]</h2>
+                                        <p class="certificate-text">has successfully completed the internship program in</p>
+                                        <h3 class="internship-title">[Internship Title]</h3>
+                                        <p class="date">Date: [Date]</p>
+                                        <div class="signature-area">
+                                            <img src="" alt="Signature" id="signature-preview" style="display: none;">
+                                            <div class="signature-line"></div>
+                                            <p class="signatory">Authorized Signatory</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            <style>
+                /* Certificate Generator Styling */
+                .certificate-controls {
+                    display: grid;
+                    grid-template-columns: 1fr 2fr;
+                    gap: 30px;
+                    padding: 20px;
+                }
+
+                .certificate-form {
+                    background: #f8f9fa;
+                    padding: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+
+                .certificate-form h3 {
+                    margin-bottom: 20px;
+                    color: #2c3e50;
+                    border-bottom: 2px solid #3498db;
+                    padding-bottom: 10px;
+                }
+
+                .form-group {
+                    margin-bottom: 20px;
+                }
+
+                .form-group label {
+                    display: block;
+                    margin-bottom: 8px;
+                    font-weight: 500;
+                    color: #2c3e50;
+                }
+
+                .form-group input[type="text"],
+                .form-group select {
+                    width: 100%;
+                    padding: 8px 12px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    font-size: 14px;
+                }
+
+                .form-group input[type="file"] {
+                    width: 100%;
+                    padding: 8px;
+                    border: 1px dashed #ddd;
+                    border-radius: 4px;
+                    background: #fff;
+                }
+
+                .form-group input[type="color"] {
+                    width: 100%;
+                    height: 40px;
+                    padding: 2px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                }
+
+                .certificate-preview {
+                    background: #fff;
+                    padding: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+
+                .certificate-preview h3 {
+                    margin-bottom: 20px;
+                    color: #2c3e50;
+                    border-bottom: 2px solid #3498db;
+                    padding-bottom: 10px;
+                }
+
+                .certificate-template {
+                    background: #fff;
+                    border: 1px solid #ddd;
+                    padding: 40px;
+                    margin: 20px auto;
+                    max-width: 800px;
+                    text-align: center;
+                    position: relative;
+                    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                }
+
+                .certificate-header {
+                    margin-bottom: 30px;
+                }
+
+                .company-logo {
+                    max-height: 80px;
+                }
+
+                .certificate-content {
+                    padding: 20px;
+                }
+
+                .certificate-content h1 {
+                    font-size: 36px;
+                    color: #2c3e50;
+                    margin-bottom: 30px;
+                }
+
+                .recipient {
+                    font-size: 18px;
+                    margin-bottom: 10px;
+                }
+
+                .intern-name {
+                    font-size: 28px;
+                    color: #3498db;
+                    margin: 20px 0;
+                }
+
+                .certificate-text {
+                    font-size: 18px;
+                    margin: 10px 0;
+                }
+
+                .internship-title {
+                    font-size: 24px;
+                    color: #2c3e50;
+                    margin: 20px 0;
+                }
+
+                .date {
+                    font-size: 16px;
+                    margin: 20px 0;
+                }
+
+                .signature-area {
+                    margin-top: 50px;
+                    display: inline-block;
+                }
+
+                .signature-line {
+                    width: 200px;
+                    height: 1px;
+                    background: #000;
+                    margin: 10px auto;
+                }
+
+                .signatory {
+                    font-size: 16px;
+                    margin-top: 5px;
+                }
+
+                @media (max-width: 992px) {
+                    .certificate-controls {
+                        grid-template-columns: 1fr;
+                    }
+                }
+            </style>
         </main>
     </div>
 
@@ -818,6 +1029,101 @@
             loadListings('internships', 'internship-listings-admin-table', 'add-internship-form', 'internship-id', 'internship-title-input', 'internship-location-input', 'internship-description-input', 'internship-deadline-input', 'internship-category-select', 'cancel-internship-edit');
             loadActiveInterns();
             loadArchivedInterns();
+
+            // Certificate Generator Functionality
+            const certificateForm = document.getElementById('certificate-settings-form');
+            const previewTitle = document.getElementById('preview-title');
+            const certificateTemplate = document.getElementById('preview-certificate');
+            
+            // Update preview on form changes
+            document.getElementById('certificate-title').addEventListener('input', (e) => {
+                previewTitle.textContent = e.target.value;
+            });
+
+            document.getElementById('certificate-color').addEventListener('input', (e) => {
+                previewTitle.style.color = e.target.value;
+                document.querySelector('.intern-name').style.color = e.target.value;
+            });
+
+            document.getElementById('company-logo').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.querySelector('.company-logo').src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            document.getElementById('signature-image').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const signatureImg = document.getElementById('signature-preview');
+                        signatureImg.src = e.target.result;
+                        signatureImg.style.display = 'block';
+                        document.querySelector('.signature-line').style.display = 'none';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            document.getElementById('certificate-template').addEventListener('change', (e) => {
+                const template = e.target.value;
+                certificateTemplate.className = 'certificate-template ' + template;
+                
+                // Apply template-specific styles
+                switch(template) {
+                    case 'modern':
+                        certificateTemplate.style.borderRadius = '10px';
+                        certificateTemplate.style.background = 'linear-gradient(135deg, #fff 0%, #f8f9fa 100%)';
+                        break;
+                    case 'professional':
+                        certificateTemplate.style.border = '15px solid #2c3e50';
+                        certificateTemplate.style.background = '#fff';
+                        break;
+                    default: // classic
+                        certificateTemplate.style.border = '1px solid #ddd';
+                        certificateTemplate.style.background = '#fff';
+                        break;
+                }
+            });
+
+            // Function to generate certificate
+            function generateCertificate(name, title) {
+                const certificate = document.getElementById('preview-certificate').cloneNode(true);
+                certificate.querySelector('.intern-name').textContent = name;
+                certificate.querySelector('.internship-title').textContent = title;
+                certificate.querySelector('.date').textContent = 'Date: ' + new Date().toLocaleDateString();
+                
+                // Convert to PDF using html2pdf
+                const element = certificate;
+                const opt = {
+                    margin: 1,
+                    filename: `${name}_certificate.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+                };
+
+                // Generate PDF
+                html2pdf().set(opt).from(element).save();
+            }
+
+            // Update certificate generation button functionality
+            const generateButtons = document.querySelectorAll('button');
+            generateButtons.forEach(button => {
+                if (button.textContent === 'Generate Certificate') {
+                    button.onclick = (e) => {
+                        const row = e.target.closest('tr');
+                        const name = row.querySelector('td:nth-child(3)').textContent;
+                        const title = row.querySelector('td:nth-child(1)').textContent;
+                        generateCertificate(name, title);
+                    };
+                }
+            });
         });
     </script>
 
