@@ -35,9 +35,32 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease-in-out;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
             border: 1px solid var(--border-color);
             background-color: white;
+        }
+        .preview-area::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            background: #f0f0f0;
+            z-index: -1;
+            border-radius: 4px;
+        }
+        .preview-area::after {
+            content: attr(data-paper-size);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary-color);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-size: 12px;
         }
 
         .draggable {
@@ -49,7 +72,28 @@
             transition: border-color 0.2s;
             padding: 5px;
             cursor: move;
+            min-width: 50px;
+            min-height: 20px;
         }
+        .draggable.selected {
+            border: 2px dashed #4a5568;
+            resize: both;
+            overflow: auto;
+        }
+        .draggable:hover {
+            border: 2px dashed #718096;
+        }
+        .resize-handle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #4a5568;
+            border: 1px solid white;
+        }
+        .resize-handle.top-left { top: -5px; left: -5px; cursor: nw-resize; }
+        .resize-handle.top-right { top: -5px; right: -5px; cursor: ne-resize; }
+        .resize-handle.bottom-left { bottom: -5px; left: -5px; cursor: sw-resize; }
+        .resize-handle.bottom-right { bottom: -5px; right: -5px; cursor: se-resize; }
 
         .draggable.selected {
             border-color: var(--primary-color);
@@ -72,42 +116,130 @@
 
         .form-input, .form-select {
             width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
             background-color: #fff;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        .form-input:hover, .form-select:hover {
+            border-color: #cbd5e0;
         }
 
         .form-input:focus, .form-select:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(74, 85, 104, 0.2);
+            box-shadow: 0 0 0 3px rgba(74, 85, 104, 0.15);
+        }
+
+        .form-input::placeholder {
+            color: #a0aec0;
+        }
+
+        textarea.form-input {
+            resize: vertical;
+            min-height: 80px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color);
+            font-size: 14px;
         }
         
         .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
+            padding: 12px 24px;
+            border: 2px solid transparent;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
             font-weight: 600;
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+            letter-spacing: 0.3px;
         }
 
         .btn-primary {
             background-color: var(--primary-color);
             color: white;
-        }
-        .orientation-btn.active {
-            background-color: var(--primary-color);
-            color: white;
+            box-shadow: 0 2px 4px rgba(74, 85, 104, 0.2);
         }
 
         .btn-primary:hover {
             background-color: #2d3748;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(74, 85, 104, 0.2);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(74, 85, 104, 0.2);
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-color);
+            background-color: #f8fafc;
+        }
+
+        .orientation-btn {
+            padding: 8px 16px;
+            flex: 1;
+            background-color: white;
+            border: 2px solid var(--border-color);
+            color: var(--text-color);
+        }
+
+        .orientation-btn:first-child {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .orientation-btn:last-child {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        .orientation-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .align-btn {
+            padding: 8px;
+            background-color: white;
+            border: 2px solid var(--border-color);
+            color: var(--text-color);
+        }
+
+        .align-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .align-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
         }
 
         .loader {
@@ -124,16 +256,70 @@
             100% { transform: rotate(360deg); }
         }
         .controls-panel {
-             background: white; 
-             padding: 2rem; 
-             border-radius: 8px; 
-             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            background: white; 
+            padding: 2rem; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid var(--border-color);
         }
-        .space-y-4 > *:not(:last-child) {
+
+        .panel-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .panel-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-color);
             margin-bottom: 1rem;
         }
+
+        .space-y-4 > *:not(:last-child) {
+            margin-bottom: 1.5rem;
+        }
+
+        .section-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 2rem 0;
+        }
+
         .hidden {
             display: none;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+            background: #e2e8f0;
+            color: var(--text-color);
+        }
+
+        .badge-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .preview-container {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
     </style>
 </head>
@@ -148,10 +334,23 @@
     <div class="container" style="max-width: 1400px; margin: auto; padding: 2rem;">
         <main style="display: grid; grid-template-columns: 400px 1fr; gap: 2rem;">
             <div class="controls-panel">
-                <div class="tabs" style="display: flex; border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem;">
-                    <button class="tab-btn active" data-tab="content">Content</button>
-                    <button class="tab-btn" data-tab="customize">Customize</button>
-                    <button class="tab-btn" data-tab="batch">Batch</button>
+                <div class="panel-header">
+                    <h2 class="panel-title">Certificate Generator</h2>
+                </div>
+                
+                <div class="tabs" style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+                    <button class="btn btn-secondary active" data-tab="content" style="flex: 1">
+                        <i class="fas fa-pen-to-square"></i>
+                        Content
+                    </button>
+                    <button class="btn btn-secondary" data-tab="customize" style="flex: 1">
+                        <i class="fas fa-palette"></i>
+                        Design
+                    </button>
+                    <button class="btn btn-secondary" data-tab="batch" style="flex: 1">
+                        <i class="fas fa-layer-group"></i>
+                        Batch
+                    </button>
                 </div>
 
                 <div id="tab-panels">
@@ -204,16 +403,27 @@
                             </button>
                         </div>
 
-                        <!-- Template Selector -->
+                        <!-- Template and Paper Size Selectors -->
                         <div class="mt-6" style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
-                            <h4 style="font-size: 1rem; font-weight: 500; margin-bottom: 1rem;">Quick Templates</h4>
-                            <select id="template-selector" class="form-select">
-                                <option value="default">Professional Certificate</option>
-                                <option value="achievement">Achievement Award</option>
-                                <option value="completion">Course Completion</option>
-                                <option value="internship">Internship Certificate</option>
-                                <option value="participation">Participation Certificate</option>
-                            </select>
+                            <h4 style="font-size: 1rem; font-weight: 500; margin-bottom: 1rem;">Certificate Settings</h4>
+                            <div style="margin-bottom: 1rem;">
+                                <label style="display: block; margin-bottom: 0.5rem;">Template Style</label>
+                                <select id="template-selector" class="form-select">
+                                    <option value="default">Professional Certificate</option>
+                                    <option value="achievement">Achievement Award</option>
+                                    <option value="completion">Course Completion</option>
+                                    <option value="internship">Internship Certificate</option>
+                                    <option value="participation">Participation Certificate</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem;">Paper Size</label>
+                                <select id="paper-size" class="form-select">
+                                    <option value="a4">A4 (210 × 297 mm)</option>
+                                    <option value="a3">A3 (297 × 420 mm)</option>
+                                    <option value="letter">US Letter (216 × 279 mm)</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
@@ -315,11 +525,17 @@
                     </div>
                 </div>
 
-                <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
-                     <button id="generate-pdf-btn" class="btn btn-primary" style="width: 100%; font-size: 1.1rem;">
-                        <i class="fas fa-file-pdf" style="margin-right: 0.5rem;"></i>
-                        Generate Single PDF
-                     </button>
+                <div class="section-divider"></div>
+                
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <button id="generate-pdf-btn" class="btn btn-primary" style="flex: 1;">
+                        <i class="fas fa-file-pdf"></i>
+                        Generate Certificate
+                    </button>
+                    <button class="btn btn-secondary" onclick="window.location.reload()">
+                        <i class="fas fa-rotate"></i>
+                        Reset
+                    </button>
                 </div>
             </div>
 
@@ -360,6 +576,13 @@ const styler = {
     alignBtns: document.querySelectorAll('.align-btn'),
 };
 let selectedElementId = null;
+
+// Paper size configurations in mm
+const paperSizes = {
+    a4: { width: 210, height: 297 },
+    a3: { width: 297, height: 420 },
+    letter: { width: 216, height: 279 }
+};
 
 const certificateTemplates = {
     default: {
@@ -403,15 +626,16 @@ function initializeState() {
     
     state = {
         orientation: 'landscape',
+        paperSize: 'a4',
         backgroundImage: null,
         elements: {
-            certificateTitle: { text: "Certificate of Achievement", x: 50, y: 15, style: { fontSize: 36, fontFamily: "'Playfair Display', serif", color: '#000000', fontWeight: 'bold', textAlign: 'center' } },
-            completionText:   { text: "This is to certify that the above named individual has successfully completed", x: 50, y: 40, style: { fontSize: 18, fontFamily: "'Inter', sans-serif", color: '#333333', fontWeight: 'normal', textAlign: 'center' } },
-            recipientName:    { text: "Name", x: 50, y: 30, style: { fontSize: 42, fontFamily: "'Playfair Display', serif", color: '#000000', fontWeight: 'bold', textAlign: 'center' } },
-            courseName:       { text: "a comprehensive internship program in Web Development, demonstrating exceptional skills and dedication throughout the duration of the program", x: 50, y: 55, style: { fontSize: 20, fontFamily: "'Inter', sans-serif", color: '#333333', fontWeight: 'normal', textAlign: 'center' } },
-            date:             { text: formattedDate, x: 50, y: 80, style: { fontSize: 18, fontFamily: "'Inter', sans-serif", color: '#555555', fontWeight: 'normal', textAlign: 'center' } },
-            signature:        { text: "_________________________", x: 20, y: 88, style: { fontSize: 18, fontFamily: "'Inter', sans-serif", color: '#000000', fontWeight: 'normal', textAlign: 'left' } },
-            signatureTitle:   { text: "Authorized Signatory", x: 20, y: 92, style: { fontSize: 16, fontFamily: "'Inter', sans-serif", color: '#333333', fontWeight: 'normal', textAlign: 'left' } },
+            certificateTitle: { text: "Certificate of Achievement", x: 50, y: 15, width: 80, height: 15, style: { fontSize: 36, fontFamily: "'Playfair Display', serif", color: '#000000', fontWeight: 'bold', textAlign: 'center' } },
+            completionText:   { text: "This is to certify that the above named individual has successfully completed", x: 50, y: 40, width: 70, height: 10, style: { fontSize: 18, fontFamily: "'Inter', sans-serif", color: '#333333', fontWeight: 'normal', textAlign: 'center' } },
+            recipientName:    { text: "Name", x: 50, y: 30, width: 60, height: 12, style: { fontSize: 42, fontFamily: "'Playfair Display', serif", color: '#000000', fontWeight: 'bold', textAlign: 'center' } },
+            courseName:       { text: "a comprehensive internship program in Web Development, demonstrating exceptional skills and dedication throughout the duration of the program", x: 50, y: 55, width: 75, height: 15, style: { fontSize: 20, fontFamily: "'Inter', sans-serif", color: '#333333', fontWeight: 'normal', textAlign: 'center' } },
+            date:             { text: formattedDate, x: 50, y: 80, width: 40, height: 8, style: { fontSize: 18, fontFamily: "'Inter', sans-serif", color: '#555555', fontWeight: 'normal', textAlign: 'center' } },
+            signature:        { text: "________________", x: 20, y: 88, width: 30, height: 5, style: { fontSize: 18, fontFamily: "'Inter', sans-serif", color: '#000000', fontWeight: 'normal', textAlign: 'left' } },
+            signatureTitle:   { text: "Authorized Signatory", x: 20, y: 91, width: 30, height: 5, style: { fontSize: 16, fontFamily: "'Inter', sans-serif", color: '#333333', fontWeight: 'normal', textAlign: 'left' } },
         }
     };
 
@@ -447,9 +671,10 @@ function renderPreview() {
     const containerWidth = container.offsetWidth - 64; // padding
     const containerHeight = container.offsetHeight - 64; // padding
 
-    // Use exact A4 proportions
-    const pdfWidth = isLandscape ? 842 : 595;
-    const pdfHeight = isLandscape ? 595 : 842;
+    // Get paper dimensions
+    const paperDims = paperSizes[state.paperSize];
+    const pdfWidth = isLandscape ? paperDims.height : paperDims.width;
+    const pdfHeight = isLandscape ? paperDims.width : paperDims.height;
     const aspectRatio = pdfWidth / pdfHeight;
     let width, height;
 
@@ -489,31 +714,66 @@ function renderPreview() {
     }
 }
 
-interact('.draggable').draggable({
-    listeners: {
-        move(event) {
-            const target = event.target;
-            const id = target.dataset.id;
-            if (!state.elements[id]) return;
+// Initialize both draggable and resizable
+interact('.draggable')
+    .draggable({
+        listeners: {
+            move(event) {
+                const target = event.target;
+                const id = target.dataset.id;
+                if (!state.elements[id]) return;
 
-            const elData = state.elements[id];
-            const previewRect = previewArea.getBoundingClientRect();
-            
-            const dxPercent = (event.dx / previewRect.width) * 100;
-            const dyPercent = (event.dy / previewRect.height) * 100;
+                const elData = state.elements[id];
+                const previewRect = previewArea.getBoundingClientRect();
+                
+                const dxPercent = (event.dx / previewRect.width) * 100;
+                const dyPercent = (event.dy / previewRect.height) * 100;
 
-            elData.x = Math.max(0, Math.min(100, (parseFloat(elData.x) || 0) + dxPercent));
-            elData.y = Math.max(0, Math.min(100, (parseFloat(elData.y) || 0) + dyPercent));
+                elData.x = Math.max(0, Math.min(100, (parseFloat(elData.x) || 0) + dxPercent));
+                elData.y = Math.max(0, Math.min(100, (parseFloat(elData.y) || 0) + dyPercent));
 
-            renderPreview();
+                renderPreview();
+            }
         }
-    }
-});
+    })
+    .resizable({
+        edges: { left: true, right: true, bottom: true, top: true },
+        listeners: {
+            move(event) {
+                const target = event.target;
+                const id = target.dataset.id;
+                if (!state.elements[id]) return;
 
-document.querySelectorAll('.tab-btn').forEach(btn => {
+                const elData = state.elements[id];
+                const previewRect = previewArea.getBoundingClientRect();
+
+                // Update width and height in percentage
+                if (!elData.width) elData.width = 20; // Default width if not set
+                if (!elData.height) elData.height = 10; // Default height if not set
+
+                const dxPercent = (event.deltaRect.width / previewRect.width) * 100;
+                const dyPercent = (event.deltaRect.height / previewRect.height) * 100;
+
+                elData.width = Math.max(10, Math.min(90, elData.width + dxPercent));
+                elData.height = Math.max(5, Math.min(50, elData.height + dyPercent));
+
+                // Update element style
+                target.style.width = `${elData.width}%`;
+                target.style.height = `${elData.height}%`;
+
+                renderPreview();
+            }
+        }
+    });
+
+document.querySelectorAll('[data-tab]').forEach(btn => {
     btn.addEventListener('click', () => {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('[data-tab]').forEach(b => {
+            b.classList.remove('active');
+            b.classList.add('btn-secondary');
+        });
         btn.classList.add('active');
+        btn.classList.remove('btn-secondary');
         document.querySelectorAll('#tab-panels > div').forEach(p => p.classList.add('hidden'));
         document.getElementById(`tab-${btn.dataset.tab}`).classList.remove('hidden');
     });
@@ -586,13 +846,16 @@ styler.alignBtns.forEach(btn => {
 });
 
 async function generatePdf(data) {
-    const doc = new jsPDF({ orientation: state.orientation, unit: 'pt', format: 'a4' });
+    const doc = new jsPDF({ 
+        orientation: state.orientation, 
+        unit: 'mm', 
+        format: state.paperSize 
+    });
     const width = doc.internal.pageSize.getWidth();
     const height = doc.internal.pageSize.getHeight();
     
     // Calculate scaling factor based on A4 size
     const previewWidth = previewArea.offsetWidth;
-    const previewHeight = previewArea.offsetHeight;
     const scale = width / previewWidth;
 
     if (state.backgroundImage) {
@@ -605,30 +868,23 @@ async function generatePdf(data) {
         const elData = state.elements[id];
         const text = data[id] || elData.text;
         
-        // Set font properties
+        // Set font properties with corrected scaling
         doc.setFont(elData.style.fontFamily.split(',')[0].replace(/'/g, ''), elData.style.fontWeight === 'bold' ? 'bold' : 'normal');
-        doc.setFontSize(elData.style.fontSize * scale * 0.75); // Scale font size proportionally
+        doc.setFontSize(elData.style.fontSize * 1.5); // Increased scaling factor
         doc.setTextColor(elData.style.color);
 
         // Calculate scaled positions
         const xPos = (elData.x / 100) * width;
         const yPos = (elData.y / 100) * height;
 
-        // Handle text alignment
-        let alignment = elData.style.textAlign;
-        if (alignment === 'center') {
-            alignment = 'center';
-        } else if (alignment === 'right') {
-            alignment = 'right';
-        } else {
-            alignment = 'left';
-        }
+        // Get element dimensions if they exist
+        const elementWidth = elData.width ? (elData.width / 100) * width : width * 0.8;
 
-        // Add text with proper alignment and baseline
+        // Add text with proper alignment and dimensions
         doc.text(text, xPos, yPos, { 
-            align: alignment,
+            align: elData.style.textAlign,
             baseline: 'top',
-            maxWidth: width * 0.8 // Prevent text from going off the page
+            maxWidth: elementWidth
         });
     }
     return doc;
@@ -870,8 +1126,21 @@ document.getElementById('add-text-box').addEventListener('click', function() {
     renderPreview();
 });
 
+// Handle paper size changes
+document.getElementById('paper-size').addEventListener('change', function(e) {
+    state.paperSize = e.target.value;
+    const paperSizeText = e.target.options[e.target.selectedIndex].text;
+    previewArea.setAttribute('data-paper-size', paperSizeText);
+    renderPreview();
+});
+
 window.addEventListener('resize', renderPreview);
 initializeState();
+
+// Set initial paper size label
+const paperSizeSelect = document.getElementById('paper-size');
+const initialPaperSizeText = paperSizeSelect.options[paperSizeSelect.selectedIndex].text;
+previewArea.setAttribute('data-paper-size', initialPaperSizeText);
 </script>
 </body>
 </html>
