@@ -243,9 +243,10 @@
                     row.insertCell().textContent = data.score || 'N/A';
                     
                     const detailsCell = row.insertCell();
-                    const universityText = data.university || 'N/A';
-                    const resumeLink = data.resumeURL ? `<a href="${data.resumeURL}" target="_blank">View Resume</a>` : 'No Resume';
-                    detailsCell.innerHTML = `University: ${universityText}<br>${resumeLink}`;
+                    const viewDetailsBtn = document.createElement('button');
+                    viewDetailsBtn.textContent = 'View Details';
+                    viewDetailsBtn.onclick = () => showApplicationDetails(data);
+                    detailsCell.appendChild(viewDetailsBtn);
 
                     const actionsCell = row.insertCell();
                     const addButton = document.createElement('button');
@@ -419,6 +420,69 @@
             });
         }
 
+        function showApplicationDetails(data) {
+            const modal = document.getElementById('applicationModal');
+            
+            // Personal Information
+            document.getElementById('modal-name').textContent = data.full_name || 'N/A';
+            document.getElementById('modal-email').textContent = data.email || 'N/A';
+            document.getElementById('modal-phone').textContent = data.phone || 'N/A';
+            
+            // Academic Information
+            document.getElementById('modal-university').textContent = data.university || 'N/A';
+            document.getElementById('modal-branch').textContent = data.branch || 'N/A';
+            document.getElementById('modal-course').textContent = data.course || 'N/A';
+            document.getElementById('modal-year').textContent = data.year_of_study || 'N/A';
+            document.getElementById('modal-tenth').textContent = data.tenth_marks || 'N/A';
+            document.getElementById('modal-twelfth').textContent = data.twelfth_marks || 'N/A';
+            document.getElementById('modal-cgpa').textContent = data.current_cgpa || 'N/A';
+
+            // Documents
+            document.getElementById('modal-resume').innerHTML = data.resumeURL ? 
+                `<a href="${data.resumeURL}" target="_blank" class="document-link">View Resume</a>` : 'Not uploaded';
+            
+            document.getElementById('modal-tenth-doc').innerHTML = data.tenth_marksheetURL ?
+                `<a href="${data.tenth_marksheetURL}" target="_blank" class="document-link">View Document</a>` : 'Not uploaded';
+            
+            document.getElementById('modal-twelfth-doc').innerHTML = data.twelfth_marksheetURL ?
+                `<a href="${data.twelfth_marksheetURL}" target="_blank" class="document-link">View Document</a>` : 'Not uploaded';
+            
+            document.getElementById('modal-cgpa-doc').innerHTML = data.cgpa_proofURL ?
+                `<a href="${data.cgpa_proofURL}" target="_blank" class="document-link">View Document</a>` : 'Not uploaded';
+
+            // Certificates
+            const certificatesList = document.getElementById('certificates-list');
+            certificatesList.innerHTML = '';
+            if (data.certificatesURLs && data.certificatesURLs.length > 0) {
+                data.certificatesURLs.forEach((url, index) => {
+                    const certLink = document.createElement('p');
+                    certLink.innerHTML = `<strong>Certificate ${index + 1}:</strong> <a href="${url}" target="_blank" class="document-link">View Certificate</a>`;
+                    certificatesList.appendChild(certLink);
+                });
+            } else {
+                certificatesList.innerHTML = '<p>No additional certificates uploaded</p>';
+            }
+
+            // Cover Letter
+            document.getElementById('modal-cover-letter').textContent = data.cover_letter || 'No cover letter provided';
+
+            // Show modal
+            modal.style.display = 'block';
+
+            // Close modal functionality
+            const closeBtn = document.getElementsByClassName('close-modal')[0];
+            closeBtn.onclick = function() {
+                modal.style.display = 'none';
+            }
+
+            // Close modal when clicking outside
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             showSection('registrations'); // Set registrations as the default active section
             
@@ -431,5 +495,106 @@
             loadArchivedInterns();
         });
     </script>
+
+    <!-- Application Details Modal -->
+    <div id="applicationModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Application Details</h2>
+            <div id="applicationDetails">
+                <div class="details-section">
+                    <h3>Personal Information</h3>
+                    <p><strong>Full Name:</strong> <span id="modal-name"></span></p>
+                    <p><strong>Email:</strong> <span id="modal-email"></span></p>
+                    <p><strong>Phone:</strong> <span id="modal-phone"></span></p>
+                </div>
+                <div class="details-section">
+                    <h3>Academic Information</h3>
+                    <p><strong>University/College:</strong> <span id="modal-university"></span></p>
+                    <p><strong>Branch:</strong> <span id="modal-branch"></span></p>
+                    <p><strong>Course:</strong> <span id="modal-course"></span></p>
+                    <p><strong>Year of Study:</strong> <span id="modal-year"></span></p>
+                    <p><strong>10th Marks:</strong> <span id="modal-tenth"></span>%</p>
+                    <p><strong>12th Marks:</strong> <span id="modal-twelfth"></span>%</p>
+                    <p><strong>Current CGPA:</strong> <span id="modal-cgpa"></span></p>
+                </div>
+                <div class="details-section">
+                    <h3>Documents</h3>
+                    <p><strong>Resume:</strong> <span id="modal-resume"></span></p>
+                    <p><strong>10th Marksheet:</strong> <span id="modal-tenth-doc"></span></p>
+                    <p><strong>12th Marksheet:</strong> <span id="modal-twelfth-doc"></span></p>
+                    <p><strong>CGPA Proof:</strong> <span id="modal-cgpa-doc"></span></p>
+                    <div id="modal-certificates">
+                        <h4>Additional Certificates</h4>
+                        <div id="certificates-list"></div>
+                    </div>
+                </div>
+                <div class="details-section">
+                    <h3>Cover Letter</h3>
+                    <p id="modal-cover-letter"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border-radius: 5px;
+        }
+
+        .close-modal {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-modal:hover {
+            color: black;
+        }
+
+        .details-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .details-section h3 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .document-link {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .document-link:hover {
+            text-decoration: underline;
+        }
+    </style>
 </body>
 </html>
