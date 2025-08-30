@@ -157,21 +157,63 @@
                 <div id="tab-panels">
                     <div id="tab-content" class="space-y-4">
                         <h3 style="font-size: 1.25rem; font-weight: 600;">Certificate Content</h3>
-                        <div>
-                            <label for="field-recipientName" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Recipient's Name</label>
-                            <input type="text" id="field-recipientName" data-field="recipientName" class="form-input" value="Jane Doe">
+                        
+                        <!-- Default Elements -->
+                        <div class="default-elements">
+                            <h4 style="font-size: 1rem; font-weight: 500; margin-bottom: 1rem;">Required Fields</h4>
+                            <div>
+                                <label for="field-certificateTitle" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Certificate Title</label>
+                                <input type="text" id="field-certificateTitle" data-field="certificateTitle" class="form-input" 
+                                    value="Certificate of Achievement">
+                            </div>
+                            <div class="mt-3">
+                                <label for="field-recipientName" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Recipient's Name</label>
+                                <input type="text" id="field-recipientName" data-field="recipientName" class="form-input" 
+                                    value="Jane Doe">
+                            </div>
+                            <div class="mt-3">
+                                <label for="field-completionText" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Achievement Statement</label>
+                                <textarea id="field-completionText" data-field="completionText" class="form-input" style="min-height: 60px;"
+                                    >This is to certify that the above named individual has successfully completed</textarea>
+                            </div>
+                            <div class="mt-3">
+                                <label for="field-courseName" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Program/Course Title</label>
+                                <textarea id="field-courseName" data-field="courseName" class="form-input" style="min-height: 60px;"
+                                    >a comprehensive internship program in Web Development, demonstrating exceptional skills and dedication throughout the duration of the program</textarea>
+                            </div>
+                            <div class="mt-3">
+                                <label for="field-date" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Date of Issue</label>
+                                <input type="date" id="field-date" data-field="date" class="form-input">
+                            </div>
+                            <div class="mt-3">
+                                <label for="field-signatureTitle" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Signatory Title</label>
+                                <input type="text" id="field-signatureTitle" data-field="signatureTitle" class="form-input" 
+                                    value="Program Director">
+                            </div>
                         </div>
-                        <div>
-                            <label for="field-courseName" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Course/Internship Title</label>
-                            <input type="text" id="field-courseName" data-field="courseName" class="form-input" value="Web Development Masterclass">
+
+                        <!-- Custom Text Boxes -->
+                        <div class="custom-elements mt-6">
+                            <h4 style="font-size: 1rem; font-weight: 500; margin-bottom: 1rem;">Additional Text Boxes</h4>
+                            <div id="custom-text-boxes">
+                                <!-- Custom text boxes will be added here -->
+                            </div>
+                            <button id="add-text-box" class="btn" style="margin-top: 1rem; border: 1px dashed var(--border-color); width: 100%; background: transparent; color: var(--primary-color);">
+                                <i class="fas fa-plus" style="margin-right: 0.5rem;"></i>
+                                Add Text Box
+                            </button>
                         </div>
-                        <div>
-                            <label for="field-completionText" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Completion Text</label>
-                            <input type="text" id="field-completionText" data-field="completionText" class="form-input" value="has successfully completed">
-                        </div>
-                        <div>
-                            <label for="field-date" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Date of Issue</label>
-                            <input type="date" id="field-date" data-field="date" class="form-input">
+
+                        <!-- Template Selector -->
+                        <div class="mt-6" style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                            <h4 style="font-size: 1rem; font-weight: 500; margin-bottom: 1rem;">Quick Templates</h4>
+                            <select id="template-selector" class="form-select">
+                                <option value="default">Professional Certificate</option>
+                                <option value="achievement">Achievement Award</option>
+                                <option value="completion">Course Completion</option>
+                                <option value="internship">Internship Certificate</option>
+                                <option value="participation">Participation Certificate</option>
+                            </select>
                         </div>
                     </div>
 
@@ -319,6 +361,41 @@ const styler = {
 };
 let selectedElementId = null;
 
+const certificateTemplates = {
+    default: {
+        certificateTitle: "Certificate of Achievement",
+        completionText: "This is to certify that the above named individual has successfully completed",
+        courseName: "a comprehensive internship program in Web Development, demonstrating exceptional skills and dedication throughout the duration of the program",
+        signatureTitle: "Program Director"
+    },
+    achievement: {
+        certificateTitle: "Certificate of Excellence",
+        completionText: "is hereby recognized for outstanding achievement in",
+        courseName: "Web Development and Programming, demonstrating exceptional skills and innovative problem-solving abilities",
+        signatureTitle: "Director of Education"
+    },
+    completion: {
+        certificateTitle: "Certificate of Completion",
+        completionText: "has successfully completed all requirements and demonstrated proficiency in",
+        courseName: "Full Stack Web Development, including front-end design, back-end development, and database management",
+        signatureTitle: "Course Instructor"
+    },
+    internship: {
+        certificateTitle: "Internship Completion Certificate",
+        completionText: "has successfully completed an intensive internship program in",
+        courseName: "Web Development, acquiring practical experience in modern development practices, team collaboration, and project delivery",
+        signatureTitle: "Internship Coordinator"
+    },
+    participation: {
+        certificateTitle: "Certificate of Participation",
+        completionText: "has actively participated and contributed to",
+        courseName: "the Web Development Workshop Series, engaging in hands-on projects and collaborative learning experiences",
+        signatureTitle: "Workshop Facilitator"
+    }
+};
+
+let customTextBoxCount = 0;
+
 function initializeState() {
     const today = new Date('2025-08-31');
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -328,10 +405,10 @@ function initializeState() {
         orientation: 'landscape',
         backgroundImage: null,
         elements: {
-            certificateTitle: { text: "Certificate of Completion", x: 50, y: 20, style: { fontSize: 30, fontFamily: "'Playfair Display', serif", color: '#000000', fontWeight: 'bold', textAlign: 'center' } },
-            completionText:   { text: "proudly presented to", x: 50, y: 40, style: { fontSize: 20, fontFamily: "'Inter', sans-serif", color: '#333333', fontWeight: 'normal', textAlign: 'center' } },
-            recipientName:    { text: "Name", x: 50, y: 50, style: { fontSize: 40, fontFamily: "'Playfair Display', serif", color: '#000000', fontWeight: 'bold', textAlign: 'center' } },
-            courseName:       { text: "for successfully completing the Web Development Masterclass", x: 50, y: 65, style: { fontSize: 22, fontFamily: "'Inter', sans-serif", color: '#333333', fontWeight: 'normal', textAlign: 'center' } },
+            certificateTitle: { text: "Certificate of Achievement", x: 50, y: 15, style: { fontSize: 36, fontFamily: "'Playfair Display', serif", color: '#000000', fontWeight: 'bold', textAlign: 'center' } },
+            completionText:   { text: "This is to certify that the above named individual has successfully completed", x: 50, y: 40, style: { fontSize: 18, fontFamily: "'Inter', sans-serif", color: '#333333', fontWeight: 'normal', textAlign: 'center' } },
+            recipientName:    { text: "Name", x: 50, y: 30, style: { fontSize: 42, fontFamily: "'Playfair Display', serif", color: '#000000', fontWeight: 'bold', textAlign: 'center' } },
+            courseName:       { text: "a comprehensive internship program in Web Development, demonstrating exceptional skills and dedication throughout the duration of the program", x: 50, y: 55, style: { fontSize: 20, fontFamily: "'Inter', sans-serif", color: '#333333', fontWeight: 'normal', textAlign: 'center' } },
             date:             { text: formattedDate, x: 50, y: 80, style: { fontSize: 18, fontFamily: "'Inter', sans-serif", color: '#555555', fontWeight: 'normal', textAlign: 'center' } },
             signature:        { text: "_________________________", x: 20, y: 88, style: { fontSize: 18, fontFamily: "'Inter', sans-serif", color: '#000000', fontWeight: 'normal', textAlign: 'left' } },
             signatureTitle:   { text: "Authorized Signatory", x: 20, y: 92, style: { fontSize: 16, fontFamily: "'Inter', sans-serif", color: '#333333', fontWeight: 'normal', textAlign: 'left' } },
@@ -370,7 +447,10 @@ function renderPreview() {
     const containerWidth = container.offsetWidth - 64; // padding
     const containerHeight = container.offsetHeight - 64; // padding
 
-    const aspectRatio = isLandscape ? 842 / 595 : 595 / 842;
+    // Use exact A4 proportions
+    const pdfWidth = isLandscape ? 842 : 595;
+    const pdfHeight = isLandscape ? 595 : 842;
+    const aspectRatio = pdfWidth / pdfHeight;
     let width, height;
 
     if (containerWidth / containerHeight > aspectRatio) {
@@ -509,6 +589,11 @@ async function generatePdf(data) {
     const doc = new jsPDF({ orientation: state.orientation, unit: 'pt', format: 'a4' });
     const width = doc.internal.pageSize.getWidth();
     const height = doc.internal.pageSize.getHeight();
+    
+    // Calculate scaling factor based on A4 size
+    const previewWidth = previewArea.offsetWidth;
+    const previewHeight = previewArea.offsetHeight;
+    const scale = width / previewWidth;
 
     if (state.backgroundImage) {
         try {
@@ -520,14 +605,31 @@ async function generatePdf(data) {
         const elData = state.elements[id];
         const text = data[id] || elData.text;
         
+        // Set font properties
         doc.setFont(elData.style.fontFamily.split(',')[0].replace(/'/g, ''), elData.style.fontWeight === 'bold' ? 'bold' : 'normal');
-        doc.setFontSize(elData.style.fontSize);
+        doc.setFontSize(elData.style.fontSize * scale * 0.75); // Scale font size proportionally
         doc.setTextColor(elData.style.color);
 
+        // Calculate scaled positions
         const xPos = (elData.x / 100) * width;
         const yPos = (elData.y / 100) * height;
 
-        doc.text(text, xPos, yPos, { align: elData.style.textAlign, baseline: 'top' });
+        // Handle text alignment
+        let alignment = elData.style.textAlign;
+        if (alignment === 'center') {
+            alignment = 'center';
+        } else if (alignment === 'right') {
+            alignment = 'right';
+        } else {
+            alignment = 'left';
+        }
+
+        // Add text with proper alignment and baseline
+        doc.text(text, xPos, yPos, { 
+            align: alignment,
+            baseline: 'top',
+            maxWidth: width * 0.8 // Prevent text from going off the page
+        });
     }
     return doc;
 }
@@ -652,16 +754,11 @@ document.getElementById('batch-generate-btn').addEventListener('click', async ()
             const row = batchData.jsonData[i];
             const name = row[batchData.mapping.recipientName] || 'Unnamed';
             
-            const pdfData = {
-                recipientName: name,
-                courseName: batchData.mapping.courseName ? row[batchData.mapping.courseName] : state.elements.courseName.text,
-                date: batchData.mapping.date && row[batchData.mapping.date] ? 
-                    (new Date(row[batchData.mapping.date])).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) :
-                    (document.getElementById('use-custom-date').checked ? 
-                        (new Date(document.getElementById('batch-issue-date').value)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) :
-                        (new Date('2025-08-31')).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })),
-                completionText: state.elements.completionText.text
-            };
+            // Use the same content as the single certificate, only change the recipient name
+            const pdfData = {};
+            for (const [key, element] of Object.entries(state.elements)) {
+                pdfData[key] = key === 'recipientName' ? name : element.text;
+            }
 
             const doc = await generatePdf(pdfData);
             zip.file(`${name.replace(/\s/g, '_')}.pdf`, await doc.output('blob'));
@@ -695,6 +792,82 @@ document.getElementById('batch-generate-btn').addEventListener('click', async ()
             progressContainer.classList.add('hidden');
         }, 5000);
     }
+});
+
+// Handle template selection
+document.getElementById('template-selector').addEventListener('change', function(e) {
+    const template = certificateTemplates[e.target.value];
+    if (template) {
+        document.getElementById('field-certificateTitle').value = template.certificateTitle;
+        document.getElementById('field-completionText').value = template.completionText;
+        document.getElementById('field-courseName').value = template.courseName;
+        document.getElementById('field-signatureTitle').value = template.signatureTitle;
+        updateStateFromInput();
+    }
+});
+
+// Handle adding custom text boxes
+document.getElementById('add-text-box').addEventListener('click', function() {
+    const customBoxId = `custom-${customTextBoxCount++}`;
+    const container = document.getElementById('custom-text-boxes');
+    
+    const boxDiv = document.createElement('div');
+    boxDiv.className = 'custom-text-box mt-3 space-y-2';
+    boxDiv.innerHTML = `
+        <div class="flex justify-between items-center">
+            <input type="text" placeholder="Text Box Label" 
+                   class="form-input" style="width: calc(100% - 40px);"
+                   data-custom-label="${customBoxId}">
+            <button class="btn delete-text-box" data-box-id="${customBoxId}">
+                <i class="fas fa-trash" style="color: #ef4444;"></i>
+            </button>
+        </div>
+        <textarea class="form-input" data-custom-content="${customBoxId}" 
+                  style="min-height: 60px;" placeholder="Enter text content"></textarea>
+    `;
+    
+    container.appendChild(boxDiv);
+    
+    // Add the custom text box to the state and preview
+    state.elements[customBoxId] = {
+        text: "",
+        x: 50,
+        y: 70,
+        style: {
+            fontSize: 18,
+            fontFamily: "'Inter', sans-serif",
+            color: '#333333',
+            fontWeight: 'normal',
+            textAlign: 'center'
+        }
+    };
+    
+    // Add element to preview area
+    const previewEl = document.createElement('div');
+    previewEl.id = `el-${customBoxId}`;
+    previewEl.dataset.id = customBoxId;
+    previewEl.className = 'draggable';
+    previewArea.appendChild(previewEl);
+    
+    // Update preview when content changes
+    const contentInput = boxDiv.querySelector(`[data-custom-content="${customBoxId}"]`);
+    contentInput.addEventListener('input', function() {
+        state.elements[customBoxId].text = this.value;
+        renderPreview();
+    });
+    
+    // Handle deletion
+    boxDiv.querySelector('.delete-text-box').addEventListener('click', function() {
+        const boxId = this.dataset.boxId;
+        // Remove from DOM
+        boxDiv.remove();
+        // Remove preview element
+        document.getElementById(`el-${boxId}`).remove();
+        // Remove from state
+        delete state.elements[boxId];
+    });
+    
+    renderPreview();
 });
 
 window.addEventListener('resize', renderPreview);
