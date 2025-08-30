@@ -12,6 +12,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="../firebase-config.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
     <style>
         .sidebar {
             position: fixed;
@@ -116,6 +117,9 @@
                         <button id="select-all-registrations" class="bulk-action-btn">Select All</button>
                         <button id="bulk-add-to-active" class="bulk-action-btn" disabled>Add Selected to Active</button>
                         <button id="bulk-delete-registrations" class="bulk-action-btn" disabled>Delete Selected</button>
+                        <button id="export-registrations" class="bulk-action-btn export-btn">
+                            <i class="fas fa-file-excel"></i> Export to Excel
+                        </button>
                     </div>
                     <table id="internship-registrations-table">
                         <thead>
@@ -165,6 +169,9 @@
                     <div class="bulk-actions">
                         <button id="select-all-listings" class="bulk-action-btn">Select All</button>
                         <button id="bulk-delete-listings" class="bulk-action-btn" disabled>Delete Selected</button>
+                        <button id="export-listings" class="bulk-action-btn export-btn">
+                            <i class="fas fa-file-excel"></i> Export to Excel
+                        </button>
                     </div>
                     <table id="internship-listings-admin-table">
                         <thead>
@@ -189,6 +196,9 @@
                         <button id="select-all-active" class="bulk-action-btn">Select All</button>
                         <button id="bulk-archive-active" class="bulk-action-btn" disabled>Archive Selected</button>
                         <button id="bulk-delete-active" class="bulk-action-btn" disabled>Delete Selected</button>
+                        <button id="export-active" class="bulk-action-btn export-btn">
+                            <i class="fas fa-file-excel"></i> Export to Excel
+                        </button>
                     </div>
                     <table id="active-interns-table">
                         <thead>
@@ -215,6 +225,9 @@
                         <button id="select-all-archived" class="bulk-action-btn">Select All</button>
                         <button id="bulk-activate-archived" class="bulk-action-btn" disabled>Activate Selected</button>
                         <button id="bulk-delete-archived" class="bulk-action-btn" disabled>Delete Selected</button>
+                        <button id="export-archived" class="bulk-action-btn export-btn">
+                            <i class="fas fa-file-excel"></i> Export to Excel
+                        </button>
                     </div>
                     <table id="archived-interns-table">
                         <thead>
@@ -923,8 +936,87 @@
             };
         }
 
+        // Export to Excel functionality
+        function exportToExcel(data, filename) {
+            // Convert data to worksheet
+            const ws = XLSX.utils.json_to_sheet(data);
+
+            // Create workbook and add the worksheet
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Data");
+
+            // Save to file
+            XLSX.writeFile(wb, filename + '_' + new Date().toISOString().split('T')[0] + '.xlsx');
+        }
+
+        // Format data for export
+        function prepareDataForExport(collection, status = null) {
+            return new Promise((resolve, reject) => {
+                let query = db.collection(collection);
+                if (status) {
+                    query = query.where('status', '==', status);
+                }
+                
+                query.get().then(snapshot => {
+                    const data = snapshot.docs.map(doc => {
+                        const data = doc.data();
+                        // Remove complex objects and clean up data
+                        const cleanData = {};
+                        Object.keys(data).forEach(key => {
+                            if (typeof data[key] !== 'object') {
+                                cleanData[key] = data[key];
+                            }
+                        });
+                        return cleanData;
+                    });
+                    resolve(data);
+                }).catch(reject);
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             showSection('registrations'); // Set registrations as the default active section
+
+            // Export button handlers
+            document.getElementById('export-registrations').addEventListener('click', async () => {
+                try {
+                    const data = await prepareDataForExport('internshipApplications', 'pending');
+                    exportToExcel(data, 'internship_registrations');
+                } catch (error) {
+                    console.error('Export failed:', error);
+                    alert('Failed to export data. Please try again.');
+                }
+            });
+
+            document.getElementById('export-listings').addEventListener('click', async () => {
+                try {
+                    const data = await prepareDataForExport('internships');
+                    exportToExcel(data, 'internship_listings');
+                } catch (error) {
+                    console.error('Export failed:', error);
+                    alert('Failed to export data. Please try again.');
+                }
+            });
+
+            document.getElementById('export-active').addEventListener('click', async () => {
+                try {
+                    const data = await prepareDataForExport('internshipApplications', 'active');
+                    exportToExcel(data, 'active_interns');
+                } catch (error) {
+                    console.error('Export failed:', error);
+                    alert('Failed to export data. Please try again.');
+                }
+            });
+
+            document.getElementById('export-archived').addEventListener('click', async () => {
+                try {
+                    const data = await prepareDataForExport('internshipApplications', 'archived');
+                    exportToExcel(data, 'archived_interns');
+                } catch (error) {
+                    console.error('Export failed:', error);
+                    alert('Failed to export data. Please try again.');
+                }
+            });
             
             // Setup bulk actions for each table
             const getSelectedRegistrations = setupBulkActions(
@@ -1383,6 +1475,19 @@
 
         .bulk-action-btn:not(:disabled):hover {
             background-color: #5e35b1;
+        }
+
+        .export-btn {
+            background-color: #2e7d32 !important;
+            margin-left: auto;
+        }
+
+        .export-btn:hover {
+            background-color: #1b5e20 !important;
+        }
+
+        .export-btn i {
+            margin-right: 8px;
         }
 
         /* Checkbox styling */
