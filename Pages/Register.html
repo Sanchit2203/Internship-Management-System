@@ -85,11 +85,11 @@
                     });
                 })
                 .then(() => {
-                    feedbackMessage.textContent = 'Registration successful! Redirecting to login...';
+                    feedbackMessage.textContent = 'Registration successful! Redirecting to dashboard...';
                     feedbackMessage.style.color = 'green';
                     setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 2000);
+                        window.location.href = 'Pages/user.html';
+                    }, 0);
                 })
                 .catch((error) => {
                     feedbackMessage.textContent = error.message;
