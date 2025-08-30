@@ -177,6 +177,7 @@
                                 <th>Full Name</th>
                                 <th>Email</th>
                                 <th>Phone</th>
+                                <th>Details</th>
                                 <th>Certificate</th>
                                 <th>Actions</th>
                             </tr>
@@ -202,6 +203,7 @@
                                 <th>Full Name</th>
                                 <th>Email</th>
                                 <th>Phone</th>
+                                <th>Details</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -483,6 +485,14 @@
                     row.insertCell().textContent = data.full_name;
                     row.insertCell().textContent = data.email;
                     row.insertCell().textContent = data.phone;
+
+                    // Add Details column
+                    const detailsCell = row.insertCell();
+                    const viewDetailsBtn = document.createElement('button');
+                    viewDetailsBtn.textContent = 'View Details';
+                    viewDetailsBtn.onclick = () => showApplicationDetails(data);
+                    detailsCell.appendChild(viewDetailsBtn);
+
                     // Add Certificate column
                     const certificateCell = row.insertCell();
                     const generateCertificateButton = document.createElement('button');
@@ -530,6 +540,14 @@
                     row.insertCell().textContent = data.full_name;
                     row.insertCell().textContent = data.email;
                     row.insertCell().textContent = data.phone;
+
+                    // Add Details column
+                    const detailsCell = row.insertCell();
+                    const viewDetailsBtn = document.createElement('button');
+                    viewDetailsBtn.textContent = 'View Details';
+                    viewDetailsBtn.onclick = () => showApplicationDetails(data);
+                    detailsCell.appendChild(viewDetailsBtn);
+
                     const actionsCell = row.insertCell();
                     const activateButton = document.createElement('button');
                     activateButton.textContent = 'Activate';
