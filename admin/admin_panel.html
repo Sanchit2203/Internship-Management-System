@@ -46,20 +46,40 @@
     </style>
 </head>
 <body>
-    <div class="hamburger-menu">
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-    </div>
     <div class="admin-wrapper">
         <aside class="sidebar">
-            <h2>Admin Menu</h2>
+            <h2>Admin Dashboard</h2>
             <ul>
-                <li><a href="#" data-target="registrations">Registrations</a></li>
-                <li><a href="#" data-target="internship-listings">Internship Listings</a></li>
-                <li><a href="#" data-target="active-interns">Active Interns</a></li>
-                <li><a href="#" data-target="archived-interns">Archived Interns</a></li>
-                <li><a href="certificate_generator.html">Certificate Generator</a></li>
+                <li>
+                    <a href="#" data-target="registrations">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Registrations</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-target="internship-listings">
+                        <i class="fas fa-list-alt"></i>
+                        <span>Internship Listings</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-target="active-interns">
+                        <i class="fas fa-users"></i>
+                        <span>Active Interns</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-target="archived-interns">
+                        <i class="fas fa-archive"></i>
+                        <span>Archived Interns</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="certificate_generator.html">
+                        <i class="fas fa-certificate"></i>
+                        <span>Certificate Generator</span>
+                    </a>
+                </li>
             </ul>
         </aside>
         <main class="main-content">
@@ -224,10 +244,11 @@
 
     <script src="../auth.js"></script>
     <script>
-        const hamburger = document.querySelector('.hamburger-menu');
         const sidebar = document.querySelector('.sidebar');
+        const adminWrapper = document.querySelector('.admin-wrapper');
 
-        hamburger.addEventListener('mouseenter', () => {
+        // Handle sidebar hover
+        sidebar.addEventListener('mouseenter', () => {
             sidebar.classList.add('expanded');
         });
 
@@ -842,6 +863,123 @@
     </div>
 
     <style>
+        /* Admin Sidebar Styling */
+        .sidebar {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            position: fixed;
+            left: -220px;
+            width: 250px;
+            z-index: 999;
+        }
+
+        .sidebar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -30px;
+            width: 30px;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .sidebar.expanded {
+            left: 0;
+        }
+
+        .sidebar:hover {
+            left: 0;
+        }
+
+        .sidebar h2 {
+            color: #ecf0f1;
+            font-size: 24px;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar ul li a {
+            color: #bdc3c7;
+            text-decoration: none;
+            display: block;
+            padding: 12px 15px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .sidebar ul li a:hover {
+            background: #34495e;
+            color: #3498db;
+            transform: translateX(5px);
+        }
+
+        .sidebar ul li a.active {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Hamburger Menu Styling */
+        .hamburger-menu {
+            cursor: pointer;
+            padding: 15px;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: #2c3e50;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-menu:hover {
+            background: #34495e;
+        }
+
+        .bar {
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        .main-content {
+            margin-left: 0;
+            transition: all 0.3s ease;
+            padding-left: 70px; /* Space for the hamburger menu */
+        }
+
+        .sidebar.expanded + .main-content {
+            margin-left: 250px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding-left: 60px;
+            }
+            
+            .sidebar.expanded + .main-content {
+                margin-left: 0;
+            }
+        }
+
         .modal {
             display: none;
             position: fixed;
