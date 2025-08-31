@@ -979,8 +979,27 @@
 
             // Export button handlers
             document.getElementById('export-registrations').addEventListener('click', async () => {
+                const selectedIds = getSelectedRegistrations();
+                if (selectedIds.length === 0) {
+                    alert('Please select at least one registration to export.');
+                    return;
+                }
                 try {
-                    const data = await prepareDataForExport('internshipApplications', 'pending');
+                    const snapshot = await db.collection('internshipApplications')
+                        .where('status', '==', 'pending')
+                        .where(firebase.firestore.FieldPath.documentId(), 'in', selectedIds)
+                        .get();
+                    const data = snapshot.docs.map(doc => {
+                        const data = doc.data();
+                        // Remove complex objects and clean up data
+                        const cleanData = {};
+                        Object.keys(data).forEach(key => {
+                            if (typeof data[key] !== 'object') {
+                                cleanData[key] = data[key];
+                            }
+                        });
+                        return cleanData;
+                    });
                     exportToExcel(data, 'internship_registrations');
                 } catch (error) {
                     console.error('Export failed:', error);
@@ -989,8 +1008,26 @@
             });
 
             document.getElementById('export-listings').addEventListener('click', async () => {
+                const selectedIds = getSelectedListings();
+                if (selectedIds.length === 0) {
+                    alert('Please select at least one listing to export.');
+                    return;
+                }
                 try {
-                    const data = await prepareDataForExport('internships');
+                    const snapshot = await db.collection('internships')
+                        .where(firebase.firestore.FieldPath.documentId(), 'in', selectedIds)
+                        .get();
+                    const data = snapshot.docs.map(doc => {
+                        const data = doc.data();
+                        // Remove complex objects and clean up data
+                        const cleanData = {};
+                        Object.keys(data).forEach(key => {
+                            if (typeof data[key] !== 'object') {
+                                cleanData[key] = data[key];
+                            }
+                        });
+                        return cleanData;
+                    });
                     exportToExcel(data, 'internship_listings');
                 } catch (error) {
                     console.error('Export failed:', error);
@@ -999,8 +1036,27 @@
             });
 
             document.getElementById('export-active').addEventListener('click', async () => {
+                const selectedIds = getSelectedActiveInterns();
+                if (selectedIds.length === 0) {
+                    alert('Please select at least one active intern to export.');
+                    return;
+                }
                 try {
-                    const data = await prepareDataForExport('internshipApplications', 'active');
+                    const snapshot = await db.collection('internshipApplications')
+                        .where('status', '==', 'active')
+                        .where(firebase.firestore.FieldPath.documentId(), 'in', selectedIds)
+                        .get();
+                    const data = snapshot.docs.map(doc => {
+                        const data = doc.data();
+                        // Remove complex objects and clean up data
+                        const cleanData = {};
+                        Object.keys(data).forEach(key => {
+                            if (typeof data[key] !== 'object') {
+                                cleanData[key] = data[key];
+                            }
+                        });
+                        return cleanData;
+                    });
                     exportToExcel(data, 'active_interns');
                 } catch (error) {
                     console.error('Export failed:', error);
@@ -1009,8 +1065,27 @@
             });
 
             document.getElementById('export-archived').addEventListener('click', async () => {
+                const selectedIds = getSelectedArchivedInterns();
+                if (selectedIds.length === 0) {
+                    alert('Please select at least one archived intern to export.');
+                    return;
+                }
                 try {
-                    const data = await prepareDataForExport('internshipApplications', 'archived');
+                    const snapshot = await db.collection('internshipApplications')
+                        .where('status', '==', 'archived')
+                        .where(firebase.firestore.FieldPath.documentId(), 'in', selectedIds)
+                        .get();
+                    const data = snapshot.docs.map(doc => {
+                        const data = doc.data();
+                        // Remove complex objects and clean up data
+                        const cleanData = {};
+                        Object.keys(data).forEach(key => {
+                            if (typeof data[key] !== 'object') {
+                                cleanData[key] = data[key];
+                            }
+                        });
+                        return cleanData;
+                    });
                     exportToExcel(data, 'archived_interns');
                 } catch (error) {
                     console.error('Export failed:', error);
