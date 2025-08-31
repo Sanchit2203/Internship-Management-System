@@ -37,7 +37,7 @@ function loadJobListings(category) {
 }
 
 // Function to fetch and display internship listings from Firestore
-function loadInternshipListings(category, registrationUrlPrefix = 'internship_registration.html?title=') {
+function loadInternshipListings(category, registrationUrlPrefix = 'Pages/internship_registration.html?title=') {
     const internshipTableBody = document.getElementById('internship-listings-table').querySelector('tbody');
     internshipTableBody.innerHTML = ''; // Clear existing rows
 
@@ -49,7 +49,7 @@ function loadInternshipListings(category, registrationUrlPrefix = 'internship_re
     query.get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             const internship = doc.data();
-            const row = internshipTableBody.insertRow(); // Changed from insertCell() to insertRow()
+            const row = internshipTableBody.insertRow(); 
             row.insertCell().textContent = internship.title || 'N/A';
             row.insertCell().textContent = internship.location || 'N/A';
             row.insertCell().textContent = internship.description || 'N/A';
@@ -57,13 +57,47 @@ function loadInternshipListings(category, registrationUrlPrefix = 'internship_re
             const applyCell = row.insertCell();
             const applyButton = document.createElement('button');
             applyButton.textContent = 'Apply';
-            applyButton.onclick = function() { location.href = registrationUrlPrefix + encodeURIComponent(internship.title); };
+            applyButton.onclick = async function() { 
+                const user = firebase.auth().currentUser;
+                if (!user) {
+                    alert('Please login to apply.');
+                    window.location.href = 'Pages/login.html';
+                    return;
+                }
+
+                const adminStatus = await isAdmin();
+                if (adminStatus) {
+                    location.href = registrationUrlPrefix + encodeURIComponent(internship.title);
+                    return;
+                }
+
+                const hasExisting = await hasExistingApplication(user.uid);
+                if (hasExisting) {
+                    alert('You already have an application in the system. You can apply for a new internship only after your previous application has been deleted by an administrator.');
+                } else {
+                    location.href = registrationUrlPrefix + encodeURIComponent(internship.title);
+                }
+            };
             applyCell.appendChild(applyButton);
         });
     })
     .catch((error) => {
         console.error("Error getting internship documents: ", error);
     });
+}
+
+async function hasExistingApplication(userId) {
+    if (!userId) return false;
+    try {
+        const applicationsRef = db.collection('internshipApplications');
+        // Check if any document exists for this user, regardless of status.
+        const snapshot = await applicationsRef.where('userId', '==', userId).limit(1).get();
+        return !snapshot.empty;
+    } catch (error) {
+        console.error("Error checking for existing application:", error);
+        // To be safe, prevent application if an error occurs.
+        return true; 
+    }
 }
 
 
@@ -78,7 +112,7 @@ async function isAdmin() {
     if (user) {
         try {
             const doc = await db.collection('users').doc(user.uid).get();
- isAdminStatus = doc.exists && doc.data().role === 'admin';
+            isAdminStatus = doc.exists && doc.data().role === 'admin';
             return isAdminStatus;
         } catch (error) {
             console.error("Error checking admin status:", error);
@@ -104,10 +138,8 @@ function resetLogoutTimer() {
 
 function logoutUser() {
     // Perform logout actions: clear session, redirect, etc.
-    // Example: Clear localStorage, assuming 'loggedInUser' is stored
     localStorage.removeItem('loggedInUser');
-    // Example: Redirect to login page
-    window.location.href = 'login.html'; // Or your actual login page
+    window.location.href = 'Pages/login.html'; 
     alert('You have been logged out due to inactivity.');
 }
 
@@ -115,19 +147,7 @@ function logoutUser() {
 document.addEventListener('mousemove', resetLogoutTimer);
 document.addEventListener('keydown', resetLogoutTimer);
 document.addEventListener('click', resetLogoutTimer);
-document.addEventListener('scroll', resetLogoutTimer); // Also listen for scroll events
+document.addEventListener('scroll', resetLogoutTimer); 
 
-// Start the timer when the script loads (e.g., on page load)
+// Start the timer when the script loads
 startLogoutTimer();
-
-// Optional: If you have a Firebase authentication listener, you might want to start/stop the timer
-// based on the auth state. For example:
-// firebase.auth().onAuthStateChanged(function(user) {
-//   if (user) {
-//     // User is signed in, start the timer
-//     startLogoutTimer();
-//   } else {
-//     // No user is signed in, clear the timer
-//     clearTimeout(timeoutId);
-//   }
-// });
