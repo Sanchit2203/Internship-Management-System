@@ -61,7 +61,7 @@ function loadInternshipListings(category, registrationUrlPrefix = 'Pages/interns
                 const user = firebase.auth().currentUser;
                 if (!user) {
                     alert('Please login to apply.');
-                    window.location.href = 'Pages/login.html';
+                    window.location.href = '/Pages/login.html';
                     return;
                 }
 
