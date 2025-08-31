@@ -495,9 +495,12 @@
                          registrationData.certificatesURLs = allCertificatesURLs;
 
                         await db.collection('internshipApplications').add(registrationData);
-                        feedbackMessage.textContent = 'Internship application submitted successfully!';
+                        feedbackMessage.textContent = 'Internship application submitted successfully! Redirecting...';
                         feedbackMessage.style.color = 'green';
-                        checkExistingApplication();
+                        // Wait for 2 seconds before redirecting
+                        setTimeout(() => {
+                            window.location.href = 'user.html';
+                        }, 2000);
                     }
                 } catch (error) {
                     feedbackMessage.textContent = 'Error saving internship application. Please try again.';
