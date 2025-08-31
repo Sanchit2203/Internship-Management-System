@@ -307,6 +307,18 @@ td:nth-child(5) { /* Branch/Category columns */
     min-width: 140px;
 }
 
+/* Specific styling for Title and Description columns to ensure full visibility */
+th:nth-child(1), td:nth-child(1), /* Title column */
+th:nth-child(3), td:nth-child(3) { /* Description column */
+    white-space: normal; /* Allow text to wrap */
+    overflow: visible;   /* Ensure content is not hidden */
+    text-overflow: clip; /* Prevent ellipsis from truncating text */
+    max-width: none;     /* Allow column to expand beyond default max-width */
+    min-width: 200px;    /* Ensure a decent minimum width for readability */
+    width: auto;         /* Allow width to adjust based on content */
+}
+
+
 /* Make action columns wider */
 th:last-child,
 td:last-child {
